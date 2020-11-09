@@ -1,0 +1,3 @@
+1.Resolve the problem of #hashtag
+2.Check if we can import re
+3. parse_sentence -clean the words from " .  , / "
