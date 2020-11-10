@@ -17,5 +17,7 @@ if __name__ == '__main__':
     #         num+=1
     #         if l!=None:
     #             print(str(num)+") "+l)
+
+    print("niv is the best git user")
     print(len(readfile))
     search_engine.main()
