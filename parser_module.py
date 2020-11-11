@@ -25,29 +25,40 @@ class Parse:
         #text_tokens = word_tokenize(text)
         ##todo clean the words after text re , . & |
         list_of_words=text.split(" ")
-        for term in list_of_words:
-            x=word_tokenize(term)
+        last=''
+        for i in range(0, len(list_of_words)):
+            x=word_tokenize(list_of_words[i])
             if x!=None and len(x)>0:
+                # hashtag law
                 if x[0] == "#":
-                    text_tokensterm.append(term)
-                    print(term)
+                    text_tokensterm.append(list_of_words[i])
+                    print(list_of_words[i])
                 elif x[0] == "@":
-                    text_tokensterm.append(term)
-                    print(term)
+                    text_tokensterm.append(list_of_words[i])
+                    print(list_of_words[i])
+                #URL law
                 elif x[0] == "https":
-                    UrlList=self.pars_url(term)
+                    UrlList=self.pars_url(list_of_words[i])
                     for word_in_url in UrlList:
                         text_tokensterm.append(word_in_url)
                         print(word_in_url)
-                elif x[0] is "percent" or x[0] is "percentage":
-                    print("-----------------------------------------------------")
-                    if last.replace('.', '', 1).isdigit():
-                        text_tokensterm.remove(last)
-                        text_tokensterm.append(last+"%")
+                # number law-units and percent
+                elif x[0].replace('.', '', 1).isdigit() or x[0].replace(',', '', 1).isdigit():
+                    print("------------------------------------------------------------------")
+                    if x[0].co
+                    if i+1 < len(list_of_words):
+                        if list_of_words[i+1] == "percent" or list_of_words[i+1] == "percentage" or list_of_words[i+1] == "Percent" or list_of_words[i+1] == "Percentage":
+                            text_tokensterm.append(x[0]+"%")
+                        if list_of_words[i+1] == "thousand":
+                            text_tokensterm.append(x[0] + "K")
+                        if list_of_words[i + 1] == "million":
+                            text_tokensterm.append(x[0] + "M")
+                        if list_of_words[i + 1] == "billion":
+                            text_tokensterm.append(x[0] + "B")
                 else:
-                    text_tokensterm.append(term)
-                    print(term)
-                last=term
+                    text_tokensterm.append(x[0])
+                    print(x[0])
+
 
         # text_tokens_without_stopwords = [w.lower() for w in text_tokens if w not in self.stop_words]
         return text_tokensterm
