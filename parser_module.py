@@ -45,7 +45,6 @@ class Parse:
                 # number law-units and percent
                 elif x[0].replace('.', '', 1).isdigit() or x[0].replace(',', '', 1).isdigit():
                     print("------------------------------------------------------------------")
-                    if x[0].co
                     if i+1 < len(list_of_words):
                         if list_of_words[i+1] == "percent" or list_of_words[i+1] == "percentage" or list_of_words[i+1] == "Percent" or list_of_words[i+1] == "Percentage":
                             text_tokensterm.append(x[0]+"%")
