@@ -6,7 +6,6 @@ from document import Document
 from urllib.parse import urlparse
 
 class Parse:
-    #word_to_sepearate_url={'/':1,"//":1,":":1,";":1,".":1,"?":1,"=":1}
     def __init__(self):
         self.stop_words = stopwords.words('english')
 
@@ -24,33 +23,46 @@ class Parse:
         """
         text_tokensterm=[]
         #text_tokens = word_tokenize(text)
-        print("##############")
-        print(text)
         ##todo clean the words after text re , . & |
         list_of_words=text.split(" ")
         for term in list_of_words:
             x=word_tokenize(term)
-            if(x!=None and len(x)>0):
-                if (term[0] == "#"):
+            if x!=None and len(x)>0:
+                if x[0] == "#":
                     text_tokensterm.append(term)
                     print(term)
-                elif (term[0] == "@"):
+                elif x[0] == "@":
                     text_tokensterm.append(term)
                     print(term)
-                elif x[0]=="https":
+                elif x[0] == "https":
                     UrlList=self.pars_url(term)
                     for word_in_url in UrlList:
                         text_tokensterm.append(word_in_url)
                         print(word_in_url)
+                elif x[0] is "percent" or x[0] is "percentage":
+                    print("-----------------------------------------------------")
+                    if last.replace('.', '', 1).isdigit():
+                        text_tokensterm.remove(last)
+                        text_tokensterm.append(last+"%")
                 else:
-                    text_tokensterm.append(x[0])
-                    print(x[0])
+                    text_tokensterm.append(term)
+                    print(term)
+                last=term
 
         # text_tokens_without_stopwords = [w.lower() for w in text_tokens if w not in self.stop_words]
-        # return text_tokens_without_stopwords
-    def pars_url(self,url):
-        list=url.split('/')
-        return list
+        return text_tokensterm
+
+
+    def pars_url(self, url):
+        import re
+        l = re.split('[,|.|/|//|:%?=+]', url)
+        a = []
+        for x in l:
+            if x is not '':
+                a.append(x)
+        print(a)
+        return a
+
     def parse_doc(self, doc_as_list):
         """
         This function takes a tweet document as list and break it into different fields
