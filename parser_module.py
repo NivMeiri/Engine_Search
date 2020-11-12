@@ -44,16 +44,34 @@ class Parse:
                         print(word_in_url)
                 # number law-units and percent
                 elif x[0].replace('.', '', 1).isdigit() or x[0].replace(',', '', 1).isdigit():
-                    print("------------------------------------------------------------------")
+                    num = x[0]
+                    if num.find(',') != -1:
+                        newNum = num.split(",")
+                        newNum2=''
+                        for n in newNum:
+                            newNum2 += n
+                        num=newNum2
                     if i+1 < len(list_of_words):
                         if list_of_words[i+1] == "percent" or list_of_words[i+1] == "percentage" or list_of_words[i+1] == "Percent" or list_of_words[i+1] == "Percentage":
-                            text_tokensterm.append(x[0]+"%")
-                        if list_of_words[i+1] == "thousand":
-                            text_tokensterm.append(x[0] + "K")
-                        if list_of_words[i + 1] == "million":
-                            text_tokensterm.append(x[0] + "M")
-                        if list_of_words[i + 1] == "billion":
-                            text_tokensterm.append(x[0] + "B")
+                            text_tokensterm.append(num+"%")
+                            print(num+"%")
+                        elif list_of_words[i+1] == "thousand":
+                            text_tokensterm.append(num + "K")
+                            print(num + "K")
+                        elif list_of_words[i + 1] == "million":
+                            text_tokensterm.append(num + "M")
+                            print(num + "M")
+                        elif list_of_words[i + 1] == "billion":
+                            text_tokensterm.append(num + "B")
+                            print(num + "B")
+                        else:
+                            num=self.to3digits_units(num)
+                            text_tokensterm.append(num)
+                            print(num)
+                    else:
+                        num=self.to3digits_units(num)
+                        text_tokensterm.append(num)
+                        print(num)
                 else:
                     text_tokensterm.append(x[0])
                     print(x[0])
@@ -102,3 +120,30 @@ class Parse:
         #print("full text:  "+full_text)
         #print(term_dict.keys())
         return document
+
+    def to3digits_units(self, num):
+        print("---------------------------------------------------")
+        print(num)
+        num_to_units = float(num)
+        if (num_to_units >= 1000) and (num_to_units < 1000000):
+            num_to_units = num_to_units/1000
+            return self.round3(str(num_to_units))+"K"
+        elif (num_to_units >= 1000000) and (num_to_units < 1000000000):
+            num_to_units = num_to_units / 1000000
+            return self.round3(str(num_to_units)) + "M"
+        elif num_to_units >= 1000000000:
+            num_to_units = num_to_units / 1000000000
+            return self.round3(str(num_to_units)) + "B"
+        else:
+            return self.round3(str(num_to_units))
+
+    def round3(self, num):
+        newNum = round(float(num), 3)
+        num_with_point = str(newNum).split(".")
+        while len(num_with_point[1])>0 and num_with_point[1][-1]=='0':
+            num_with_point[1]=num_with_point[1][:-1]
+        if len(num_with_point[1])==0:
+            return str(num_with_point[0])
+        else:
+            return str(num_with_point[0])+'.'+str(num_with_point[1])
+
