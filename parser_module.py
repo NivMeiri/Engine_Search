@@ -1,5 +1,8 @@
 import re
+from math import log
 
+from nltk.corpus import wordnet
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from document import Document
@@ -8,14 +11,31 @@ from urllib.parse import urlparse
 class Parse:
     def __init__(self):
         self.stop_words = stopwords.words('english')
+        words = open("word_freq.txt").read().split()
+        self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
+        self.maxword = max(len(x) for x in words)
+
+        self.word_dict={}
 
     def parse_tags(self,term,text_tokensterm):
-        hash_Tag = re.findall('[A-Z][^A-Z]*', term)
-        for hash in hash_Tag:
-            print(hash)
-            text_tokensterm.append(hash)
+        print("_______________________________________________")
+        if (term.isupper()):
+            text_tokensterm.append(term)
+            print(term)
+        elif (term.islower()):
+            hash_list = self.infer_spaces(term)
+            for hash in hash_list:
+                print(hash)
+                text_tokensterm.append(hash)
+        else:
+            hash_list = re.findall('[A-Z][^A-Z]*', term)
+            for hash in hash_list:
+                print(hash)
+                text_tokensterm.append(hash)
 
     def parse_sentence(self, text):
+        self.Names_and_Entities(text)
+        #print(self.word_dict)
         """
         This function tokenize, remove stop words and apply lower case for every word within the text
         :param text:
@@ -28,20 +48,22 @@ class Parse:
         last=''
         for i in range(0, len(list_of_words)):
             x=word_tokenize(list_of_words[i])
+
             if x!=None and len(x)>0:
                 # hashtag law
                 if x[0] == "#":
                     text_tokensterm.append(list_of_words[i])
                     print(list_of_words[i])
+                    self.parse_tags(x[1],text_tokensterm)
                 elif x[0] == "@":
                     text_tokensterm.append(list_of_words[i])
-                    print(list_of_words[i])
+                    #print(list_of_words[i])
                 #URL law
                 elif x[0] == "https":
                     UrlList=self.pars_url(list_of_words[i])
                     for word_in_url in UrlList:
                         text_tokensterm.append(word_in_url)
-                        print(word_in_url)
+                        #print(word_in_url)
                 # number law-units and percent
                 elif x[0].replace('.', '', 1).isdigit() or x[0].replace(',', '', 1).isdigit():
                     num = x[0]
@@ -52,33 +74,33 @@ class Parse:
                             newNum2 += n
                         num=newNum2
                     if i+1 < len(list_of_words):
-                        if list_of_words[i+1] == "percent" or list_of_words[i+1] == "percentage" or list_of_words[i+1] == "Percent" or list_of_words[i+1] == "Percentage":
+                        if list_of_words[i+1].lower() == "percent" or list_of_words[i+1].lower() == "percentage" :
                             text_tokensterm.append(num+"%")
-                            print(num+"%")
-                        elif list_of_words[i+1] == "thousand":
+                            #print(num+"%")
+                        elif list_of_words[i+1].lower() == "thousand":
                             text_tokensterm.append(num + "K")
-                            print(num + "K")
-                        elif list_of_words[i + 1] == "million":
+                            #print(num + "K")
+                        elif list_of_words[i + 1].lower() == "million":
                             text_tokensterm.append(num + "M")
-                            print(num + "M")
-                        elif list_of_words[i + 1] == "billion":
+                            #print(num + "M")
+                        elif list_of_words[i + 1].lower() == "billion":
                             text_tokensterm.append(num + "B")
-                            print(num + "B")
+                            #print(num + "B")
                         else:
                             num=self.to3digits_units(num)
                             text_tokensterm.append(num)
-                            print(num)
+                            #print(num)
                     else:
                         num=self.to3digits_units(num)
                         text_tokensterm.append(num)
-                        print(num)
+                        #print(num)
                 else:
+                    self.Upper_Lowe_Case_Words(x[0])
                     text_tokensterm.append(x[0])
-                    print(x[0])
 
 
-        # text_tokens_without_stopwords = [w.lower() for w in text_tokens if w not in self.stop_words]
-        return text_tokensterm
+        text_tokens_without_stopwords = [w.lower() for w in text_tokensterm if w not in self.stop_words]
+        return text_tokens_without_stopwords
 
 
     def pars_url(self, url):
@@ -88,7 +110,6 @@ class Parse:
         for x in l:
             if x is not '':
                 a.append(x)
-        print(a)
         return a
 
     def parse_doc(self, doc_as_list):
@@ -122,8 +143,7 @@ class Parse:
         return document
 
     def to3digits_units(self, num):
-        print("---------------------------------------------------")
-        print(num)
+
         num_to_units = float(num)
         if (num_to_units >= 1000) and (num_to_units < 1000000):
             num_to_units = num_to_units/1000
@@ -146,4 +166,64 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0])+'.'+str(num_with_point[1])
+
+    def Upper_Lowe_Case_Words(self,word):
+        upper=word.upper()
+        lower=word.lower()
+        #checking that the word isnt empty string
+        if(len(word)>0 and word!=None):
+            if(lower not in self.word_dict):
+                #the word start with lower case char
+                if(word[0].islower()):
+                    self.word_dict[lower] = 1
+                    if(upper in self.word_dict):
+                        self.word_dict[lower]+=self.word_dict[upper]
+                        self.word_dict.pop(upper, None)
+                # the word start with upper case char
+                else:
+                    if(upper in self.word_dict):
+                        self.word_dict[upper]+=1
+                    else:
+                        self.word_dict[upper]=1
+            else:
+                self.word_dict[lower]+=1
+
+
+    def  Names_and_Entities(self, text):
+        tokens = word_tokenize(text)
+        pos=(nltk.pos_tag(tokens))
+        my_NE_word=nltk.ne_chunk(pos)
+        #print("new")
+        #if (my_NE_word.find("NE ")<0):
+
+    def infer_spaces(self,s):
+        """Uses dynamic programming to infer the location of spaces in a string
+        without spaces."""
+
+        # Find the best match for the i first characters, assuming cost has
+        # been built for the i-1 first characters.
+        # Returns a pair (match_cost, match_length).
+        def best_match(i):
+
+            candidates = enumerate(reversed(cost[max(0, i - self.maxword):i]))
+            return min((c + self.wordcost.get(s[i - k - 1:i], 9e999), k + 1) for k, c in candidates)
+
+        # Build the cost array.
+        cost = [0]
+        for i in range(1, len(s) + 1):
+            c, k = best_match(i)
+            cost.append(c)
+
+        # Backtrack to recover the minimal-cost string.
+        out = []
+        i = len(s)
+        while i > 0:
+            c, k = best_match(i)
+            assert c == cost[i]
+            out.append(s[i - k:i])
+            i -= k
+
+        return out
+
+
 
