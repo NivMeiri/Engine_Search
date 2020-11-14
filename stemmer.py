@@ -1,9 +1,14 @@
 from nltk.stem import snowball
 
 
+from nltk.stem import PorterStemmer
+
+
+
 class Stemmer:
     def __init__(self):
         self.stemmer = snowball.SnowballStemmer("english")
+        self.ps = PorterStemmer()
 
     def stem_term(self, token):
         """

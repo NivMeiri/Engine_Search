@@ -1,3 +1,5 @@
+from timeit import default_timer as timer
+
 from reader import ReadFile
 from configuration import ConfigClass
 from parser_module import Parse
@@ -8,13 +10,14 @@ import utils
 
 def run_engine():
     """
-
     :return:
     """
     number_of_documents = 0
 
     config = ConfigClass()
     r = ReadFile(corpus_path=config.get__corpusPath())
+    #r = ReadFile("C:/Users/Admin/Desktop/Data/date=07-08-2020")
+
     p = Parse()
     indexer = Indexer(config)
 #todo get the file name
@@ -49,7 +52,14 @@ def search_and_rank_query(query, inverted_index, k):
 
 
 def main():
+    print("start")
+    start = timer()
     run_engine()
+    end = timer()
+    print(end - start)
+
+    print("finish")
+    print(end - start)
     query = input("Please enter a query: ")
     k = int(input("Please enter number of docs to retrieve: "))
     inverted_index = load_index()

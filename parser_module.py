@@ -1,12 +1,11 @@
 import re
 from math import log
-
 from nltk.corpus import wordnet
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
 from document import Document
-from urllib.parse import urlparse
+from nltk import ne_chunk, pos_tag, word_tokenize
+from nltk.tree import Tree
 
 class Parse:
     def __init__(self):
@@ -14,28 +13,21 @@ class Parse:
         words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
         self.maxword = max(len(x) for x in words)
-
         self.word_dict={}
-
     def parse_tags(self,term,text_tokensterm):
-        print("_______________________________________________")
         if (term.isupper()):
             text_tokensterm.append(term)
-            print(term)
         elif (term.islower()):
             hash_list = self.infer_spaces(term)
             for hash in hash_list:
-                print(hash)
                 text_tokensterm.append(hash)
         else:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
             for hash in hash_list:
-                print(hash)
                 text_tokensterm.append(hash)
 
     def parse_sentence(self, text):
         self.Names_and_Entities(text)
-        #print(self.word_dict)
         """
         This function tokenize, remove stop words and apply lower case for every word within the text
         :param text:
@@ -49,11 +41,10 @@ class Parse:
         for i in range(0, len(list_of_words)):
             x=word_tokenize(list_of_words[i])
 
-            if x!=None and len(x)>0:
+            if (x!=None and len(x)>0):
                 # hashtag law
-                if x[0] == "#":
+                if x[0] == "#" and  len(x)>1:
                     text_tokensterm.append(list_of_words[i])
-                    print(list_of_words[i])
                     self.parse_tags(x[1],text_tokensterm)
                 elif x[0] == "@":
                     text_tokensterm.append(list_of_words[i])
@@ -98,20 +89,18 @@ class Parse:
                     self.Upper_Lowe_Case_Words(x[0])
                     text_tokensterm.append(x[0])
 
-
         text_tokens_without_stopwords = [w.lower() for w in text_tokensterm if w not in self.stop_words]
         return text_tokens_without_stopwords
 
 
     def pars_url(self, url):
         import re
-        l = re.split('[,|.|/|//|:%?=+]', url)
+        l = re.split('[,|/|//|:%?=+]', url)
         a = []
         for x in l:
             if x is not '':
                 a.append(x)
         return a
-
     def parse_doc(self, doc_as_list):
         """
         This function takes a tweet document as list and break it into different fields
@@ -130,7 +119,6 @@ class Parse:
         tokenized_text = self.parse_sentence(full_text)
 
         doc_length = len(tokenized_text)  # after text operations.
-
         for term in tokenized_text:
             if term not in term_dict.keys():
                 term_dict[term] = 1
@@ -143,7 +131,6 @@ class Parse:
         return document
 
     def to3digits_units(self, num):
-
         num_to_units = float(num)
         if (num_to_units >= 1000) and (num_to_units < 1000000):
             num_to_units = num_to_units/1000
@@ -168,6 +155,7 @@ class Parse:
             return str(num_with_point[0])+'.'+str(num_with_point[1])
 
     def Upper_Lowe_Case_Words(self,word):
+
         upper=word.upper()
         lower=word.lower()
         #checking that the word isnt empty string
@@ -189,31 +177,26 @@ class Parse:
                 self.word_dict[lower]+=1
 
 
+
     def  Names_and_Entities(self, text):
         tokens = word_tokenize(text)
         pos=(nltk.pos_tag(tokens))
         my_NE_word=nltk.ne_chunk(pos)
-        #print("new")
-        #if (my_NE_word.find("NE ")<0):
 
     def infer_spaces(self,s):
         """Uses dynamic programming to infer the location of spaces in a string
         without spaces."""
-
         # Find the best match for the i first characters, assuming cost has
         # been built for the i-1 first characters.
         # Returns a pair (match_cost, match_length).
         def best_match(i):
-
             candidates = enumerate(reversed(cost[max(0, i - self.maxword):i]))
             return min((c + self.wordcost.get(s[i - k - 1:i], 9e999), k + 1) for k, c in candidates)
-
         # Build the cost array.
         cost = [0]
         for i in range(1, len(s) + 1):
             c, k = best_match(i)
             cost.append(c)
-
         # Backtrack to recover the minimal-cost string.
         out = []
         i = len(s)
@@ -222,8 +205,28 @@ class Parse:
             assert c == cost[i]
             out.append(s[i - k:i])
             i -= k
-
         return out
+
+
+    def get_continuous_chunks(self,text):
+        '''
+        chunked = ne_chunk(pos_tag(word_tokenize(text)))
+        continuous_chunk = []
+        current_chunk = []
+        for i in chunked:
+            if type(i) == Tree:
+                current_chunk.append(" ".join([token for token, pos in i.leaves()]))
+            if current_chunk:
+                named_entity = " ".join(current_chunk)
+                if named_entity not in continuous_chunk:
+                    continuous_chunk.append(named_entity)
+                current_chunk = []
+            else:
+                         continue
+        if (continuous_chunk in self.word_dict):
+            self.word_dict[continuous_chunk] += 1
+        else:
+            self.word_dict[continuous_chunk] = 1'''
 
 
 
