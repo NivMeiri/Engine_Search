@@ -76,7 +76,7 @@ def get_continuous_chunks(text):
         return continuous_chunk
 my_sent="Donald Trump  is the best  president of United States"
 Parser_1=parser_module.Parse()
-print(Parser_1.parse_sentence("i have 1,000,000  shekels"))
+print(Parser_1.parse_sentence("i have 1,000.54  shekels"))
 #print(get_continuous_chunks(my_sent))
 
 #search_engine.main()

@@ -56,14 +56,8 @@ class Parse:
                         text_tokensterm.append(word_in_url)
                         #print(word_in_url)
                 # number law-units and percent
-                elif x[0].replace('.', '', 1).isdigit() or x[0].replace(',', '', 1).isdigit():
-                    num = x[0]
-                    if num.find(',') != -1:
-                        newNum = num.split(",")
-                        newNum2=''
-                        for n in newNum:
-                            newNum2 += n
-                        num=newNum2
+                elif self.to_number(x[0]).replace('.', '', 1).isdigit():
+                    num = self.to_number(x[0])
                     if i+1 < len(list_of_words):
                         if list_of_words[i+1].lower() == "percent" or list_of_words[i+1].lower() == "percentage" :
                             text_tokensterm.append(num+"%")
@@ -228,5 +222,10 @@ class Parse:
         else:
             self.word_dict[continuous_chunk] = 1'''
 
-
+    def to_number(self,num):
+        newNum = num.split(",")
+        newNum2 = ''
+        for n in newNum:
+            newNum2 += n
+        return newNum2
 

@@ -1,9 +1,5 @@
 from nltk.stem import snowball
-
-
 from nltk.stem import PorterStemmer
-
-
 
 class Stemmer:
     def __init__(self):
