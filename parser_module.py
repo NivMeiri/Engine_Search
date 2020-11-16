@@ -14,6 +14,9 @@ class Parse:
         self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
         self.maxword = max(len(x) for x in words)
         self.word_dict={}
+        self.month={"jan": "01","january": "01","Feb": "02","February": "02","Mar": "03","March": "03","Apr": "04",
+        "April": "04","May": "05","Jun": "06","June": "06","Jul": "07","July": "07","Aug": "08","August": "08",
+        "Sep": "09","September": "09","October": "10","Oct": "10","Nov": "11","November": "11","Dec": "12","December": "12"}
     def parse_tags(self,term,text_tokensterm):
         if (term.isupper()):
             text_tokensterm.append(term)
@@ -40,7 +43,6 @@ class Parse:
         last=''
         for i in range(0, len(list_of_words)):
             x=word_tokenize(list_of_words[i])
-
             if (x!=None and len(x)>0):
                 # hashtag law
                 if x[0] == "#" and  len(x)>1:
@@ -56,20 +58,26 @@ class Parse:
                         text_tokensterm.append(word_in_url)
                         #print(word_in_url)
                 # number law-units and percent
+                if x[0] in self.month:
+                    self.to_date(x[0],list_of_words,i,text_tokensterm)
                 elif self.to_number(x[0]).replace('.', '', 1).isdigit():
                     num = self.to_number(x[0])
                     if i+1 < len(list_of_words):
-                        if list_of_words[i+1].lower() == "percent" or list_of_words[i+1].lower() == "percentage" :
-                            text_tokensterm.append(num+"%")
+                        if list_of_words[i+1].lower() == "percent" or list_of_words[i+1].lower() == "percentage":
+                            text_tokensterm.append(self.to3digits_units(num)+"%")
+                            list_of_words[i+1]=""
                             #print(num+"%")
                         elif list_of_words[i+1].lower() == "thousand":
                             text_tokensterm.append(num + "K")
+                            list_of_words[i + 1] = ""
                             #print(num + "K")
                         elif list_of_words[i + 1].lower() == "million":
                             text_tokensterm.append(num + "M")
+                            list_of_words[i + 1] = ""
                             #print(num + "M")
                         elif list_of_words[i + 1].lower() == "billion":
                             text_tokensterm.append(num + "B")
+                            list_of_words[i + 1] = ""
                             #print(num + "B")
                         else:
                             num=self.to3digits_units(num)
@@ -229,3 +237,21 @@ class Parse:
             newNum2 += n
         return newNum2
 
+    def to_date(self,term,list_of_words,i,text_tokensterm):
+        date=""
+        if list_of_words[i-1].isdigit() and len(list_of_words[i-1]) < 3:
+            date = list_of_words[i-1]+"-"+self.month.get(term)
+            text_tokensterm.pop()
+        elif list_of_words[i-1].isdigit() and len(list_of_words[i-1]) <= 4:
+            date = self.month.get(term)+"-"+list_of_words[i - 1]
+            text_tokensterm.pop()
+        elif i+1<len(list_of_words):
+            if list_of_words[i+1].isdigit() and len(list_of_words[i+1])<3:
+                date = list_of_words[i + 1] + "-" + self.month.get(term)
+                list_of_words[i + 1]=""
+            elif list_of_words[i+1].isdigit() and len(list_of_words[i+1]) <= 4:
+                date = self.month.get(term)+"-"+list_of_words[i + 1]
+                list_of_words[i + 1]=""
+        else:
+            date=term
+        text_tokensterm.append(date)
