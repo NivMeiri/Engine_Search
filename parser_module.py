@@ -14,14 +14,17 @@ class Parse:
         self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
         self.maxword = max(len(x) for x in words)
         self.word_dict={}
-        self.month={"jan": "01","january": "01","Feb": "02","February": "02","Mar": "03","March": "03","Apr": "04",
-        "April": "04","May": "05","Jun": "06","June": "06","Jul": "07","July": "07","Aug": "08","August": "08",
-        "Sep": "09","September": "09","October": "10","Oct": "10","Nov": "11","November": "11","Dec": "12","December": "12"}
+        self.month={"jan": "01","january": "01","feb": "02","february": "02","mar": "03","march": "03","apr": "04",
+        "april": "04","may": "05","jun": "06","june": "06","jul": "07","july": "07","aug": "08","august": "08",
+        "sep": "09","september": "09","october": "10","oct": "10","nov": "11","november": "11","dec": "12","december": "12"}
+
     def parse_tags(self,term,text_tokensterm):
         if (term.isupper()):
             text_tokensterm.append(term)
         elif (term.islower()):
             hash_list = self.infer_spaces(term)
+            if '#' in hash_list:
+                hash_list.remove('#')
             for hash in hash_list:
                 text_tokensterm.append(hash)
         else:
@@ -43,11 +46,11 @@ class Parse:
         last=''
         for i in range(0, len(list_of_words)):
             x=word_tokenize(list_of_words[i])
-            if (x!=None and len(x)>0):
+            if x != None and len(x) > 0:
                 # hashtag law
-                if x[0] == "#" and  len(x)>1:
+                if x[0] == "#" and len(x) > 1:
                     text_tokensterm.append(list_of_words[i])
-                    self.parse_tags(x[1],text_tokensterm)
+                    self.parse_tags(x[1], text_tokensterm)
                 elif x[0] == "@":
                     text_tokensterm.append(list_of_words[i])
                     #print(list_of_words[i])
@@ -58,8 +61,8 @@ class Parse:
                         text_tokensterm.append(word_in_url)
                         #print(word_in_url)
                 # number law-units and percent
-                if x[0] in self.month:
-                    self.to_date(x[0],list_of_words,i,text_tokensterm)
+                elif x[0].lower() in self.month:
+                    self.to_date(x[0].lower(),list_of_words,i,text_tokensterm)
                 elif self.to_number(x[0]).replace('.', '', 1).isdigit():
                     num = self.to_number(x[0])
                     if i+1 < len(list_of_words):
@@ -119,7 +122,7 @@ class Parse:
         quote_url = doc_as_list[7]
         term_dict = {}
         tokenized_text = self.parse_sentence(full_text)
-
+        print(tokenized_text)
         doc_length = len(tokenized_text)  # after text operations.
         for term in tokenized_text:
             if term not in term_dict.keys():
@@ -238,20 +241,29 @@ class Parse:
         return newNum2
 
     def to_date(self,term,list_of_words,i,text_tokensterm):
-        date=""
+        date = ""
         if list_of_words[i-1].isdigit() and len(list_of_words[i-1]) < 3:
             date = list_of_words[i-1]+"-"+self.month.get(term)
             text_tokensterm.pop()
         elif list_of_words[i-1].isdigit() and len(list_of_words[i-1]) <= 4:
             date = self.month.get(term)+"-"+list_of_words[i - 1]
             text_tokensterm.pop()
-        elif i+1<len(list_of_words):
+        elif (list_of_words[i-1].endswith("st") or list_of_words[i-1].endswith("th")) and list_of_words[i-1][0:-2].isdigit():
+            date = list_of_words[i - 1][:-2] + "-" + self.month.get(term)
+            text_tokensterm.pop()
+        if i+1<len(list_of_words):
             if list_of_words[i+1].isdigit() and len(list_of_words[i+1])<3:
                 date = list_of_words[i + 1] + "-" + self.month.get(term)
                 list_of_words[i + 1]=""
             elif list_of_words[i+1].isdigit() and len(list_of_words[i+1]) <= 4:
-                date = self.month.get(term)+"-"+list_of_words[i + 1]
-                list_of_words[i + 1]=""
-        else:
-            date=term
+                if len(date)>0:
+                    date = date+"-" + list_of_words[i + 1]
+                else:
+                    date = self.month.get(term)+"-"+list_of_words[i + 1]
+                list_of_words[i + 1] = ""
+            elif (list_of_words[i + 1].endswith("st") or list_of_words[i + 1].endswith("th")) and list_of_words[i + 1][0:-2].isdigit():
+                date = list_of_words[i + 1][:-2] + "-" + self.month.get(term)
+                list_of_words[i + 1] = ""
+        if len(date)==0:
+            date = term
         text_tokensterm.append(date)
