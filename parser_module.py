@@ -20,17 +20,15 @@ class Parse:
 
     def parse_tags(self,term,text_tokensterm):
         if (term.isupper()):
-            text_tokensterm.append(term)
+            text_tokensterm.append(self.clean_word(term))
         elif (term.islower()):
             hash_list = self.infer_spaces(term)
-            if '#' in hash_list:
-                hash_list.remove('#')
             for hash in hash_list:
-                text_tokensterm.append(hash)
+                text_tokensterm.append(self.clean_word(hash))
         else:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
             for hash in hash_list:
-                text_tokensterm.append(hash)
+                text_tokensterm.append(self.clean_word(hash))
 
     def parse_sentence(self, text):
         self.Names_and_Entities(text)
@@ -43,7 +41,6 @@ class Parse:
         #text_tokens = word_tokenize(text)
         ##todo clean the words after text re , . & |
         list_of_words=text.split(" ")
-        last=''
         for i in range(0, len(list_of_words)):
             x=word_tokenize(list_of_words[i])
             if x != None and len(x) > 0:
@@ -52,7 +49,7 @@ class Parse:
                     text_tokensterm.append(list_of_words[i])
                     self.parse_tags(x[1], text_tokensterm)
                 elif x[0] == "@":
-                    text_tokensterm.append(list_of_words[i])
+                    text_tokensterm.append(self.clean_word(list_of_words[i]))
                     #print(list_of_words[i])
                 #URL law
                 elif x[0] == "https":
@@ -91,8 +88,10 @@ class Parse:
                         text_tokensterm.append(num)
                         #print(num)
                 else:
-                    self.Upper_Lowe_Case_Words(x[0])
-                    text_tokensterm.append(x[0])
+                    x[0] = self.clean_word(x[0])
+                    if len(x[0])>0:
+                        self.Upper_Lowe_Case_Words(x[0])
+                        text_tokensterm.append(x[0])
 
         text_tokens_without_stopwords = [w.lower() for w in text_tokensterm if w not in self.stop_words]
         return text_tokens_without_stopwords
@@ -122,7 +121,9 @@ class Parse:
         quote_url = doc_as_list[7]
         term_dict = {}
         tokenized_text = self.parse_sentence(full_text)
+        print(full_text)
         print(tokenized_text)
+        print("------------------------------------------------------------------------------")
         doc_length = len(tokenized_text)  # after text operations.
         for term in tokenized_text:
             if term not in term_dict.keys():
@@ -267,3 +268,14 @@ class Parse:
         if len(date)==0:
             date = term
         text_tokensterm.append(date)
+
+    def clean_word(self,term):
+        while len(term)>0:
+            if term[-1] in "/.…,''`;:|":
+                term=term[:-1]
+            elif term[0] in "/.…,''`;:|":
+                term = term[:0]
+            else:
+                break
+        return term
+

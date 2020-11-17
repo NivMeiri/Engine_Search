@@ -5,6 +5,7 @@ import pandas as pd
 class ReadFile:
     def __init__(self, corpus_path):
         self.corpus_path = corpus_path
+
     def read_file(self, file_name):
         """
         This function is reading a parquet file contains several tweets
