@@ -76,9 +76,9 @@ def get_continuous_chunks(text):
         return continuous_chunk
 my_sent="Donald Trump  is the best  president of United States"
 Parser_1=parser_module.Parse()
-print(Parser_1.parse_sentence("RT @ashtonpittman: Roughly ⅕ of the Mississippi Legislature, including the House speaker and Senate president, have tested positive for #CO…"))
+#print(Parser_1.parse_sentence("RT @ashtonpittman: Roughly ⅕ of the Mississippi Legislature, including the House speaker and Senate president, have tested positive for #CO…"))
 #print(get_continuous_chunks(my_sent))
 
-#search_engine.main()
+search_engine.main()
 
 

@@ -22,7 +22,7 @@ def run_engine():
     indexer = Indexer(config)
 #todo get the file name
 
-    documents_list = r.read_file(file_name='sample3.parquet')
+    documents_list = r.read_file("C:/Users/Admin/Desktop/Data")
     # Iterate over every document in the file
     for idx, document in enumerate(documents_list):
         # parse the document
