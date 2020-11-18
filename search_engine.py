@@ -17,13 +17,13 @@ def run_engine():
 
     config = ConfigClass()
     r = ReadFile(corpus_path=config.get__corpusPath())
-    r = ReadFile("C:/Users/Hadassa Zenou/Desktop")
+    #r = ReadFile("C:/Users/Hadassa Zenou/Desktop")
 
     p = Parse()
     indexer = Indexer(config)
 #todo get the file name
     start=time.time()
-    documents_list = r.read_file(file_name="Data")
+    documents_list = r.read_file(file_name="C:/Users/Hadassa Zenou/Desktop/Data/date=07-08-2020")
     print(time.time()-start)
     # Iterate over every document in the file
     print(len(documents_list))
@@ -32,7 +32,7 @@ def run_engine():
         parsed_document = p.parse_doc(document)
         number_of_documents += 1
         # index the document data
-        #indexer.add_new_doc(parsed_document)
+        indexer.add_new_doc(parsed_document)
     print('Finished parsing and indexing. Starting to export files')
     print(number_of_documents)
     utils.save_obj(indexer.inverted_idx, "inverted_idx")

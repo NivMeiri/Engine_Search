@@ -13,18 +13,19 @@ class Parse:
         words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
         self.maxword = max(len(x) for x in words)
-        self.word_dict={}
-        self.month={"jan": "01","january": "01","feb": "02","february": "02","mar": "03","march": "03","apr": "04",
-        "april": "04","may": "05","jun": "06","june": "06","jul": "07","july": "07","aug": "08","august": "08",
-        "sep": "09","september": "09","october": "10","oct": "10","nov": "11","november": "11","dec": "12","december": "12"}
+        self.word_dict = {}
+        self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
+                    "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
+                    "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
+                    "nov": "11", "november": "11", "dec": "12", "december": "12"}
 
     def parse_tags(self,term,text_tokensterm):
         if (term.isupper()):
             text_tokensterm.append(self.clean_word(term))
-        elif (term.islower()):
-             hash_list = self.infer_spaces(term)
-             for hash in hash_list:
-                 text_tokensterm.append(self.clean_word(hash))
+        #elif (term.islower()):
+             #hash_list = self.infer_spaces(term)
+             #for hash in hash_list:
+            #   text_tokensterm.append(self.clean_word(hash))
         else:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
             for hash in hash_list:
@@ -38,9 +39,9 @@ class Parse:
         :return:
         """
         text_tokensterm=[]
-        #text_tokens = word_tokenize(text)
         ##todo clean the words after text re , . & |
         list_of_words=text.split(" ")
+        list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
             x=word_tokenize(list_of_words[i])
             if x != None and len(x) > 0:
@@ -95,8 +96,8 @@ class Parse:
                         self.Upper_Lowe_Case_Words(x[0])
                         text_tokensterm.append(x[0])
 
-        text_tokens_without_stopwords = [w.lower() for w in text_tokensterm if w not in self.stop_words]
-        return text_tokens_without_stopwords
+
+        return text_tokensterm
 
 
     def pars_url(self, url):
@@ -107,6 +108,7 @@ class Parse:
             if x is not '':
                 a.append(x)
         return a
+
     def parse_doc(self, doc_as_list):
         """
         This function takes a tweet document as list and break it into different fields
@@ -192,7 +194,7 @@ class Parse:
         pos=(nltk.pos_tag(tokens))
         my_NE_word=nltk.ne_chunk(pos)
 
-    def infer_spaces(self,s):
+    def infer_spaces(self, s):
         """Uses dynamic programming to infer the location of spaces in a string
         without spaces."""
         # Find the best match for the i first characters, assuming cost has
