@@ -1,3 +1,4 @@
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from document import Document
@@ -27,14 +28,48 @@ class Parse:
         """
         text_tokensterm = []
         ##todo clean the words after text re , . & |
-        list_of_words = text.split(" ")
+        list_of_words = text.split()
         list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
-            if len(list_of_words[i]) > 0:
+            term = self.clean(list_of_words[i])
+            if len(term) > 0:
                 ###hash tag law
-                if list_of_words[i][0] == "#":
-                    text_tokensterm.append(list_of_words[i])
-                    self.parse_tags(list_of_words[i][1:-1], text_tokensterm)
+                if term[0] == "#":
+                    text_tokensterm.append(term)
+                    self.parse_tags(term[1:], text_tokensterm)
+                elif term[0] == "@":
+                    text_tokensterm.append(term)
+                elif term[-1] in "%":
+                    text_tokensterm.append(term)
+                elif term[0:5] == "https":
+                    UrlList = self.pars_url(term)
+                    for word_in_url in UrlList:
+                        self.clean_and_push(word_in_url,text_tokensterm)
+                elif term.lower() in self.month:
+                    self.to_date(term.lower(), list_of_words, i, text_tokensterm)
+                elif self.to_number(term).replace('.', '', 1).isdigit() and term.isascii():
+                    num = self.to_number(term)
+                    if i + 1 < len(list_of_words):
+                        if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
+                            text_tokensterm.append(self.to3digits_units(num) + "%")
+                            list_of_words[i + 1] = ""
+                        elif list_of_words[i + 1].lower() == "thousand":
+                            text_tokensterm.append(num + "K")
+                            list_of_words[i + 1] = ""
+                        elif list_of_words[i + 1].lower() == "million":
+                            text_tokensterm.append(num + "M")
+                            list_of_words[i + 1] = ""
+                        elif list_of_words[i + 1].lower() == "billion":
+                            text_tokensterm.append(num + "B")
+                            list_of_words[i + 1] = ""
+                        else:
+                            num = self.to3digits_units(num)
+                            text_tokensterm.append(num)
+                    else:
+                        num = self.to3digits_units(num)
+                        text_tokensterm.append(num)
+                else:
+                    text_tokensterm.append(term)
 
         return text_tokensterm
 
@@ -54,7 +89,7 @@ class Parse:
         quote_url = doc_as_list[7]
         term_dict = {}
         tokenized_text = self.parse_sentence(full_text)
-        print(tokenized_text)
+        #print(tokenized_text)
         doc_length = len(tokenized_text)  # after text operations.
 
         for term in tokenized_text:
@@ -70,15 +105,15 @@ class Parse:
 
     def parse_tags(self, term, text_tokensterm):
         if (term.isupper()):
-            text_tokensterm.append(term)
+            self.clean_and_push(term,text_tokensterm)
         elif (term.islower()):
             hash_list = self.infer_spaces(term)
             for hash in hash_list:
-                text_tokensterm.append(hash)
+                self.clean_and_push(hash,text_tokensterm)
         else:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
             for hash in hash_list:
-                text_tokensterm.append(hash)
+                self.clean_and_push(hash,text_tokensterm)
 
 
     def infer_spaces(self, s):
@@ -106,3 +141,97 @@ class Parse:
             out.append(s[i - k:i])
             i -= k
         return out
+
+    def clean_and_push(self,term,text_tokensterm):
+        while len(term)>0:
+            if term[-1] in "/.…,''`;:-|!?":
+                term = term[:-1]
+            elif term[0] in "/.…,''`;:-|!?":
+                term = term[:0]
+            else:
+                break
+        if len(term)>0:
+            text_tokensterm.append(term)
+
+    def clean(self, term):
+        while len(term)>0:
+            if term[-1] in "/.…,''`;:-|!?":
+                term = term[:-1]
+            elif term[0] in "/.…,''`;:-|!?":
+                term = term[:0]
+            else:
+                break
+        return term
+
+    def pars_url(self, url):
+        l = re.split('[,|/|//|:%?=+]', url)
+        a = []
+        for x in l:
+            if x is not '':
+                a.append(x)
+        return a
+
+    def to_date(self,term,list_of_words,i,text_tokensterm):
+        date = ""
+        if i>0 and list_of_words[i-1].isdigit() and len(list_of_words[i-1]) < 3:
+            date = list_of_words[i-1]+"-"+self.month.get(term)
+            text_tokensterm.pop()
+        elif i>0 and list_of_words[i-1].isdigit() and len(list_of_words[i-1]) <= 4:
+            date = self.month.get(term)+"-"+list_of_words[i - 1]
+            text_tokensterm.pop()
+        elif i>0 and (list_of_words[i-1].endswith("st") or list_of_words[i-1].endswith("th")) and list_of_words[i-1][0:-2].isdigit():
+            date = list_of_words[i - 1][:-2] + "-" + self.month.get(term)
+            text_tokensterm.pop()
+        if i+1<len(list_of_words):
+            clean_num=self.clean(list_of_words[i+1])
+            if clean_num.isdigit() and len(clean_num)<3:
+                date = clean_num + "-" + self.month.get(term)
+                list_of_words[i + 1]=""
+            elif clean_num.isdigit() and len(list_of_words[i+1]) <= 4:
+                if len(date)>0:
+                    date = date+"-" + clean_num
+                else:
+                    date = self.month.get(term)+"-"+clean_num
+                list_of_words[i + 1] = ""
+            elif (clean_num.endswith("st") or clean_num.endswith("th")) and clean_num[0:-2].isdigit():
+                date = clean_num[:-2] + "-" + self.month.get(term)
+                list_of_words[i + 1] = ""
+        if len(date)==0:
+            date = term
+        text_tokensterm.append(date)
+
+    def to3digits_units(self, num):
+        num_to_units = float(num)
+        if (num_to_units >= 1000) and (num_to_units < 1000000):
+            num_to_units = num_to_units / 1000
+            return self.round3(str(num_to_units)) + "K"
+        elif (num_to_units >= 1000000) and (num_to_units < 1000000000):
+            num_to_units = num_to_units / 1000000
+            return self.round3(str(num_to_units)) + "M"
+        elif num_to_units >= 1000000000:
+            num_to_units = num_to_units / 1000000000
+            return self.round3(str(num_to_units)) + "B"
+        else:
+            return self.round3(str(num_to_units))
+
+    def round3(self, num):
+        newNum = round(float(num), 3)
+        num_with_point = str(newNum).split(".")
+        while len(num_with_point[1]) > 0 and num_with_point[1][-1] == '0':
+            num_with_point[1] = num_with_point[1][:-1]
+        if len(num_with_point[1]) == 0:
+            return str(num_with_point[0])
+        else:
+            return str(num_with_point[0]) + '.' + str(num_with_point[1])
+
+    def to_number(self, num):
+        newNum = num.split(",")
+        newNum2 = ''
+        for n in newNum:
+            newNum2 += n
+        return newNum2
+
+    def  Names_and_Entities(self, text):
+        tokens = word_tokenize(text)
+        pos=(nltk.pos_tag(tokens))
+        my_NE_word=nltk.ne_chunk(pos)
