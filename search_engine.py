@@ -1,3 +1,5 @@
+import time
+
 from reader import ReadFile
 from configuration import ConfigClass
 from parser_module import Parse
@@ -18,7 +20,10 @@ def run_engine():
     p = Parse()
     indexer = Indexer(config)
 #todo get the file name
+    start=time.time()
     documents_list = r.read_file(file_name='C:/Users/Hadassa Zenou/Desktop/Data/date=07-08-2020')
+    print(time.time()-start)
+    print(len(documents_list))
     # Iterate over every document in the file
     for idx, document in enumerate(documents_list):
         # parse the document
@@ -27,7 +32,7 @@ def run_engine():
         # index the document data
         indexer.add_new_doc(parsed_document)
     print('Finished parsing and indexing. Starting to export files')
-
+    print(time.time()-start)
     utils.save_obj(indexer.inverted_idx, "inverted_idx")
     utils.save_obj(indexer.postingDict, "posting")
 
