@@ -1,3 +1,4 @@
+import time
 from timeit import default_timer as timer
 
 from reader import ReadFile
@@ -16,22 +17,24 @@ def run_engine():
 
     config = ConfigClass()
     r = ReadFile(corpus_path=config.get__corpusPath())
-    #r = ReadFile("C:/Users/Admin/Desktop/Data/date=07-08-2020")
+    r = ReadFile("C:/Users/Hadassa Zenou/Desktop")
 
     p = Parse()
     indexer = Indexer(config)
 #todo get the file name
-
-    documents_list = r.read_file("C:/Users/Admin/Desktop/Data")
+    start=time.time()
+    documents_list = r.read_file(file_name="Data")
+    print(time.time()-start)
     # Iterate over every document in the file
+    print(len(documents_list))
     for idx, document in enumerate(documents_list):
         # parse the document
         parsed_document = p.parse_doc(document)
         number_of_documents += 1
         # index the document data
-        indexer.add_new_doc(parsed_document)
+        #indexer.add_new_doc(parsed_document)
     print('Finished parsing and indexing. Starting to export files')
-
+    print(number_of_documents)
     utils.save_obj(indexer.inverted_idx, "inverted_idx")
     utils.save_obj(indexer.postingDict, "posting")
 

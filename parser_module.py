@@ -22,16 +22,16 @@ class Parse:
         if (term.isupper()):
             text_tokensterm.append(self.clean_word(term))
         elif (term.islower()):
-            hash_list = self.infer_spaces(term)
-            for hash in hash_list:
-                text_tokensterm.append(self.clean_word(hash))
+             hash_list = self.infer_spaces(term)
+             for hash in hash_list:
+                 text_tokensterm.append(self.clean_word(hash))
         else:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
             for hash in hash_list:
                 text_tokensterm.append(self.clean_word(hash))
 
     def parse_sentence(self, text):
-        self.Names_and_Entities(text)
+        #self.Names_and_Entities(text)
         """
         This function tokenize, remove stop words and apply lower case for every word within the text
         :param text:
@@ -51,6 +51,8 @@ class Parse:
                 elif x[0] == "@":
                     text_tokensterm.append(self.clean_word(list_of_words[i]))
                     #print(list_of_words[i])
+                elif list_of_words[i][-1] in "%":
+                    text_tokensterm.append(list_of_words[i])
                 #URL law
                 elif x[0] == "https":
                     UrlList=self.pars_url(list_of_words[i])
@@ -60,7 +62,7 @@ class Parse:
                 # number law-units and percent
                 elif x[0].lower() in self.month:
                     self.to_date(x[0].lower(),list_of_words,i,text_tokensterm)
-                elif self.to_number(x[0]).replace('.', '', 1).isdigit():
+                elif self.to_number(x[0]).replace('.', '', 1).isdigit() and x[0].isascii():
                     num = self.to_number(x[0])
                     if i+1 < len(list_of_words):
                         if list_of_words[i+1].lower() == "percent" or list_of_words[i+1].lower() == "percentage":
@@ -120,10 +122,11 @@ class Parse:
         quote_text = doc_as_list[6]
         quote_url = doc_as_list[7]
         term_dict = {}
+        #print(full_text)
         tokenized_text = self.parse_sentence(full_text)
-        print(full_text)
-        print(tokenized_text)
-        print("------------------------------------------------------------------------------")
+
+        #print(tokenized_text)
+        #print("------------------------------------------------------------------------------")
         doc_length = len(tokenized_text)  # after text operations.
         for term in tokenized_text:
             if term not in term_dict.keys():
@@ -243,27 +246,28 @@ class Parse:
 
     def to_date(self,term,list_of_words,i,text_tokensterm):
         date = ""
-        if list_of_words[i-1].isdigit() and len(list_of_words[i-1]) < 3:
+        if i>0 and list_of_words[i-1].isdigit() and len(list_of_words[i-1]) < 3:
             date = list_of_words[i-1]+"-"+self.month.get(term)
             text_tokensterm.pop()
-        elif list_of_words[i-1].isdigit() and len(list_of_words[i-1]) <= 4:
+        elif i>0 and list_of_words[i-1].isdigit() and len(list_of_words[i-1]) <= 4:
             date = self.month.get(term)+"-"+list_of_words[i - 1]
             text_tokensterm.pop()
-        elif (list_of_words[i-1].endswith("st") or list_of_words[i-1].endswith("th")) and list_of_words[i-1][0:-2].isdigit():
+        elif i>0 and (list_of_words[i-1].endswith("st") or list_of_words[i-1].endswith("th")) and list_of_words[i-1][0:-2].isdigit():
             date = list_of_words[i - 1][:-2] + "-" + self.month.get(term)
             text_tokensterm.pop()
         if i+1<len(list_of_words):
-            if list_of_words[i+1].isdigit() and len(list_of_words[i+1])<3:
-                date = list_of_words[i + 1] + "-" + self.month.get(term)
+            clean_num=self.clean_word(list_of_words[i+1])
+            if clean_num.isdigit() and len(clean_num)<3:
+                date = clean_num + "-" + self.month.get(term)
                 list_of_words[i + 1]=""
-            elif list_of_words[i+1].isdigit() and len(list_of_words[i+1]) <= 4:
+            elif clean_num.isdigit() and len(list_of_words[i+1]) <= 4:
                 if len(date)>0:
-                    date = date+"-" + list_of_words[i + 1]
+                    date = date+"-" + clean_num
                 else:
-                    date = self.month.get(term)+"-"+list_of_words[i + 1]
+                    date = self.month.get(term)+"-"+clean_num
                 list_of_words[i + 1] = ""
-            elif (list_of_words[i + 1].endswith("st") or list_of_words[i + 1].endswith("th")) and list_of_words[i + 1][0:-2].isdigit():
-                date = list_of_words[i + 1][:-2] + "-" + self.month.get(term)
+            elif (clean_num.endswith("st") or clean_num.endswith("th")) and clean_num[0:-2].isdigit():
+                date = clean_num[:-2] + "-" + self.month.get(term)
                 list_of_words[i + 1] = ""
         if len(date)==0:
             date = term
@@ -271,9 +275,9 @@ class Parse:
 
     def clean_word(self,term):
         while len(term)>0:
-            if term[-1] in "/.…,''`;:|":
-                term=term[:-1]
-            elif term[0] in "/.…,''`;:|":
+            if term[-1] in "/.…,''`;:|!?":
+                term = term[:-1]
+            elif term[0] in "/.…,''`;:|!?":
                 term = term[:0]
             else:
                 break
