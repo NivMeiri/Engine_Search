@@ -1,3 +1,6 @@
 1.Resolve the problem of #hashtag
 2.Check if we can import re
 3. parse_sentence -clean the words from " .  , / "
+4. #todo merge files indexer pickle
+5. #todo Hadassa- fix the parser && merge
+6. #todo Niv-entities alghroithm  && ranker

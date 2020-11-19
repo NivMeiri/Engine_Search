@@ -1,3 +1,5 @@
+import pickle
+
 import search_engine
 import numpy
 import pandas as pd
@@ -20,4 +22,10 @@ if __name__ == '__main__':
 
     #print("niv is the best git user")
     #print(len(readfile))
+
     search_engine.main()
+    file=open("Pickle_Save","rb")
+    db=pickle.load(file)
+    #print(db)
+
+    file.close()

@@ -19,24 +19,26 @@ def run_engine():
     r = ReadFile(corpus_path=config.get__corpusPath())
     p = Parse()
     indexer = Indexer(config)
+   # indexer.save_with_pickle({})
 #todo get the file name
     start=time.time()
     documents_list = r.read_file(file_name='C:/Users/Hadassa Zenou/Desktop/Data/date=07-30-2020')
     print(time.time()-start)
     print(len(documents_list))
     # Iterate over every document in the file
+
     for idx, document in enumerate(documents_list):
         # parse the document
         parsed_document = p.parse_doc(document)
         num += 1
         # index the document data
         indexer.add_new_doc(parsed_document)
-        if num==1000000 or num==2000000 or num==3000000 or num==4000000 or num==5000000 or num==6000000 or num==7000000 or num==8000000 or num==9000000:
-            print(num)
-            print(time.time()-start)
-    print((indexer.postingDict))
-    print("#####################3 inverted")
-    print('Finished parsing and indexing. Starting to export files')
+        indexer.merge_files()
+
+    #indexer.merge_files()
+    #print((indexer.postingDict))
+    #print("#####################3 inverted")
+    #print('Finished parsing and indexing. Starting to export files')
     print(time.time()-start)
     utils.save_obj(indexer.inverted_idx, "inverted_idx")
     utils.save_obj(indexer.postingDict, "posting")

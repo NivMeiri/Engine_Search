@@ -1,9 +1,13 @@
+import pickle
+
+
 class Indexer:
 
     def __init__(self, config):
         self.inverted_idx = {}
         self.postingDict = {}
         self.config = config
+        self.saved_dict={}
 
     def add_new_doc(self, document):
         """
@@ -45,5 +49,28 @@ class Indexer:
                     toReturn=lower
                 self.postingDict[toReturn].append((document.tweet_id, document_dictionary[term], len(document_dictionary)))
                 #print(self.postingDict)
+
+    def save_with_pickle(self,dict):
+        db=open('Pickle_Save','ab')
+        pickle.dump(dict, db)
+        db.close()
+
+    def load_dictionary(self):
+        db=open('Pickle_Save','rb')
+        dbfile=pickle.load(db)
+        db.close()
+        return  dbfile
+
+    def merge_files(self):
+        saved_dict = self.load_dictionary()
+        for term in self.postingDict:
+            if term in saved_dict:
+                for doc in self.postingDict[term]:
+                    saved_dict[term].append(doc)
+            else:
+                saved_dict[term] = self.postingDict[term]
+        self.postingDict={}
+        self.save_with_pickle(saved_dict)
+
 
 
