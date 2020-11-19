@@ -5,7 +5,6 @@ from document import Document
 import re
 from math import log
 
-
 class Parse:
 
     def __init__(self):
@@ -26,6 +25,7 @@ class Parse:
         :param text:
         :return:
         """
+        #self.Names_and_Entities(text)
         text_tokensterm = []
         ##todo clean the words after text re , . & |
         list_of_words = text.split()
@@ -88,6 +88,7 @@ class Parse:
         quote_text = doc_as_list[6]
         quote_url = doc_as_list[7]
         term_dict = {}
+        #print(full_text)
         tokenized_text = self.parse_sentence(full_text)
         #print(tokenized_text)
         doc_length = len(tokenized_text)  # after text operations.
@@ -142,22 +143,16 @@ class Parse:
             i -= k
         return out
 
-    def clean_and_push(self,term,text_tokensterm):
-        while len(term)>0:
-            if term[-1] in "/.…,''`;:-|!?":
-                term = term[:-1]
-            elif term[0] in "/.…,''`;:-|!?":
-                term = term[:0]
-            else:
-                break
-        if len(term)>0:
+    def clean_and_push(self, term, text_tokensterm):
+        term= self.clean(term)
+        if len(term) > 0:
             text_tokensterm.append(term)
 
     def clean(self, term):
-        while len(term)>0:
-            if term[-1] in "/.…,''`;:-|!?":
+        while len(term) > 0:
+            if term[-1] in '/(.…),''`;:-|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
                 term = term[:-1]
-            elif term[0] in "/.…,''`;:-|!?":
+            elif term[0] in '/().…,''`;:-|!?"' or term[0] in "'" or ord(term[0]) > 126:
                 term = term[:0]
             else:
                 break
