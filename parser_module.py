@@ -29,6 +29,7 @@ class Parse:
         text_tokensterm = []
         ##todo clean the words after text re , . & |
         list_of_words = text.split()
+
         list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
             term = self.clean(list_of_words[i])
@@ -70,7 +71,6 @@ class Parse:
                         text_tokensterm.append(num)
                 else:
                     text_tokensterm.append(term)
-
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -150,9 +150,9 @@ class Parse:
 
     def clean(self, term):
         while len(term) > 0:
-            if term[-1] in '/(.…),''`;:-|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
+            if term[-1] in '/(.&…),''`;:-|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
                 term = term[:-1]
-            elif term[0] in '/().…,''`;:-|!?"' or term[0] in "'" or ord(term[0]) > 126:
+            elif term[0] in '/()&.…,''`;:-|!?"' or term[0] in "'" or ord(term[0]) > 126:
                 term = term[:0]
             else:
                 break
@@ -226,7 +226,7 @@ class Parse:
             newNum2 += n
         return newNum2
 
-    def  Names_and_Entities(self, text):
-        tokens = word_tokenize(text)
-        pos=(nltk.pos_tag(tokens))
-        my_NE_word=nltk.ne_chunk(pos)
+
+
+
+

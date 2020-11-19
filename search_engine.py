@@ -34,6 +34,8 @@ def run_engine():
         if num==1000000 or num==2000000 or num==3000000 or num==4000000 or num==5000000 or num==6000000 or num==7000000 or num==8000000 or num==9000000:
             print(num)
             print(time.time()-start)
+    print((indexer.postingDict))
+    print("#####################3 inverted")
     print('Finished parsing and indexing. Starting to export files')
     print(time.time()-start)
     utils.save_obj(indexer.inverted_idx, "inverted_idx")

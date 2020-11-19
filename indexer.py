@@ -16,15 +16,34 @@ class Indexer:
         document_dictionary = document.term_doc_dictionary
         # Go over each term in the doc
         for term in document_dictionary.keys():
-            try:
+                upper = term.upper()
+                lower = term.lower()
+                toReturn=""
                 # Update inverted index and posting
-                if term not in self.inverted_idx.keys():
-                    self.inverted_idx[term] = 1
-                    self.postingDict[term] = []
+                if (lower not in self.inverted_idx):
+                    # the word start with lower case char
+                    if (term[0].islower() or (len(term)>1 and (term[0]=='@' or term[0]=='#') and term[1].islower())):
+                        self.inverted_idx[lower] = 1
+                        self.postingDict[lower]=[]
+                        toReturn = lower
+                        if (upper in self.inverted_idx):
+                            self.inverted_idx[lower] += self.inverted_idx[upper]
+                            self.inverted_idx.pop(upper, None)
+                            self.postingDict[lower].append(self.postingDict[upper])
+                            self.postingDict.pop(upper,None)
+
+                    # the word start with upper case char
+                    else:
+                        toReturn = upper
+                        if (upper in self.inverted_idx):
+                            self.inverted_idx[upper] += 1
+                        else:
+                            self.inverted_idx[upper] = 1
+                            self.postingDict[upper]=[]
                 else:
-                    self.inverted_idx[term] += 1
+                    self.inverted_idx[lower] += 1
+                    toReturn=lower
+                self.postingDict[toReturn].append((document.tweet_id, document_dictionary[term], len(document_dictionary)))
+                #print(self.postingDict)
 
-                self.postingDict[term].append((document.tweet_id, document_dictionary[term]))
 
-            except:
-                print('problem with the following key {}'.format(term[0]))
