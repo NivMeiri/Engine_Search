@@ -14,7 +14,7 @@ class ReadFile:
         """
         full_path = os.path.join(self.corpus_path, file_name)
         # tranforming to panda.
-        toReturn = []
+        tweets = []
         i = 0
         if not full_path.endswith(".parquet"):
             for subdir, dirs, files in os.walk(full_path):
@@ -23,7 +23,7 @@ class ReadFile:
                     if filepath.endswith(".parquet"):
                         df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
                         for doc in df:
-                            toReturn.append(doc)
+                            tweets.append(doc)
         else:
-            toReturn = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
-        return toReturn
+            tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
+        return tweets
