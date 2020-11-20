@@ -23,6 +23,7 @@ def run_engine():
 #todo get the file name
     start=time.time()
     documents_list = r.read_file(file_name='C:/Users/Hadassa Zenou/Desktop/Data/date=07-30-2020')
+    #documents_list = r.read_file(file_name='sample.parquet')
     print(time.time()-start)
     print(len(documents_list))
     # Iterate over every document in the file
@@ -33,7 +34,6 @@ def run_engine():
         num += 1
         # index the document data
         indexer.add_new_doc(parsed_document)
-        indexer.merge_files()
 
     #indexer.merge_files()
     #print((indexer.postingDict))
