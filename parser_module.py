@@ -28,49 +28,56 @@ class Parse:
         #self.Names_and_Entities(text)
         text_tokensterm = []
         ##todo clean the words after text re , . & |
-        list_of_words = text.split()
+        list_of_words =text.split()
+        #print(list_of_words)
 
-        list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
+        #list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
             term = self.clean(list_of_words[i])
-            if len(term) > 0:
-                ###hash tag law
-                if term[0] == "#":
-                    text_tokensterm.append(term)
-                    self.parse_tags(term[1:], text_tokensterm)
-                elif term[0] == "@":
-                    text_tokensterm.append(term)
-                elif term[-1] in "%":
-                    text_tokensterm.append(term)
-                elif term[0:5] == "https":
-                    UrlList = self.pars_url(term)
-                    for word_in_url in UrlList:
-                        self.clean_and_push(word_in_url,text_tokensterm)
-                elif term.lower() in self.month:
-                    self.to_date(term.lower(), list_of_words, i, text_tokensterm)
-                elif self.to_number(term).replace('.', '', 1).isdigit() and term.isascii():
-                    num = self.to_number(term)
-                    if i + 1 < len(list_of_words):
-                        if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
-                            text_tokensterm.append(self.to3digits_units(num) + "%")
-                            list_of_words[i + 1] = ""
-                        elif list_of_words[i + 1].lower() == "thousand":
-                            text_tokensterm.append(num + "K")
-                            list_of_words[i + 1] = ""
-                        elif list_of_words[i + 1].lower() == "million":
-                            text_tokensterm.append(num + "M")
-                            list_of_words[i + 1] = ""
-                        elif list_of_words[i + 1].lower() == "billion":
-                            text_tokensterm.append(num + "B")
-                            list_of_words[i + 1] = ""
+            if term not in self.stop_words:
+                if len(term) > 0:
+                    ###hash tag law
+                    if term[0] == "#":
+                        text_tokensterm.append(term)
+                        text_tokensterm.append(term[1:])
+                        self.parse_tags(term[1:], text_tokensterm)
+                    elif term[0] == "@":
+                        text_tokensterm.append(term)
+                    elif term[-1] in "%":
+                        text_tokensterm.append(term)
+                    elif term[0:5] == "https":
+                        UrlList = self.pars_url(term)
+                        for word_in_url in UrlList:
+                            self.clean_and_push(word_in_url,text_tokensterm)
+                    elif term.lower() in self.month:
+                        self.to_date(term.lower(), list_of_words, i, text_tokensterm)
+                    elif self.to_number(term).replace('.', '', 1).isdigit() and term.isascii():
+                        num = self.to_number(term)
+                        if i + 1 < len(list_of_words):
+                            if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
+                                text_tokensterm.append(self.to3digits_units(num) + "%")
+                                list_of_words[i + 1] = ""
+                            elif list_of_words[i + 1].lower() == "thousand":
+                                text_tokensterm.append(num + "K")
+                                list_of_words[i + 1] = ""
+                            elif list_of_words[i + 1].lower() == "million":
+                                text_tokensterm.append(num + "M")
+                                list_of_words[i + 1] = ""
+                            elif list_of_words[i + 1].lower() == "billion":
+                                text_tokensterm.append(num + "B")
+                                list_of_words[i + 1] = ""
+                            else:
+                                num = self.to3digits_units(num)
+                                text_tokensterm.append(num)
                         else:
                             num = self.to3digits_units(num)
                             text_tokensterm.append(num)
                     else:
-                        num = self.to3digits_units(num)
-                        text_tokensterm.append(num)
-                else:
-                    text_tokensterm.append(term)
+                        list_term = re.split('[-,|/|//|:.%?=+]', term)
+                        for word in list_term:
+                            if word is not '':
+                                text_tokensterm.append(word)
+        print(text_tokensterm)
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -150,9 +157,9 @@ class Parse:
 
     def clean(self, term):
         while len(term) > 0:
-            if term[-1] in '/(.&…),''`;:-|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
+            if term[-1] in '/(.&…),''`;:-_|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
                 term = term[:-1]
-            elif term[0] in '/()&.…,''`;:-|!?"' or term[0] in "'" or ord(term[0]) > 126:
+            elif term[0] in '/()&.…,''`;:-_|!?"' or term[0] in "'" or ord(term[0]) > 126:
                 term = term[:0]
             else:
                 break

@@ -22,8 +22,8 @@ def run_engine():
    # indexer.save_with_pickle({})
 #todo get the file name
     start=time.time()
-    documents_list = r.read_file(file_name='C:/Users/Hadassa Zenou/Desktop/Data/date=07-30-2020')
-    #documents_list = r.read_file(file_name='sample.parquet')
+    #documents_list = r.read_file(file_name='C:/Users/Hadassa Zenou/Desktop/Data/date=07-08-2020')
+    documents_list = r.read_file(file_name='sample3.parquet')
     print(time.time()-start)
     print(len(documents_list))
     # Iterate over every document in the file

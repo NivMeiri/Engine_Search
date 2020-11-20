@@ -54,9 +54,9 @@ class Indexer:
                     self.postingDict[lower] = []
                 toReturn=lower
             self.postingDict[toReturn].append((document.tweet_id, document_dictionary[term], len(document_dictionary)))
-        if Indexer.num_of_doc==10000:
+        if Indexer.num_of_doc==100000:
             self.save_with_pickle(self.postingDict)
-        elif Indexer.num_of_doc%10000 == 0:
+        elif Indexer.num_of_doc%100000 == 0:
             self.merge_files()
                 #print(self.postingDict)
 
@@ -70,7 +70,7 @@ class Indexer:
     def load_dictionary(self):
         db=open('Pickle_Save','rb')
         dbfile=pickle.load(db)
-        print(dbfile)
+        #print(dbfile)
         db.close()
         return  dbfile
 
