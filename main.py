@@ -1,5 +1,7 @@
 import pickle
 
+import parser_module
+from  parser_module import  Parse
 import search_engine
 import numpy
 import pandas as pd
@@ -22,10 +24,11 @@ if __name__ == '__main__':
 
     #print("niv is the best git user")
     #print(len(readfile))
-
+    #Parse.__init__(parser_module.Parse)
+    #print(Parse.parse_sentence(parser_module.Parse,"donald"))
     search_engine.main()
-    file=open("Pickle_Save","rb")
-    db=pickle.load(file)
+    #file=open("Pickle_Save","rb")
+    #db=pickle.load(file)
     #print(db)
 
-    file.close()
+    #file.close()

@@ -22,10 +22,9 @@ def run_engine():
    # indexer.save_with_pickle({})
 #todo get the file name
     start=time.time()
-    #documents_list = r.read_file(file_name='C:/Users/Hadassa Zenou/Desktop/Data/date=07-08-2020')
-    documents_list = r.read_file(file_name='sample3.parquet')
-    print(time.time()-start)
-    print(len(documents_list))
+    documents_list = r.read_file(file_name='C:/Users/Admin/Desktop/data')
+    #documents_list = r.read_file(file_name='sample3.parquet')
+    print("time that toke to read:  "+  str(time.time()-start))
     # Iterate over every document in the file
 
     for idx, document in enumerate(documents_list):
@@ -33,13 +32,13 @@ def run_engine():
         parsed_document = p.parse_doc(document)
         num += 1
         # index the document data
-        indexer.add_new_doc(parsed_document)
+        #indexer.add_new_doc(parsed_document)
 
     #indexer.merge_files()
     #print((indexer.postingDict))
     #print("#####################3 inverted")
     #print('Finished parsing and indexing. Starting to export files')
-    print(time.time()-start)
+    print("time that toke to pars:  "+str(time.time()-start))
     utils.save_obj(indexer.inverted_idx, "inverted_idx")
     utils.save_obj(indexer.postingDict, "posting")
 

@@ -1,7 +1,6 @@
 class Ranker:
     def __init__(self):
         pass
-
     @staticmethod
     def rank_relevant_doc(relevant_doc):
         """
@@ -11,7 +10,6 @@ class Ranker:
         :return: sorted list of documents by score
         """
         return sorted(relevant_doc.items(), key=lambda item: item[1], reverse=True)
-
     @staticmethod
     def retrieve_top_k(sorted_relevant_doc, k=1):
         """

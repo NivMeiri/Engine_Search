@@ -30,7 +30,6 @@ class Parse:
         ##todo clean the words after text re , . & |
         list_of_words =text.split()
         #print(list_of_words)
-
         #list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
             term = self.clean(list_of_words[i])
@@ -77,7 +76,6 @@ class Parse:
                         for word in list_term:
                             if word is not '':
                                 text_tokensterm.append(word)
-        print(text_tokensterm)
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
