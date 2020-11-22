@@ -22,7 +22,7 @@ def run_engine():
    # indexer.save_with_pickle({})
 #todo get the file name
     start=time.time()
-    documents_list = r.read_file(file_name='C:/Users/Admin/Desktop/data')
+    documents_list = r.read_file(file_name='C:/Users/Admin/Desktop/data/date=07-30-2020')
     #documents_list = r.read_file(file_name='sample3.parquet')
     print("time that toke to read:  "+  str(time.time()-start))
     # Iterate over every document in the file
@@ -32,7 +32,7 @@ def run_engine():
         parsed_document = p.parse_doc(document)
         num += 1
         # index the document data
-        #indexer.add_new_doc(parsed_document)
+        indexer.add_new_doc(parsed_document)
 
     #indexer.merge_files()
     #print((indexer.postingDict))

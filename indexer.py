@@ -28,15 +28,16 @@ class Indexer:
             # Update inverted index and posting
             if (lower not in self.inverted_idx):
                 # the word start with lower case char
-                if (term[0].islower() or (len(term)>1 and (term[0]=='@' or term[0]=='#') and term[1].islower())):
+                if ((len(term) and term[0].islower()) or (len(term)>1 and term[1].islower() and (term[0]=='@' or term[0]=='#') )):
                     self.inverted_idx[lower] = 1
                     self.postingDict[lower]=[]
                     toReturn = lower
                     if (upper in self.inverted_idx):
                         self.inverted_idx[lower] += self.inverted_idx[upper]
                         self.inverted_idx.pop(upper, None)
-                        self.postingDict[lower].append(self.postingDict[upper])
-                        self.postingDict.pop(upper,None)
+                        if upper in self.postingDict:
+                            self.postingDict[lower].append(self.postingDict[upper])
+                            self.postingDict.pop(upper,None)
 
                 # the word start with upper case char
                 else:
@@ -65,7 +66,6 @@ class Indexer:
         pickle.dump(dict, db)
         db.close()
         self.postingDict = {}
-
 
     def load_dictionary(self):
         db=open('Pickle_Save','rb')
