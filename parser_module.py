@@ -26,6 +26,7 @@ class Parse:
         :return:
         """
         #self.Names_and_Entities(text)
+        print("this is the text before parsing!!:   "+str(text))
         text_tokensterm = []
         ##todo clean the words after text re , . & |
         list_of_words =text.split()
@@ -33,12 +34,11 @@ class Parse:
         #list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
             term = self.clean(list_of_words[i])
-            if term not in self.stop_words:
+            if term not in self.stop_words and term.lower() != "rt":
                 if len(term) > 0:
                     ###hash tag law
                     if term[0] == "#":
                         text_tokensterm.append(term)
-                        text_tokensterm.append(term[1:])
                         self.parse_tags(term[1:], text_tokensterm)
                     elif term[0] == "@":
                         text_tokensterm.append(term)
@@ -66,7 +66,11 @@ class Parse:
                                 text_tokensterm.append(num + "B")
                                 list_of_words[i + 1] = ""
                             else:
-                                num = self.to3digits_units(num)
+                                if "/" in list_of_words[i + 1] and list_of_words[i + 1][0].isdigit():
+                                    num = self.to3digits_units(num)+" "+list_of_words[i+1]
+                                    list_of_words[i+1]=""
+                                else:
+                                    num = self.to3digits_units(num)
                                 text_tokensterm.append(num)
                         else:
                             num = self.to3digits_units(num)
@@ -74,8 +78,8 @@ class Parse:
                     else:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
-                            if word is not '':
-                                text_tokensterm.append(word)
+                            self.clean_and_push(word,text_tokensterm)
+        print("this is the text After parsing!!:   " + str(text_tokensterm))
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -85,9 +89,12 @@ class Parse:
         :return: Document object with corresponding fields.
         """
         tweet_id = doc_as_list[0]
+
         tweet_date = doc_as_list[1]
         full_text = doc_as_list[2]
         url = doc_as_list[3]
+        print(url)
+
         retweet_text = doc_as_list[4]
         retweet_url = doc_as_list[5]
         quote_text = doc_as_list[6]
@@ -96,30 +103,34 @@ class Parse:
         #print(full_text)
         tokenized_text = self.parse_sentence(full_text)
         #print(tokenized_text)
+        #print(tokenized_text)
         doc_length = len(tokenized_text)  # after text operations.
-
+        max_term=("",0)
         for term in tokenized_text:
             if term not in term_dict.keys():
                 term_dict[term] = 1
             else:
                 term_dict[term] += 1
+            if term_dict[term] > max_term[1]:
+                max_term = (term, term_dict[term])
 
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
-                            quote_url, term_dict, doc_length)
+                            quote_url, term_dict, doc_length, max_term)
         return document
 
 
     def parse_tags(self, term, text_tokensterm):
-        if (term.isupper()):
-            self.clean_and_push(term,text_tokensterm)
-        elif (term.islower()):
+        hash_list=[]
+        if (term.islower()):
             hash_list = self.infer_spaces(term)
             for hash in hash_list:
-                self.clean_and_push(hash,text_tokensterm)
-        else:
+                self.clean_and_push(hash, text_tokensterm)
+        elif term.isupper() == False:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
             for hash in hash_list:
                 self.clean_and_push(hash,text_tokensterm)
+        if self.clean(term) not in hash_list:
+            self.clean_and_push(term, text_tokensterm)
 
 
     def infer_spaces(self, s):
@@ -151,7 +162,7 @@ class Parse:
     def clean_and_push(self, term, text_tokensterm):
         term= self.clean(term)
         if len(term) > 0:
-            text_tokensterm.append(term)
+            self.end_with_s(term,text_tokensterm)
 
     def clean(self, term):
         while len(term) > 0:
@@ -162,6 +173,11 @@ class Parse:
             else:
                 break
         return term
+    def end_with_s(self,term,text_tokensterm):
+        if term.lower().endswith("'s"):
+            text_tokensterm.append(term[:-2])
+        else:
+            text_tokensterm.append(term)
 
     def pars_url(self, url):
         l = re.split('[,|/|//|:%?=+]', url)

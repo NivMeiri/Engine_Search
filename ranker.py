@@ -1,3 +1,5 @@
+from math import  log,sqrt
+
 class Ranker:
     def __init__(self):
         pass
@@ -18,4 +20,12 @@ class Ranker:
         :param k: Number of top document to return
         :return: list of relevant document
         """
+
         return sorted_relevant_doc[:k]
+    # N is the number of docs in the corpus
+    # n_qi , the number of docs that contain the term
+    def Idf_Rank(self,N,n_qi):
+        return log((N-n_qi+0.5)/n_qi+0.5)
+    #W_iq is the number of times that the term exist in the query
+    def Rank_with_cosimilarity(self,Idf,tf,W_iq):
+        return  (W_iq*tf*Idf)/sqrt((W_iq**2)*((tf*Idf)**2))
