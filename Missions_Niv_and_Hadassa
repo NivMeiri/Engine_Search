@@ -1,10 +1,11 @@
-1.Resolve the problem of #hashtag
-2.Check if we can import re
-3. parse_sentence -clean the words from " .  , / "
+todo WordNet
 4. todo merge files indexer pickle
-5. todo Hadassa- fix the parser && merge
 6. todo Niv-entities alghroithm  && ranker
 7. todo fix hash tags : #ABCD big words and isn't------- ' this sign
 8. todo check if the co-founder in first tweet C:/Users/Admin/Desktop/data/date=07-30-2020
 9. todo the report
 10. todo add references from internet
+11. todo add posting with stemmer
+12. todo if there is time-re tweet
+13. todo reader & parser more efficent
+14. before

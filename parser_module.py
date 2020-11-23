@@ -26,7 +26,6 @@ class Parse:
         :return:
         """
         #self.Names_and_Entities(text)
-        print("this is the text before parsing!!:   "+str(text))
         text_tokensterm = []
         ##todo clean the words after text re , . & |
         list_of_words =text.split()
@@ -79,7 +78,6 @@ class Parse:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
                             self.clean_and_push(word,text_tokensterm)
-        print("this is the text After parsing!!:   " + str(text_tokensterm))
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -100,24 +98,27 @@ class Parse:
         quote_text = doc_as_list[6]
         quote_url = doc_as_list[7]
         term_dict = {}
-        #print(full_text)
+        # print(full_text)
         tokenized_text = self.parse_sentence(full_text)
-        #print(tokenized_text)
-        #print(tokenized_text)
+        # print(tokenized_text)
+        # print(tokenized_text)
         doc_length = len(tokenized_text)  # after text operations.
-        max_term=("",0)
+        max_term = ("", 0)
+        index = 0
         for term in tokenized_text:
             if term not in term_dict.keys():
-                term_dict[term] = 1
+                term_dict[term] = (1, [index])
             else:
-                term_dict[term] += 1
-            if term_dict[term] > max_term[1]:
-                max_term = (term, term_dict[term])
+                print("this is the term"+term)
+                term_dict[term][1].append(index)
+                term_dict[term] = (term_dict[term][0] + 1, term_dict[term][1])
+            if term_dict[term][0] > max_term[1]:
+                max_term = (term, term_dict[term][0])
+            index+=1
 
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
                             quote_url, term_dict, doc_length, max_term)
         return document
-
 
     def parse_tags(self, term, text_tokensterm):
         hash_list=[]

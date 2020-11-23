@@ -1,4 +1,7 @@
+import ast
+import linecache
 import pickle
+
 
 import parser_module
 from  parser_module import  Parse
@@ -26,6 +29,20 @@ if __name__ == '__main__':
     #print(len(readfile))
     #Parse.__init__(parser_module.Parse)
     #print(Parse.parse_sentence(parser_module.Parse,"donald"))
+
+    # define list of places
+
+    # dict=[1,2,3,4]
+    # with open('listfile.txt', 'w') as filehandle:
+    #     for i in range (100):
+    #         filehandle.write('%s\n' % (dict))
+    # x=linecache.getline("listfile.txt", 100, module_globals=None)
+    #
+    #
+    # x=ast.literal_eval(x)
+    # print(type(x))
+    # print(x)
+
     search_engine.main()
     #file=open("Pickle_Save","rb")
     #db=pickle.load(file)

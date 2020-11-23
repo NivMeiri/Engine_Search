@@ -24,6 +24,7 @@ class ReadFile:
                         df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
                         for doc in df:
                             tweets.append(doc)
+
         else:
             tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
         return tweets

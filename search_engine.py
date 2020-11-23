@@ -22,8 +22,8 @@ def run_engine():
    # indexer.save_with_pickle({})
 #todo get the file name
     start=time.time()
-    documents_list = r.read_file(file_name='C:/Users/Admin/Desktop/data/date=07-30-2020')
-    #documents_list = r.read_file(file_name='sample3.parquet')
+    #documents_list = r.read_file(file_name='C:/Users/Admin/Desktop/data/date=07-30-2020')
+    documents_list = r.read_file(file_name='sample.parquet')
     print("time that toke to read:  "+  str(time.time()-start))
     # Iterate over every document in the file
 
