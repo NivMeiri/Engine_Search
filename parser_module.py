@@ -13,6 +13,7 @@ class Parse:
         self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
         self.maxword = max(len(x) for x in words)
         self.word_dict = {}
+        self.entities={}
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
@@ -29,10 +30,13 @@ class Parse:
         text_tokensterm = []
         ##todo clean the words after text re , . & |
         list_of_words =text.split()
-        #print(list_of_words)
-        #list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
         for i in range(0, len(list_of_words)):
-            term = self.clean(list_of_words[i])
+            list_of_words[i] = self.clean(list_of_words[i])
+        #list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
+        #self.Entites_and_Names(list_of_words)
+        for i in range(0, len(list_of_words)):
+            term = list_of_words[i]
+
             if term not in self.stop_words and term.lower() != "rt":
                 if len(term) > 0:
                     ###hash tag law
@@ -91,7 +95,6 @@ class Parse:
         tweet_date = doc_as_list[1]
         full_text = doc_as_list[2]
         url = doc_as_list[3]
-        print(url)
 
         retweet_text = doc_as_list[4]
         retweet_url = doc_as_list[5]
@@ -109,7 +112,6 @@ class Parse:
             if term not in term_dict.keys():
                 term_dict[term] = (1, [index])
             else:
-                print("this is the term"+term)
                 term_dict[term][1].append(index)
                 term_dict[term] = (term_dict[term][0] + 1, term_dict[term][1])
             if term_dict[term][0] > max_term[1]:
@@ -247,6 +249,7 @@ class Parse:
         for n in newNum:
             newNum2 += n
         return newNum2
+    #def Entites_and_Names(self,list_of_words):
 
 
 

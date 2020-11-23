@@ -23,7 +23,7 @@ def run_engine():
 #todo get the file name
     start=time.time()
     #documents_list = r.read_file(file_name='C:/Users/Admin/Desktop/data/date=07-30-2020')
-    documents_list = r.read_file(file_name='sample.parquet')
+    documents_list = r.read_file(file_name='sample3.parquet')
     print("time that toke to read:  "+  str(time.time()-start))
     # Iterate over every document in the file
 
@@ -33,6 +33,9 @@ def run_engine():
         num += 1
         # index the document data
         indexer.add_new_doc(parsed_document)
+    # delete the entities that occur less then twice
+    #indexer(parser.entities_dict)
+
 
     print('Finished parsing and indexing. Starting to export files')
     print("time that toke to pars:  "+str(time.time()-start))

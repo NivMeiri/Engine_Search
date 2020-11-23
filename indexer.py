@@ -1,6 +1,9 @@
 import ast
 import linecache
 import pickle
+from math import log
+
+
 class Indexer:
     num_of_doc=0
     def __init__(self, config):
@@ -71,8 +74,7 @@ class Indexer:
         elif Indexer.num_of_doc%2 == 0:
             self.merge_files_posting()
             self.save_file_Info()
-            #print("this is the load"+str(self.Load_Doc_Info(document.tweet_id)))
-
+            print(self.Load_Doc_Info(document.tweet_id))
     def save_with_pickle(self):
         db=open('Pickle_Save_posting',"wb")
         pickle.dump(self.postingDict, db)
@@ -113,17 +115,23 @@ class Indexer:
             param="w"
         with open('Documnet_info.txt', param) as my_file:
                 for doc in self.Doc_Info_Text:
-                    print(doc[1])
-                    my_file.write('%s\n' % (str(doc[1])))
+                    my_file.write('%s\n' % (str(doc[1]).encode("utf-8")))
                     self.Doc_Line_Number[doc[0]]=self.Next_line
                     self.Next_line+=1
         self.Doc_Info_Text=[]
 
     def Load_Doc_Info (self,Doc_id):
-        Doc_line=self.Doc_Line_Number[Doc_id]
-        x = linecache.getline("Documnet_info.txt",1, module_globals=None)
-        x = ast.literal_eval(x)
-        return  x
+        Doc_line = self.Doc_Line_Number[Doc_id]
+        fp = open("Documnet_info.txt")
+        for i, line in enumerate(fp):
+            if i ==Doc_line:
+                line=(line[2:])
+                print(line)
+                break
+        fp.close()
+        #x = linecache.getline("Documnet_info.txt", Doc_line, module_globals=('UTF-8'))
+        #x=ast.literal_eval(x)
+        #return  x
 
     def add_to_Posting_sorted(self, toReturn, document_tweet_id, frequency):
         index = self.binary_insert(self.postingDict[toReturn], document_tweet_id)
@@ -147,3 +155,20 @@ class Indexer:
     def doc_info(self, doc):
         text_info = [doc.max_term, len(doc.term_doc_dictionary), doc.term_doc_dictionary]
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
+
+    def add_wij_to_doc(self):
+        with open('Doc_info_with_Wij.txt', 'w') as my_file:
+            for i in range(1, len(self.Doc_Line_Number)):
+                x = linecache.getline("Documnet_info.txt", i, module_globals=None)
+                x = ast.literal_eval(x)
+                print(type(x))
+                print("num:   " + str(x[2]))
+                doc_term = x[2]
+                for term in doc_term:
+                    wij = self.calc_wij(doc_term[term][0], self.inverted_idx[term], len(self.Doc_Line_Number))
+                    doc_term[term] = doc_term[term] + (wij,)
+                x[2] = doc_term
+                my_file.write('%s\n' % (str(x)))
+
+    def calc_wij(self, tf, df, n):
+        return tf * (log((n - df + 0.5) / (df + 0.5)))
