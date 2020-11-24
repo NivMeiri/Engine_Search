@@ -1,6 +1,8 @@
 import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+
+import stemmer
 from document import Document
 import re
 from math import log
@@ -14,6 +16,7 @@ class Parse:
         self.maxword = max(len(x) for x in words)
         self.word_dict = {}
         self.entities={}
+        self.stemmer=stemmer.Stemmer().Porter_stemmer
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
@@ -82,7 +85,10 @@ class Parse:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
                             self.clean_and_push(word,text_tokensterm)
-        return text_tokensterm
+        my_list=[]
+        for i in text_tokensterm:
+            my_list.append(self.stemmer.stem(i))
+        return my_list
 
     def parse_doc(self, doc_as_list):
         """
@@ -175,6 +181,7 @@ class Parse:
                 term = term[:0]
             else:
                 break
+
         return term
     def end_with_s(self,term,text_tokensterm):
         if term.lower().endswith("'s"):

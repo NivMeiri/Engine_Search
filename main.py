@@ -47,5 +47,10 @@ if __name__ == '__main__':
     #file=open("Pickle_Save","rb")
     #db=pickle.load(file)
     #print(db)
+    # line = ast.literal_eval("[('#covidã¼19', 1), 14, {'#covidã¼19': (1, [0]), 'covidã¼19': (1, [1]), 'claim': (1, [2]), 'life': (1, [3]), '@wsbradio': (1, [4]), 'host': (1, [5]), '@thehermancain': (1, [6]), '#coverageyoucancounton': (1, [7]), 'coverag': (1, [8]), 'you': (1, [9]), 'can': (1, [10]), 'count': (1, [11]), 'On': (1, [12]), 'coverageyoucancounton': (1, [13])}]")
+    # print(line)
+    # print(type(line))
+    # for i in line:
+    #     print(i)
 
     #file.close()

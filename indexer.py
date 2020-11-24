@@ -7,25 +7,21 @@ from math import log
 class Indexer:
     num_of_doc=0
     def __init__(self, config):
-        # the dictionary
+        # the Main Dictionary {Term:unique doc}
         self.inverted_idx = {}
-        #the posting files
+        #the posting files   {term: [(doc1,freq in doc),(doc3,8),(doc5,7)]-sorted list by doc id}
         self.postingDict = {}
-        # Dictionary for the docs... key= doc id... value={max tf, doc}
-        self.doc_dictionary={}
+        # dictionary to retreive the line number of specific key..{doc id:line number in text file}
+        self.Doc_Line_Number = {}
+        # [doc id,[doc info]]....doc info=[max_term(str),max freq(int),unique terms(int),wij^2,dictionary{term:(freq,indices(list),wij}
+        self.Doc_Info_Text = []
+        #counter for the line in the text to write
+        self.Next_line = 1
         self.config = config
-        self.saved_dict = {}
-        self.Doc_Line_Number={}
-        self.Next_line=1
-        self.Doc_Info_Text=[]
-        # init the dictionaries by alpha bet probability
-
 
     def add_new_doc(self, document):
         Indexer.num_of_doc = Indexer.num_of_doc + 1
         document_dictionary = document.term_doc_dictionary
-        #adding the doc max term, doc term dictionary and the len of unique terms in the documenet
-        #self.doc_dictionary[document[0]]=(document.max_term,len(document_dictionary ),document_dictionary )
         """
         This function perform indexing process for a document object.
         Saved information is captures via two dictionaries ('inverted index' and 'posting')
@@ -33,6 +29,7 @@ class Indexer:
         :return: -
         """
         # Go over each term in the doc
+        #the upper lower sort.. decide if the word will be saved in upper or lower case and update the matches terms
         for term in document_dictionary.keys():
             upper = term.upper()
             lower = term.lower()
@@ -50,7 +47,6 @@ class Indexer:
                         if upper in self.postingDict:
                             self.postingDict[lower].append(self.postingDict[upper])
                             self.postingDict.pop(upper,None)
-
                 # the word start with upper case char
                 else:
                     toReturn = upper
@@ -66,15 +62,16 @@ class Indexer:
                 if lower not in self.postingDict:
                     self.postingDict[lower] = []
                 toReturn=lower
-        self.postingDict[toReturn].append((document.tweet_id,document_dictionary[term]))
+            self.add_to_Posting_sorted(toReturn,document.tweet_id,document_dictionary[term])
         self.doc_info(document)
-        if Indexer.num_of_doc==5:
+        if Indexer.num_of_doc==100000:
             self.save_with_pickle()
             self.save_file_Info()
-        elif Indexer.num_of_doc%2 == 0:
-            self.merge_files_posting()
-            self.save_file_Info()
-            print(self.Load_Doc_Info(document.tweet_id))
+        elif Indexer.num_of_doc%100000 == 0:
+            self.merge_and_save_posting()
+            self.Load_Doc_Info(document.tweet_id)
+
+
     def save_with_pickle(self):
         db=open('Pickle_Save_posting',"wb")
         pickle.dump(self.postingDict, db)
@@ -87,13 +84,7 @@ class Indexer:
         db.close()
         return  dbfile
 
-    #self.add_to_Posting_sorted(toReturn, document.tweet_id, document_dictionary[term])
-
-    def add_to_Posting_sorted(self,toReturn,document_tweet_id,freqency):
-        index=0
-        self.postingDict[toReturn].insert(index,(document_tweet_id, freqency))
-
-    def merge_files_posting(self):
+    def merge_and_save_posting(self):
         saved_dict = self.load_dictionary()
         for term in self.postingDict:
             if term in saved_dict:
@@ -103,8 +94,6 @@ class Indexer:
                 saved_dict[term] = self.postingDict[term]
         self.postingDict=saved_dict
         self.save_with_pickle()
-
-    #self.Doc_Info_Text=[(doc_id,[(max_term,term),unique_Terms,dict])]
 
     def save_file_Info(self):
         import os.path
@@ -125,10 +114,14 @@ class Indexer:
         fp = open("Documnet_info.txt")
         for i, line in enumerate(fp):
             if i ==Doc_line:
-                line=(line[2:])
+                #x=linecache.getline("listfile.txt", Doc_line, module_globals=None)
+                line=ast.literal_eval(line)
+                line=line.decode( ("utf-8"))
+                line=ast.literal_eval(line)
+                print(type(line))
                 print(line)
-                break
-        fp.close()
+                return  line
+        #fp.close()
         #x = linecache.getline("Documnet_info.txt", Doc_line, module_globals=('UTF-8'))
         #x=ast.literal_eval(x)
         #return  x
@@ -145,7 +138,6 @@ class Indexer:
             mid = (high + low) // 2
             if (mid == low) and (doc_id < list_doc[high][0]) and (doc_id > list_doc[low][0]):
                 return high
-
             elif list_doc[mid][0] < doc_id:
                 low = mid + 1
 
@@ -157,18 +149,22 @@ class Indexer:
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
 
     def add_wij_to_doc(self):
-        with open('Doc_info_with_Wij.txt', 'w') as my_file:
-            for i in range(1, len(self.Doc_Line_Number)):
-                x = linecache.getline("Documnet_info.txt", i, module_globals=None)
-                x = ast.literal_eval(x)
-                print(type(x))
-                print("num:   " + str(x[2]))
-                doc_term = x[2]
-                for term in doc_term:
-                    wij = self.calc_wij(doc_term[term][0], self.inverted_idx[term], len(self.Doc_Line_Number))
-                    doc_term[term] = doc_term[term] + (wij,)
-                x[2] = doc_term
-                my_file.write('%s\n' % (str(x)))
+        with open('Documnet_info_Wij.txt', 'w') as to_write:
+            with open('Documnet_info_Wij.txt', 'w') as to_read:
+                for i, line in enumerate(to_read):
+                    line = ast.literal_eval(line)
+                    line = line.decode(("utf-8"))
+                    doc_info_list = ast.literal_eval(line)
+
+
+                    square_wij=0
+                    doc_term = doc_info_list[3]
+                    for term in doc_term:
+                        wij = self.calc_wij(doc_term[term][0], self.inverted_idx[term], len(self.Doc_Line_Number))
+                        square_wij+=wij
+                        doc_term[term] = doc_term[term] + (wij,)
+                    x[2] = doc_term
+                    my_file.writelines(8,'%s\n' % (str(x)))
 
     def calc_wij(self, tf, df, n):
         return tf * (log((n - df + 0.5) / (df + 0.5)))
