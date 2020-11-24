@@ -62,6 +62,7 @@ class Indexer:
                 if lower not in self.postingDict:
                     self.postingDict[lower] = []
                 toReturn=lower
+
             self.add_to_Posting_sorted(toReturn,document.tweet_id,document_dictionary[term])
         self.doc_info(document)
         if Indexer.num_of_doc==100000:
@@ -127,20 +128,28 @@ class Indexer:
         #return  x
 
     def add_to_Posting_sorted(self, toReturn, document_tweet_id, frequency):
-        index = self.binary_insert(self.postingDict[toReturn], document_tweet_id)
-        self.postingDict[toReturn].insert(index, (document_tweet_id, frequency))
+        if((self.postingDict[toReturn]==[])):
+            self.postingDict[toReturn]=[(document_tweet_id,frequency)]
+        else:
+            index = self.binary_insert(self.postingDict[toReturn], document_tweet_id)
+            self.postingDict[toReturn].insert(index, (document_tweet_id, frequency))
 
     def binary_insert(self, list_doc, doc_id):
         low = 0
         high = len(list_doc) - 1
         mid = 0
+        doc_id=str(doc_id)
+        if(len(list_doc)==1):
+            if(doc_id<list_doc[0][0]):
+                return 0
+            return 1
         while low <= high:
             mid = (high + low) // 2
-            if (mid == low) and (doc_id < list_doc[high][0]) and (doc_id > list_doc[low][0]):
+
+            if (mid == low) and ((doc_id) < list_doc[high][0]) and (doc_id > list_doc[low][0]):
                 return high
             elif list_doc[mid][0] < doc_id:
                 low = mid + 1
-
             elif list_doc[mid][0] > doc_id:
                 high = mid - 1
 

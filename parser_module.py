@@ -8,7 +8,6 @@ import re
 from math import log
 
 class Parse:
-
     def __init__(self):
         self.stop_words = stopwords.words('english')
         words = open("word_freq.txt").read().split()
@@ -31,15 +30,12 @@ class Parse:
         """
         #self.Names_and_Entities(text)
         text_tokensterm = []
-        ##todo clean the words after text re , . & |
         list_of_words =text.split()
         for i in range(0, len(list_of_words)):
             list_of_words[i] = self.clean(list_of_words[i])
-        #list_of_words = [w.lower() for w in list_of_words if w not in self.stop_words]
-        #self.Entites_and_Names(list_of_words)
+        self.Entites_and_Names(list_of_words)
         for i in range(0, len(list_of_words)):
             term = list_of_words[i]
-
             if term not in self.stop_words and term.lower() != "rt":
                 if len(term) > 0:
                     ###hash tag law
@@ -97,11 +93,9 @@ class Parse:
         :return: Document object with corresponding fields.
         """
         tweet_id = doc_as_list[0]
-
         tweet_date = doc_as_list[1]
         full_text = doc_as_list[2]
         url = doc_as_list[3]
-
         retweet_text = doc_as_list[4]
         retweet_url = doc_as_list[5]
         quote_text = doc_as_list[6]
@@ -152,7 +146,6 @@ class Parse:
         def best_match(i):
             candidates = enumerate(reversed(cost[max(0, i - self.maxword):i]))
             return min((c + self.wordcost.get(s[i - k - 1:i], 9e999), k + 1) for k, c in candidates)
-
         # Build the cost array.
         cost = [0]
         for i in range(1, len(s) + 1):
@@ -181,7 +174,6 @@ class Parse:
                 term = term[:0]
             else:
                 break
-
         return term
     def end_with_s(self,term,text_tokensterm):
         if term.lower().endswith("'s"):
@@ -249,14 +241,14 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0]) + '.' + str(num_with_point[1])
-
     def to_number(self, num):
         newNum = num.split(",")
         newNum2 = ''
         for n in newNum:
             newNum2 += n
         return newNum2
-    #def Entites_and_Names(self,list_of_words):
+    def Entites_and_Names(self,list_of_words):
+        print(list_of_words)
 
 
 
