@@ -1,5 +1,6 @@
 import ast
 import linecache
+import math
 import pickle
 from math import log
 
@@ -20,6 +21,7 @@ class Indexer:
         self.config = config
 
     def add_new_doc(self, document):
+        #print(document.full_text)
         Indexer.num_of_doc = Indexer.num_of_doc + 1
         document_dictionary = document.term_doc_dictionary
         """
@@ -28,6 +30,7 @@ class Indexer:
         :param document: a document need to be indexed.
         :return: -
         """
+        doc_up_low={}
         # Go over each term in the doc
         #the upper lower sort.. decide if the word will be saved in upper or lower case and update the matches terms
         for term in document_dictionary.keys():
@@ -37,7 +40,7 @@ class Indexer:
             # Update inverted index and posting
             if (lower not in self.inverted_idx):
                 # the word start with lower case char
-                if ( term[0].islower()) or (len(term)>1 and term[1].islower() and (term[0]=='@' or term[0]=='#') ):
+                if (term[0].islower()) or (len(term)>1 and term[1].islower() and (term[0]=='@' or term[0]=='#')):
                     self.inverted_idx[lower] = 1
                     self.postingDict[lower]=[]
                     toReturn = lower
@@ -63,24 +66,26 @@ class Indexer:
                     self.postingDict[lower] = []
                 toReturn=lower
 
-            self.add_to_Posting_sorted(toReturn,document.tweet_id,document_dictionary[term])
+            self.add_to_Posting_sorted(toReturn,document.tweet_id,document.term_doc_dictionary[term])
         self.doc_info(document)
-        if Indexer.num_of_doc==100000:
+        if Indexer.num_of_doc==1000:
             self.save_with_pickle()
             self.save_file_Info()
-        elif Indexer.num_of_doc%100000 == 0:
+        elif (Indexer.num_of_doc%25000==0):
             self.merge_and_save_posting()
-            self.Load_Doc_Info(document.tweet_id)
+            self.save_file_Info()
+
+            #self.Load_Doc_Info(document.tweet_id)
 
 
     def save_with_pickle(self):
-        db=open('Pickle_Save_posting',"wb")
+        db=open('Pickle_Save_posting.pkl',"wb")
         pickle.dump(self.postingDict, db)
         db.close()
         self.postingDict = {}
 
     def load_dictionary(self):
-        db=open('Pickle_Save_posting','rb')
+        db=open('Pickle_Save_posting.pkl','rb')
         dbfile=pickle.load(db)
         db.close()
         return  dbfile
@@ -112,15 +117,13 @@ class Indexer:
 
     def Load_Doc_Info (self,Doc_id):
         Doc_line = self.Doc_Line_Number[Doc_id]
-        fp = open("Documnet_info.txt")
+        fp = open("Documnet_info_Wij.txt")
         for i, line in enumerate(fp):
             if i ==Doc_line:
                 #x=linecache.getline("listfile.txt", Doc_line, module_globals=None)
                 line=ast.literal_eval(line)
                 line=line.decode( ("utf-8"))
                 line=ast.literal_eval(line)
-                print(type(line))
-                print(line)
                 return  line
         #fp.close()
         #x = linecache.getline("Documnet_info.txt", Doc_line, module_globals=('UTF-8'))
@@ -139,41 +142,38 @@ class Indexer:
         high = len(list_doc) - 1
         mid = 0
         doc_id=str(doc_id)
-        if(len(list_doc)==1):
-            if(doc_id<list_doc[0][0]):
-                return 0
-            return 1
-        while low <= high:
-            mid = (high + low) // 2
-
-            if (mid == low) and ((doc_id) < list_doc[high][0]) and (doc_id > list_doc[low][0]):
-                return high
-            elif list_doc[mid][0] < doc_id:
+        while low < high:
+            mid = (low + high) // 2
+            if doc_id < list_doc[mid][0]:
+                high = mid
+            else:
                 low = mid + 1
-            elif list_doc[mid][0] > doc_id:
-                high = mid - 1
+        return low
 
     def doc_info(self, doc):
-        text_info = [doc.max_term, len(doc.term_doc_dictionary), doc.term_doc_dictionary]
+        text_info = [doc.max_term[0],doc.max_term[1], len(doc.term_doc_dictionary), doc.term_doc_dictionary]
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
 
     def add_wij_to_doc(self):
         with open('Documnet_info_Wij.txt', 'w') as to_write:
-            with open('Documnet_info_Wij.txt', 'w') as to_read:
+            with open('Documnet_info.txt', 'r') as to_read:
                 for i, line in enumerate(to_read):
                     line = ast.literal_eval(line)
                     line = line.decode(("utf-8"))
                     doc_info_list = ast.literal_eval(line)
-
-
-                    square_wij=0
+                    square_wij = 0
                     doc_term = doc_info_list[3]
+                    #print("doc term:     "+str(doc_term))
                     for term in doc_term:
-                        wij = self.calc_wij(doc_term[term][0], self.inverted_idx[term], len(self.Doc_Line_Number))
-                        square_wij+=wij
+                        temp_term=term.lower()
+                        if (temp_term not in self.inverted_idx):
+                            temp_term = term.upper()
+                        wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
+                        square_wij += (wij**2)
                         doc_term[term] = doc_term[term] + (wij,)
-                    x[2] = doc_term
-                    my_file.writelines(8,'%s\n' % (str(x)))
+                    doc_info_list[3] = doc_term
+                    doc_info_list.insert(3, square_wij)
+                    to_write.write('%s\n' % (str(doc_info_list).encode("utf-8")))
 
-    def calc_wij(self, tf, df, n):
-        return tf * (log((n - df + 0.5) / (df + 0.5)))
+    def calc_wij(self, fi,max_fi, df, n):
+        return ((fi/max_fi) * (log(n/df, 2)))

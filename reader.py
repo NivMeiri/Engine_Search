@@ -13,18 +13,21 @@ class ReadFile:
         :return: a dataframe contains tweets.
         """
         full_path = os.path.join(self.corpus_path, file_name)
-        # tranforming to panda.
+        doc_names=[]
         tweets = []
-        i = 0
         if not full_path.endswith(".parquet"):
             for subdir, dirs, files in os.walk(full_path):
                 for filename in files:
                     filepath = subdir + os.sep + filename
                     if filepath.endswith(".parquet"):
+                        doc_names.append(filepath)
+                        '''
                         df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
                         for doc in df:
                             tweets.append(doc)
-
+                            if(len(tweets)==100000):
+                            '''
         else:
-            tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
-        return tweets
+            doc_names .append(full_path)
+            #tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
+        return doc_names

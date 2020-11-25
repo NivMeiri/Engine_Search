@@ -14,7 +14,7 @@ class Parse:
         self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
         self.maxword = max(len(x) for x in words)
         self.word_dict = {}
-        self.entities={}
+        self.entities=[]
         self.stemmer=stemmer.Stemmer().Porter_stemmer
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
@@ -30,9 +30,14 @@ class Parse:
         """
         #self.Names_and_Entities(text)
         text_tokensterm = []
+        #print("the full text   "+text)
         list_of_words =text.split()
+        new_list = []
         for i in range(0, len(list_of_words)):
-            list_of_words[i] = self.clean(list_of_words[i])
+            clean_word=self.clean(list_of_words[i])
+            if(len(clean_word)>0):
+                new_list.append(clean_word)
+        list_of_words=new_list
         self.Entites_and_Names(list_of_words)
         for i in range(0, len(list_of_words)):
             term = list_of_words[i]
@@ -82,9 +87,9 @@ class Parse:
                         for word in list_term:
                             self.clean_and_push(word,text_tokensterm)
         my_list=[]
-        for i in text_tokensterm:
-            my_list.append(self.stemmer.stem(i))
-        return my_list
+        #for i in text_tokensterm:
+            #my_list.append(self.stemmer.stem(i))
+        return text_tokensterm
 
     def parse_doc(self, doc_as_list):
         """
@@ -164,6 +169,10 @@ class Parse:
     def clean_and_push(self, term, text_tokensterm):
         term= self.clean(term)
         if len(term) > 0:
+            if (term[0].isupper()):
+                term=term.upper()
+            else:
+                term=term.lower()
             self.end_with_s(term,text_tokensterm)
 
     def clean(self, term):
@@ -248,7 +257,21 @@ class Parse:
             newNum2 += n
         return newNum2
     def Entites_and_Names(self,list_of_words):
-        print(list_of_words)
+        #print("the lists of words  "+str(list_of_words))
+        for i in range(len(list_of_words)) :
+            if(list_of_words[i] in self.stop_words or list_of_words[i].upper()=="RT"):
+                break
+            Tag_Names = re.findall("\A@", list_of_words[i])
+            if (len(Tag_Names) > 0):
+                self.entities.append(list_of_words[i][1:].lower())
+            elif(list_of_words[i].isupper):
+                self.entities.append(list_of_words[i ].lower())
+            elif(list_of_words[i].upper()=="THE"):
+                if(i+1<len(list_of_words) and len(list_of_words[i+1])>0 and list_of_words[i+1][0].isupper()):
+                    #print(list_of_words[i+1])
+                    self.entities.append(list_of_words[i+1].lower())
+
+
 
 
 

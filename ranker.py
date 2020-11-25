@@ -1,4 +1,6 @@
+import math
 from math import  log,sqrt
+from nltk.corpus import wordnet
 
 class Ranker:
     def __init__(self):
@@ -12,8 +14,9 @@ class Ranker:
         :return: sorted list of documents by score
         """
         return sorted(relevant_doc.items(), key=lambda item: item[1], reverse=True)
+
     @staticmethod
-    def retrieve_top_k(sorted_relevant_doc, k=1):
+    def retrieve_top_k(sorted_relevant_doc, k=2000):
         """
         return a list of top K tweets based on their ranking from highest to lowest
         :param sorted_relevant_doc: list of all candidates docs.
@@ -24,8 +27,16 @@ class Ranker:
         return sorted_relevant_doc[:k]
     # N is the number of docs in the corpus
     # n_qi , the number of docs that contain the term
-    def Idf_Rank(self,N,n_qi):
-        return log((N-n_qi+0.5)/n_qi+0.5)
+
     #W_iq is the number of times that the term exist in the query
-    def Rank_with_cosimilarity(self,Idf,tf,W_iq):
-        return  (W_iq*tf*Idf)/sqrt((W_iq**2)*((tf*Idf)**2))
+
+
+    def Rank_with_cosimilarity(self, wij_power,wiq_power,sum_weight):
+        return  (sum_weight/(math.sqrt(wij_power*wiq_power)))
+
+    def WordNet(self,word):
+        synonyms = []
+        for syn in wordnet.synsets(word):
+            for l in syn.lemmas():
+                synonyms.append(l.name())
+        return(set(synonyms))
