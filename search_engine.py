@@ -51,10 +51,15 @@ def search_and_rank_query(query, inverted_index,doc_line ,k):
     p = Parse()
     query_as_list = p.parse_sentence(query)
     searcher = Searcher(inverted_index,doc_line)
+    print("start search")
+    start=time.time()
     relevant_docs = searcher.relevant_docs_from_posting(query_as_list)
     ranked_docs = searcher.ranker.rank_relevant_doc(relevant_docs)
+    print(time.time()-start)
     return searcher.ranker.retrieve_top_k(ranked_docs, k)
+
 def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
+    start=time.time()
     run_engine(corpus_path,output_path,stemming)
     info=load_index()
     inverted_index = info[0]
@@ -62,6 +67,7 @@ def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
     for query in queries:
         for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, num_docs_to_retrieve):
             print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
+    print("total time:    "+str(time.time()-start))
 
 def main2():
     run_engine()
@@ -72,6 +78,8 @@ def main2():
     Doc_line=info[1]
     for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, k):
         print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
+
+
 def read_Parquert(filepath):
     tweets=[]
     df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()

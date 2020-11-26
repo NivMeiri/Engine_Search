@@ -66,7 +66,7 @@ class Indexer:
                     self.postingDict[lower] = []
                 toReturn=lower
 
-            self.add_to_Posting_sorted(toReturn,document.tweet_id,document.term_doc_dictionary[term])
+            self.add_to_Posting_sorted(toReturn,document.tweet_id,document.term_doc_dictionary[term][0]/(document.max_term[1]))
         self.doc_info(document)
         if Indexer.num_of_doc==1000:
             self.save_with_pickle()
@@ -151,7 +151,7 @@ class Indexer:
         return low
 
     def doc_info(self, doc):
-        text_info = [doc.max_term[0],doc.max_term[1], len(doc.term_doc_dictionary), doc.term_doc_dictionary]
+        text_info = [doc.max_term[0],doc.max_term[1], len(doc.term_doc_dictionary),doc.term_doc_dictionary]
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
 
     def add_wij_to_doc(self):
@@ -170,10 +170,11 @@ class Indexer:
                             temp_term = term.upper()
                         wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
                         square_wij += (wij**2)
-                        doc_term[term] = doc_term[term] + (wij,)
+                        #doc_term[term] = doc_term[term] + (wij,)
                     doc_info_list[3] = doc_term
                     doc_info_list.insert(3, square_wij)
-                    to_write.write('%s\n' % (str(doc_info_list).encode("utf-8")))
+                    new_info=[doc_info_list[1],doc_info_list[2],doc_info_list[3]]
+                    to_write.write('%s\n' % (str(new_info).encode("utf-8")))
 
     def calc_wij(self, fi,max_fi, df, n):
         return ((fi/max_fi) * (log(n/df, 2)))

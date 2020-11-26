@@ -1,4 +1,6 @@
 import ast
+import time
+from math import log
 
 from nltk.corpus import wordnet
 
@@ -17,6 +19,7 @@ class Searcher:
         self.ranker = Ranker()
         self.inverted_index = inverted_index
         self.doc_line=doc_line
+        self.num_of_doc=len(self.doc_line)
     def relevant_docs_from_posting(self, query):
         """
         This function loads the posting list and count the amount of relevant documents per term.
@@ -30,21 +33,28 @@ class Searcher:
         posting = utils.load_obj("Pickle_Save_posting")
         relevant_docs = {}
         for term in query:
-            try: # an example of checks that you have to do
-                posting_doc = posting[term]
-                for doc_tuple in posting_doc:
-                    doc = doc_tuple[0]
-                    if doc not in relevant_docs.keys():
-                        doc_info=self.Load_Doc_Info(doc)
-                        dict_info=doc_info[4]
-                        sum_weight=0
-                        for term_query in query:
-                            if term_query in dict_info:
-                                sum_weight+=dict_info[term_query][2]
-                        cosim=self.ranker.Rank_with_cosimilarity(doc_info[2],len(query),sum_weight)
-                        relevant_docs[doc] = cosim
-            except:
-                print('term {} not found in posting'.format(term))
+            #try: # an example of checks that you have to do
+            posting_doc = posting[term]
+            idf = log(self.num_of_doc/len(posting_doc), 2)
+            for doc_tuple in posting_doc:
+                doc = doc_tuple[0]
+                tf=doc_tuple[1]
+                if doc not in relevant_docs.keys():
+                    doc_info=self.Load_Doc_Info(doc)
+                    # dict_info=doc_info[4]
+                    # sum_weight=0
+                    # for term_query in query:
+                    #     if term_query in dict_info:
+                    #         sum_weight+=dict_info[term_query][2]
+                    # sumw=self.ranker.Rank_with_cosimilarity(doc_info[3],len(query),sum_weight)
+                    relevant_docs[doc] = (doc_info[2],tf*idf)
+                else:
+                    sum=relevant_docs[doc][1]+tf*idf
+                    relevant_docs[doc]=(relevant_docs[doc][0],sum)
+
+            # except:
+            # print('term {} not found in posting'.format(term))
+        relevant_docs=self.ranker.Rank_with_cosimilarity(relevant_docs,query)
         return relevant_docs
 
 

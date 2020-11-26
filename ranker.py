@@ -31,8 +31,12 @@ class Ranker:
     #W_iq is the number of times that the term exist in the query
 
 
-    def Rank_with_cosimilarity(self, wij_power,wiq_power,sum_weight):
-        return  (sum_weight/(math.sqrt(wij_power*wiq_power)))
+    def Rank_with_cosimilarity(self, relevant_doc,query):
+        wiq=len(query)
+        for doc in relevant_doc.keys():
+            sum=(relevant_doc[doc][1]/(math.sqrt(relevant_doc[doc][0]*wiq)))
+            relevant_doc[doc]=sum
+        return  (relevant_doc)
 
     def WordNet(self,word):
         synonyms = []
