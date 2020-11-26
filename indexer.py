@@ -30,7 +30,6 @@ class Indexer:
         :param document: a document need to be indexed.
         :return: -
         """
-        doc_up_low={}
         # Go over each term in the doc
         #the upper lower sort.. decide if the word will be saved in upper or lower case and update the matches terms
         for term in document_dictionary.keys():
@@ -48,8 +47,8 @@ class Indexer:
                         self.inverted_idx[lower] += self.inverted_idx[upper]
                         self.inverted_idx.pop(upper, None)
                         if upper in self.postingDict:
-                            self.postingDict[lower].append(self.postingDict[upper])
-                            self.postingDict.pop(upper,None)
+                            self.postingDict[lower] += self.postingDict[upper]
+                            self.postingDict.pop(upper, None)
                 # the word start with upper case char
                 else:
                     toReturn = upper
@@ -132,10 +131,10 @@ class Indexer:
 
     def add_to_Posting_sorted(self, toReturn, document_tweet_id, frequency):
         if((self.postingDict[toReturn]==[])):
-            self.postingDict[toReturn]=[(document_tweet_id,frequency)]
+            self.postingDict[toReturn].append((document_tweet_id,frequency))
         else:
-            index = self.binary_insert(self.postingDict[toReturn], document_tweet_id)
-            self.postingDict[toReturn].insert(index, (document_tweet_id, frequency))
+            #index = self.binary_insert(self.postingDict[toReturn], document_tweet_id)
+            self.postingDict[toReturn].insert(0, (document_tweet_id, frequency))
 
     def binary_insert(self, list_doc, doc_id):
         low = 0
@@ -177,4 +176,4 @@ class Indexer:
                     to_write.write('%s\n' % (str(new_info).encode("utf-8")))
 
     def calc_wij(self, fi,max_fi, df, n):
-        return ((fi/max_fi) * (log(n/df, 2)))
+        return (fi/max_fi) * (log(n/df, 2))

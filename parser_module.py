@@ -1,49 +1,33 @@
-import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
-
 import stemmer
 from document import Document
 import re
 from math import log
 
 class Parse:
-    def __init__(self):
+    def __init__(self,is_stemming):
         self.stop_words = stopwords.words('english')
-        words = open("word_freq.txt").read().split()
-        self.wordcost = dict((k, log((i + 1) * log(len(words)))) for i, k in enumerate(words))
-        self.maxword = max(len(x) for x in words)
-        self.word_dict = {}
-        self.entities=[]
+        self.words = open("word_freq.txt").read().split()
+        self.wordcost = dict((k, log((i + 1) * log(len(self.words)))) for i, k in enumerate(self.words))
+        self.maxword = max(len(x) for x in self.words)
+        self.entities={}
+        self.binary_Stem=is_stemming
         self.stemmer=stemmer.Stemmer().Porter_stemmer
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
-
-
     def parse_sentence(self, text):
         """
         This function tokenize, remove stop words and apply lower case for every word within the text
         :param text:
         :return:
         """
-        #self.Names_and_Entities(text)
         text_tokensterm = []
-        #print("the full text   "+text)
         list_of_words =text.split()
-        new_list = []
         for i in range(0, len(list_of_words)):
-            clean_word=self.clean(list_of_words[i])
-            if(len(clean_word)>0):
-                new_list.append(clean_word)
-        list_of_words=new_list
-        self.Entites_and_Names(list_of_words)
-        for i in range(0, len(list_of_words)):
-            term = list_of_words[i]
-            if term not in self.stop_words and term.lower() != "rt":
-                if len(term) > 0:
-                    ###hash tag law
+            term = self.clean(list_of_words[i])
+            if len(term)>0 and term not in self.stop_words and term != "RT":
                     if term[0] == "#":
                         text_tokensterm.append(term)
                         self.parse_tags(term[1:], text_tokensterm)
@@ -86,9 +70,7 @@ class Parse:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
                             self.clean_and_push(word,text_tokensterm)
-        my_list=[]
-        #for i in text_tokensterm:
-            #my_list.append(self.stemmer.stem(i))
+        self.Entites_and_Names(text_tokensterm)
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -106,10 +88,7 @@ class Parse:
         quote_text = doc_as_list[6]
         quote_url = doc_as_list[7]
         term_dict = {}
-        # print(full_text)
         tokenized_text = self.parse_sentence(full_text)
-        # print(tokenized_text)
-        # print(tokenized_text)
         doc_length = len(tokenized_text)  # after text operations.
         max_term = ("", 0)
         index = 0
@@ -256,24 +235,27 @@ class Parse:
         for n in newNum:
             newNum2 += n
         return newNum2
+
+
     def Entites_and_Names(self,list_of_words):
-        #print("the lists of words  "+str(list_of_words))
+        length=len(list_of_words)
         for i in range(len(list_of_words)) :
-            if(list_of_words[i] in self.stop_words or list_of_words[i].upper()=="RT"):
-                break
             Tag_Names = re.findall("\A@", list_of_words[i])
             if (len(Tag_Names) > 0):
-                self.entities.append(list_of_words[i][1:].lower())
-            elif(list_of_words[i].isupper):
-                self.entities.append(list_of_words[i ].lower())
-            elif(list_of_words[i].upper()=="THE"):
-                if(i+1<len(list_of_words) and len(list_of_words[i+1])>0 and list_of_words[i+1][0].isupper()):
-                    #print(list_of_words[i+1])
-                    self.entities.append(list_of_words[i+1].lower())
+                self.check_if_in_entites_dictionary(list_of_words[i][1:].lower())
+            elif(list_of_words[i][0].isupper):
+                if(length>i+1 and len(list_of_words[i+1])>0):
+                    if(list_of_words[i+1][0].isupper()):
+                        my_String=list_of_words[i].lower()+" "+list_of_words[i+1].lower()
+                        self.check_if_in_entites_dictionary(my_String)
+                else:
+                    self.check_if_in_entites_dictionary(list_of_words[i].lower())
 
-
-
-
+    def check_if_in_entites_dictionary(self,entite):
+        if( entite in self.entities):
+            self.entities[entite]+=1
+        else:
+            self.entities[entite]=1
 
 
 

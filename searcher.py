@@ -11,11 +11,11 @@ import utils
 
 class Searcher:
 
-    def __init__(self, inverted_index,doc_line):
+    def __init__(self, inverted_index,doc_line,stem):
         """
         :param inverted_index: dictionary of inverted index
         """
-        self.parser = Parse()
+        self.parser = Parse(stem)
         self.ranker = Ranker()
         self.inverted_index = inverted_index
         self.doc_line=doc_line
@@ -34,6 +34,8 @@ class Searcher:
         relevant_docs = {}
         for term in query:
             #try: # an example of checks that you have to do
+            if term not in posting:
+                continue
             posting_doc = posting[term]
             idf = log(self.num_of_doc/len(posting_doc), 2)
             for doc_tuple in posting_doc:

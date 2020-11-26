@@ -15,23 +15,24 @@ def run_engine(corpus_path,output_path,stemming):
     num = 0
     config = ConfigClass()
     r = ReadFile(corpus_path=config.get__corpusPath())
-    p = Parse()
+    p = Parse(stemming)
     indexer = Indexer(config)
    # indexer.save_with_pickle({})
 #todo get the file name
     start=time.time()
-    #documents_list = r.read_file(corpus_path)
-    documents_list = r.read_file(file_name='sample3.parquet')
-    print("time that toke to read:  "+  str(time.time()-start))
+    documents_list = r.read_file(corpus_path)
+    #documents_list = r.read_file(file_name='sample3.parquet')
     # Iterate over every document in the file
     for file in documents_list:
         documents_list=read_Parquert(file)
+        print("time that toke to read:  " + str(time.time() - start))
         for idx, document in enumerate(documents_list):
             parsed_document = p.parse_doc(document)
             num += 1
         # index the document data
             indexer.add_new_doc(parsed_document)
     indexer.add_wij_to_doc()
+
     # delete the entities that occur less then twice
     #indexer(parser.entities_dict)
 
@@ -47,10 +48,10 @@ def load_index():
     Doc_line=utils.load_obj("Doc_Line_Number")
     return (inverted_index,Doc_line)
 
-def search_and_rank_query(query, inverted_index,doc_line ,k):
-    p = Parse()
+def search_and_rank_query(query, inverted_index,doc_line ,k,stem):
+    p = Parse(stem)
     query_as_list = p.parse_sentence(query)
-    searcher = Searcher(inverted_index,doc_line)
+    searcher = Searcher(inverted_index,doc_line,stem)
     print("start search")
     start=time.time()
     relevant_docs = searcher.relevant_docs_from_posting(query_as_list)
@@ -65,7 +66,7 @@ def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
     inverted_index = info[0]
     Doc_line=info[1]
     for query in queries:
-        for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, num_docs_to_retrieve):
+        for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, num_docs_to_retrieve,stemming):
             print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
     print("total time:    "+str(time.time()-start))
 
