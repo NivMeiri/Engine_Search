@@ -25,13 +25,17 @@ def run_engine(corpus_path,output_path,stemming):
     # Iterate over every document in the file
     for file in documents_list:
         documents_list=read_Parquert(file)
-        print("time that toke to read:  " + str(time.time() - start))
         for idx, document in enumerate(documents_list):
             parsed_document = p.parse_doc(document)
             num += 1
-        # index the document data
             indexer.add_new_doc(parsed_document)
+        print("num of tweets:  " + str(num) )
+        print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
+    indexer.merge_all_posting()
+    print("the posting dict was merged and saved:  " + str(file) + ":  " + str(time.time() - start))
+        # index the document data
     indexer.add_wij_to_doc()
+    print("time that  calc wij:  " + str(file) + ":  " + str(time.time() - start))
 
     # delete the entities that occur less then twice
     #indexer(parser.entities_dict)
@@ -62,13 +66,13 @@ def search_and_rank_query(query, inverted_index,doc_line ,k,stem):
 def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
     start=time.time()
     run_engine(corpus_path,output_path,stemming)
-    info=load_index()
-    inverted_index = info[0]
-    Doc_line=info[1]
-    for query in queries:
-        for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, num_docs_to_retrieve,stemming):
-            print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
-    print("total time:    "+str(time.time()-start))
+    #info=load_index()
+    # inverted_index = info[0]
+    # Doc_line=info[1]
+    # for query in queries:
+    #     for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, num_docs_to_retrieve,stemming):
+    #         print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
+    # print("total time:    "+str(time.time()-start))
 
 def main2():
     run_engine()

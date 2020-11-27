@@ -1,8 +1,9 @@
+from math import log
+
 from nltk.corpus import stopwords
 import stemmer
 from document import Document
 import re
-from math import log
 
 class Parse:
     def __init__(self,is_stemming):
@@ -42,7 +43,7 @@ class Parse:
                     elif term.lower() in self.month:
                         self.to_date(term.lower(), list_of_words, i, text_tokensterm)
                     elif self.to_number(term).replace('.', '', 1).isdigit() and term.isascii():
-                        num = self.to_number(term)
+                        num = re.sub('[,]', '',term)
                         if i + 1 < len(list_of_words):
                             if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
                                 text_tokensterm.append(self.to3digits_units(num) + "%")
@@ -70,7 +71,7 @@ class Parse:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
                             self.clean_and_push(word,text_tokensterm)
-        self.Entites_and_Names(text_tokensterm)
+        #self.Entites_and_Names(text_tokensterm)
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -232,10 +233,8 @@ class Parse:
     def to_number(self, num):
         newNum = num.split(",")
         newNum2 = ''
-        for n in newNum:
-            newNum2 += n
+        newNum2.join(newNum)
         return newNum2
-
 
     def Entites_and_Names(self,list_of_words):
         length=len(list_of_words)

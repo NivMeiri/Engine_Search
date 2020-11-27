@@ -18,6 +18,8 @@ class Indexer:
         self.Doc_Info_Text = []
         #counter for the line in the text to write
         self.Next_line = 1
+        self.Posting_counter=1
+        self.my_files=[]
         self.config = config
 
     def add_new_doc(self, document):
@@ -67,24 +69,25 @@ class Indexer:
 
             self.add_to_Posting_sorted(toReturn,document.tweet_id,document.term_doc_dictionary[term][0]/(document.max_term[1]))
         self.doc_info(document)
-        if Indexer.num_of_doc==1000:
+        if Indexer.num_of_doc%100000==0:
             self.save_with_pickle()
             self.save_file_Info()
-        elif (Indexer.num_of_doc%25000==0):
-            self.merge_and_save_posting()
-            self.save_file_Info()
+
 
             #self.Load_Doc_Info(document.tweet_id)
 
 
     def save_with_pickle(self):
-        db=open('Pickle_Save_posting.pkl',"wb")
+        name='Pickl_posting'+str(self.Posting_counter)+".pkl"
+        self.Posting_counter+=1
+        self.my_files.append(name)
+        db=open(name,"wb")
         pickle.dump(self.postingDict, db)
         db.close()
         self.postingDict = {}
 
-    def load_dictionary(self):
-        db=open('Pickle_Save_posting.pkl','rb')
+    def load_dictionary(self,name):
+        db=open(name,'rb')
         dbfile=pickle.load(db)
         db.close()
         return  dbfile
@@ -109,7 +112,9 @@ class Indexer:
             param="w"
         with open('Documnet_info.txt', param) as my_file:
                 for doc in self.Doc_Info_Text:
-                    my_file.write('%s\n' % (str(doc[1]).encode("utf-8")))
+                    my_string=str(doc[1])
+                    if my_string.isascii():
+                        my_file.write('%s\n' % (my_string))
                     self.Doc_Line_Number[doc[0]]=self.Next_line
                     self.Next_line+=1
         self.Doc_Info_Text=[]
@@ -120,8 +125,6 @@ class Indexer:
         for i, line in enumerate(fp):
             if i ==Doc_line:
                 #x=linecache.getline("listfile.txt", Doc_line, module_globals=None)
-                line=ast.literal_eval(line)
-                line=line.decode( ("utf-8"))
                 line=ast.literal_eval(line)
                 return  line
         #fp.close()
@@ -154,26 +157,43 @@ class Indexer:
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
 
     def add_wij_to_doc(self):
+        counter=0
+        list_of_docs=[]
+        with open('Documnet_info.txt', 'r') as to_read:
+            for i, line in enumerate(to_read):
+                line = ast.literal_eval(line)
+                list_of_docs.append( line)
+                counter+=1
+                if(counter==10000):
+                    self.writing_wij_to_text(list_of_docs)
+                    counter=0
+                    list_of_docs=[]
+
+    def writing_wij_to_text(self,list_of_docs):
+        square_wij = 0
         with open('Documnet_info_Wij.txt', 'w') as to_write:
-            with open('Documnet_info.txt', 'r') as to_read:
-                for i, line in enumerate(to_read):
-                    line = ast.literal_eval(line)
-                    line = line.decode(("utf-8"))
-                    doc_info_list = ast.literal_eval(line)
-                    square_wij = 0
-                    doc_term = doc_info_list[3]
-                    #print("doc term:     "+str(doc_term))
-                    for term in doc_term:
-                        temp_term=term.lower()
-                        if (temp_term not in self.inverted_idx):
-                            temp_term = term.upper()
-                        wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
-                        square_wij += (wij**2)
-                        #doc_term[term] = doc_term[term] + (wij,)
-                    doc_info_list[3] = doc_term
-                    doc_info_list.insert(3, square_wij)
-                    new_info=[doc_info_list[1],doc_info_list[2],doc_info_list[3]]
-                    to_write.write('%s\n' % (str(new_info).encode("utf-8")))
+            for doc_info_list in list_of_docs:
+                doc_term = doc_info_list[3]
+                for term in doc_term:
+                    temp_term = term.lower()
+                    if (temp_term not in self.inverted_idx):
+                        temp_term = term.upper()
+                    wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
+                    square_wij += (wij ** 2)
+                doc_info_list[3] = doc_term
+                doc_info_list.insert(3, square_wij)
+                new_info = [doc_info_list[1], doc_info_list[2], doc_info_list[3]]
+                to_write.write('%s\n' % (str(new_info)))
 
     def calc_wij(self, fi,max_fi, df, n):
         return (fi/max_fi) * (log(n/df, 2))
+
+    def merge_all_posting(self):
+        for file in (self.my_files):
+            saved_dict=self.load_dictionary(file)
+            for term in saved_dict:
+                if term in self.postingDict:
+                    self.postingDict[term]+=saved_dict[term]
+                else:
+                    self.postingDict[term] = saved_dict[term]
+        self.save_with_pickle()

@@ -1,11 +1,9 @@
-1.todo improve WordNet
+1.todo improve WordNet-niv
 2. todo improve entities alghroithm and to use it in the indexer
 3. todo fix hash tags : #ABCD big words and isn't------- ' this sign
 4. todo the report
 5. todo add references from internet
 6. todo add posting with stemmer
 7 todo check what do with-re tweet
-8. todo reader & parser more efficent
-9. todo check the parser efficent
-10. todo main function
-11. todo configuration file-for what???
+8. todo check the indexer efficent
+9. todo configuration file-for what???
