@@ -22,15 +22,15 @@ def run_engine(corpus_path,output_path,stemming):
     documents_list = r.read_file(corpus_path)
     #documents_list = r.read_file(file_name='sample3.parquet')
     # Iterate over every document in the file
-    for file in documents_list:
-        documents_list=read_Parquert(file)
-        for idx, document in enumerate(documents_list):
-            parsed_document = p.parse_doc(document)
-            num += 1
-            indexer.add_new_doc(parsed_document)
-        print("num of tweets:  " + str(num) )
-        print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
-        indexer.insert_posting()
+    # for file in documents_list:
+    #     documents_list=read_Parquert(file)
+    #     for idx, document in enumerate(documents_list):
+    #         parsed_document = p.parse_doc(document)
+    #         num += 1
+    #         indexer.add_new_doc(parsed_document)
+    #     print("num of tweets:  " + str(num) )
+    #     print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
+    #     indexer.insert_posting()
     for director in Files_directories:
         documents_list = r.read_file_pickl(output_path + "/Pickles_directories"+"/"+director)
         indexer.Merge_into_28_pickles(documents_list,director)

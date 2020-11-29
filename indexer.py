@@ -17,10 +17,10 @@ class Indexer:
         self.Doc_information={}
         self.config = config
         self.output_path=output_path + "/Pickles_directories"
-
-        os.mkdir(self.output_path)
-        for key in self.General_Posting.keys():
-            os.mkdir(self.output_path + "/" + key)
+        #
+        # os.mkdir(self.output_path)
+        # for key in self.General_Posting.keys():
+        #     os.mkdir(self.output_path + "/" + key)
 
     def add_new_doc(self, document):
         Indexer.num_of_doc = Indexer.num_of_doc + 1
@@ -108,7 +108,7 @@ class Indexer:
         if(len(documents_list)>0):
             our_dict=self.load_dictionary(documents_list[0])
         for i in range (1,len( documents_list)):
-            temp_dict=utils.load_obj(documents_list[i])
+            temp_dict=self.load_dictionary(documents_list[i])
             for term in temp_dict:
                     if term in our_dict:
                         our_dict[term] += temp_dict[term]

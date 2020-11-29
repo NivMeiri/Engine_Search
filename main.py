@@ -16,7 +16,7 @@ if __name__ == '__main__':
                             "s": [1, {}], "t": [1, {}], "u": [1, {}], "v": [1, {}], "w": [1, {}], "x": [1, {}],
                             "y": [1, {}], "z": [1, {}], "@": [1, {}], "#": [1, {}], "other": [1, {}]}
 
-    corpus_path= 'C:/Users/Admin/Desktop/data/date=07-30-2020'
+    corpus_path= 'C:/Users/Admin/Desktop/data'
     output_path="C:/Users/Admin/Documents/GitHub/Engine_Search"
     stemming=False
     queries=["going"]
