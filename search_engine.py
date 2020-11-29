@@ -31,7 +31,7 @@ def run_engine(corpus_path,output_path,stemming):
             indexer.add_new_doc(parsed_document)
         print("num of tweets:  " + str(num) )
         print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
-    indexer.merge_all_posting()
+    #indexer.merge_all_posting()
     print("the posting dict was merged and saved:  " + str(file) + ":  " + str(time.time() - start))
         # index the document data
     indexer.add_wij_to_doc()
