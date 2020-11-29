@@ -38,6 +38,10 @@ class Ranker:
             relevant_doc[doc]=sum
         return  (relevant_doc)
 
+    def rank_with_bm25(self,idf,tf,d,avg):
+        return
+
+
     def WordNet(self,word):
         synonyms = []
         for syn in wordnet.synsets(word):

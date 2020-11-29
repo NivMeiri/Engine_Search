@@ -20,6 +20,7 @@ class Searcher:
         self.inverted_index = inverted_index
         self.doc_line=doc_line
         self.num_of_doc=len(self.doc_line)
+
     def relevant_docs_from_posting(self, query):
         """
         This function loads the posting list and count the amount of relevant documents per term.

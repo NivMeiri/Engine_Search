@@ -104,7 +104,7 @@ class Parse:
             index+=1
 
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
-                            quote_url, term_dict, doc_length, max_term)
+                            quote_url, term_dict, doc_length, max_term, len(tokenized_text))
         return document
 
     def parse_tags(self, term, text_tokensterm):

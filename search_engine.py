@@ -34,9 +34,9 @@ def run_engine(corpus_path,output_path,stemming):
     #indexer.merge_all_posting()
     print("the posting dict was merged and saved:  " + str(file) + ":  " + str(time.time() - start))
         # index the document data
-    indexer.add_wij_to_doc()
+    #indexer.add_wij_to_doc()
     print("time that  calc wij:  " + str(file) + ":  " + str(time.time() - start))
-
+    #print(indexer.Doc_Line_Number)
     # delete the entities that occur less then twice
     #indexer(parser.entities_dict)
 

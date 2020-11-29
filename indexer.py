@@ -2,6 +2,7 @@ import ast
 import linecache
 import math
 import pickle
+import re
 from math import log
 import os.path
 
@@ -11,25 +12,16 @@ class Indexer:
     def __init__(self, config):
         # the Main Dictionary {Term:unique doc,line in posting}
         self.inverted_idx = {}
-        #the posting files   {term: [(doc1,freq in doc),(doc3,8),(doc5,7)]-sorted list by doc id}
-        #alpha_bet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-        #             "u", "v", "w", "x", "y", "z", "@", "#", "other"]
-        # for word in alpha_bet:
-        #     name = "Posting_files" + word + ".txt"
-         #   open(name, 'a')
-        # dictionary to retreive the line number of specific key..{doc id:line number in text file}
+
         self.Doc_Line_Number = {}
         # [doc id,[doc info]]....doc info=[max_term(str),max freq(int),unique terms(int),wij^2,dictionary{term:(freq,indices(list),wij}
         self.Doc_Info_Text = []
         #counter for the line in the text to write
         self.Next_line = 1
         self.Posting_counter=1
+        self.posting_files={}
         self.my_files=[]
-        #self.General_Posting={"a":[1,{}],"b":[1,{}],"c":[1,{}],"d":[1,{}],"e":[1,{}],"f":[1,{}],"g":[1,{}],"h":[1,{}],"i":[1,{}],"j":[1,{}],"k":[1,{}],"l":[1,{}],"m":[1,{}],"n":[1,{}],"o":[1,{}],"p":[1,{}],"q":[1,{}],"r":[1,{}],"s":[1,{}],"t":[1,{}],"u":[1,{}],"v":[1,{}],"w":[1,{}],"x":[1,{}],"y":[1,{}],"z":[1,{}],"@":[1,{}],"#":[1,{}],"other":[1,{}]}
-        self.TO_posting_info_a= {}
         self.config = config
-
-
 
     def add_new_doc(self, document):
         Indexer.num_of_doc = Indexer.num_of_doc + 1
@@ -64,88 +56,17 @@ class Indexer:
                     self.inverted_idx[upper][0] +=  1
 
             freq=document.term_doc_dictionary[term][0]/(document.max_term[1])
-            first_term=toReturn[0].lower()
-            #"a": [0, {}]
-            if(first_term not in self.General_Posting ):
-                if toReturn in self.General_Posting["other"][1]:
-                    self.General_Posting["other"][1][toReturn].append([document.tweet_id, freq])
-                else:
-                    self.General_Posting["other"][1][toReturn] = [[document.tweet_id, freq]]
-                if (len(self.General_Posting["other"][1]) == 12000):
-                    self.insert_to_post( "other")
+            if toReturn in self.posting_files:
+                self.posting_files[toReturn]+=" "+document.tweet_id+":"+str(freq)
             else:
-                if toReturn in self.General_Posting[first_term]:
-                    self.General_Posting[first_term][1][toReturn].append([document.tweet_id,freq])
-                else:
-                    self.General_Posting[first_term][1][toReturn]=[[document.tweet_id,freq]]
-                if(len(self.General_Posting[first_term][1])==12000):
-                    self.insert_to_post(first_term)
-
-
-        # if ( len(self.TO_posting_info)%150000==0):
-        #     self.insert_to_post( )
-        self.doc_info(document)
-        if Indexer.num_of_doc%100000==0:
-            #self.save_with_pickle()
-            self.save_file_Info()
-
-
-
-
-
-    def add_new_doc2(self, document):
-        #print(document.full_text)
-        Indexer.num_of_doc = Indexer.num_of_doc + 1
-        document_dictionary = document.term_doc_dictionary
-        """
-        This function perform indexing process for a document object.
-        Saved information is captures via two dictionaries ('inverted index' and 'posting')
-        :param document: a document need to be indexed.
-        :return: -
-        """
-        # Go over each term in the doc
-        #the upper lower sort.. decide if the word will be saved in upper or lower case and update the matches terms
-        for term in document_dictionary.keys():
-            upper = term.upper()
-            lower = term.lower()
-            toReturn=""
-            # Update inverted index and posting
-            if (lower not in self.inverted_idx):
-                # the word start with lower case char
-                if (term[0].islower()) or (len(term)>1 and term[1].islower() and (term[0]=='@' or term[0]=='#')):
-                    self.inverted_idx[lower] = 1
-                    self.postingDict[lower]=[]
-                    toReturn = lower
-                    if (upper in self.inverted_idx):
-                        self.inverted_idx[lower] += self.inverted_idx[upper]
-                        self.inverted_idx.pop(upper, None)
-                        if upper in self.postingDict:
-                            self.postingDict[lower] += self.postingDict[upper]
-                            self.postingDict.pop(upper, None)
-                # the word start with upper case char
-                else:
-                    toReturn = upper
-                    if (upper in self.inverted_idx):
-                        self.inverted_idx[upper] += 1
-                        if upper not in self.postingDict:
-                            self.postingDict[upper] = []
-                    else:
-                        self.inverted_idx[upper] = 1
-                        self.postingDict[upper]=[]
-            else:
-                self.inverted_idx[lower] += 1
-                if lower not in self.postingDict:
-                    self.postingDict[lower] = []
-                toReturn=lower
-
-            self.add_to_Posting_sorted(toReturn,document.tweet_id,document.term_doc_dictionary[term][0]/(document.max_term[1]))
-        self.doc_info(document)
-        if Indexer.num_of_doc%250000==0:
-            self.save_with_pickle()
-            self.save_file_Info()
-
-
-            #self.Load_Doc_Info(document.tweet_id)
+                 self.posting_files[toReturn] = document.tweet_id+":"+str(freq)
+            if (len(self.posting_files) == 1000):
+                 self.insert_to_post()
+        self.Doc_Line_Number[document.tweet_id] = [document.len_doc,0.0]
+        #self.doc_info(document)
+        # if Indexer.num_of_doc%100000==0:
+        #     #self.save_with_pickle()
+        #     self.save_file_Info()
 
 
     def save_with_pickle(self):
@@ -226,24 +147,38 @@ class Indexer:
         text_info = [doc.max_term[0],doc.max_term[1], len(doc.term_doc_dictionary),doc.term_doc_dictionary]
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
 
-    def insert_to_post(self,char):
-            dictionary=self.General_Posting[char][1]
-            #check if the file is already exist
-            with open("Posting_files"+char+".txt", 'a') as my_file:
-                for key in dictionary.keys():
-                    to_insert = str(dictionary[key])
-                    if(key in self.inverted_idx):
-                        if self.inverted_idx[key][1]==None:
-                            my_file.write('%s\n' % (to_insert))
-                        else:
-                            old=self.read_specific_line("Posting_files"+char+".txt",self.inverted_idx[key] [1])
-                            old=""
-                            to_add=old+to_insert
-                            my_file.write('%s\n' % (to_add))
+    def insert_to_post(self):
+        with open("Posting_files.txt", 'a') as my_file:
+            for key in self.posting_files:
+                to_insert = self.posting_files[key]
+                if key in self.inverted_idx:
+                    if self.inverted_idx[key][1] == None:
+                        my_file.write('%s\n' % (to_insert))
+                    else:
+                        to_insert=to_insert+" "+str(self.inverted_idx[key][1])
+                        my_file.write('%s\n' % (to_insert))
+                    self.inverted_idx[key][1]=self.Posting_counter
+                    self.Posting_counter+=1
+            self.posting_files={}
 
-                        self.inverted_idx[key][1] = self.General_Posting[char][0]
-                        self.General_Posting[char][0] += 1
-                self.General_Posting[char][1]={}
+    # def insert_to_post(self,char):
+    #         dictionary=self.General_Posting[char][1]
+    #         #check if the file is already exist
+    #         with open("Posting_files"+char+".txt", 'a') as my_file:
+    #             for key in dictionary.keys():
+    #                 to_insert = str(dictionary[key])
+    #                 if(key in self.inverted_idx):
+    #                     if self.inverted_idx[key][1]==None:
+    #                         my_file.write('%s\n' % (to_insert))
+    #                     else:
+    #                         old=self.read_specific_line("Posting_files"+char+".txt",self.inverted_idx[key] [1])
+    #                         old=""
+    #                         to_add=old+to_insert
+    #                         my_file.write('%s\n' % (to_add))
+    #
+    #                     self.inverted_idx[key][1] = self.General_Posting[char][0]
+    #                     self.General_Posting[char][0] += 1
+    #             self.General_Posting[char][1]={}
 
 
     def read_specific_line(self,filename,line_num):
@@ -269,34 +204,54 @@ class Indexer:
         #                     self.Posting_files_line += 1
 
 
-    def add_wij_to_doc(self):
-        counter=0
-        list_of_docs=[]
-        with open('Documnet_info.txt', 'r') as to_read:
-            for i, line in enumerate(to_read):
-                line = ast.literal_eval(line)
-                list_of_docs.append( line)
-                counter+=1
-                if(counter==10000):
-                    self.writing_wij_to_text(list_of_docs)
-                    counter=0
-                    list_of_docs=[]
+    # def add_wij_to_doc(self):
+    #     counter=0
+    #     list_of_docs=[]
+    #     with open('Documnet_info.txt', 'r') as to_read:
+    #         for i, line in enumerate(to_read):
+    #             line = ast.literal_eval(line)
+    #             list_of_docs.append( line)
+    #             counter+=1
+    #             if(counter==10000):
+    #                 self.writing_wij_to_text(list_of_docs)
+    #                 counter=0
+    #                 list_of_docs=[]
 
-    def writing_wij_to_text(self,list_of_docs):
-        square_wij = 0
-        with open('Documnet_info_Wij.txt', 'w') as to_write:
-            for doc_info_list in list_of_docs:
-                doc_term = doc_info_list[3]
-                for term in doc_term:
-                    temp_term = term.lower()
-                    if (temp_term not in self.inverted_idx):
-                        temp_term = term.upper()
-                    wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
-                    square_wij += (wij ** 2)
-                doc_info_list[3] = doc_term
-                doc_info_list.insert(3, square_wij)
-                new_info = [doc_info_list[1], doc_info_list[2], doc_info_list[3]]
-                to_write.write('%s\n' % (str(new_info)))
+    # def writing_wij_to_text(self,list_of_docs):
+    #     square_wij = 0
+    #     with open('Documnet_info_Wij.txt', 'w') as to_write:
+    #         for doc_info_list in list_of_docs:
+    #             doc_term = doc_info_list[3]
+    #             for term in doc_term:
+    #                 temp_term = term.lower()
+    #                 if (temp_term not in self.inverted_idx):
+    #                     temp_term = term.upper()
+    #                 wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
+    #                 square_wij += (wij ** 2)
+    #             doc_info_list[3] = doc_term
+    #             doc_info_list.insert(3, square_wij)
+    #             new_info = [doc_info_list[1], doc_info_list[2], doc_info_list[3]]
+    #             to_write.write('%s\n' % (str(new_info)))
+
+    def add_wij_to_doc(self):
+        for term in self.inverted_idx:
+            freq_line=self.inverted_idx[term]
+            idf=log(self.num_of_doc/freq_line[0])
+            line=self.read_specific_line('Posting_files.txt',freq_line[1])
+            list_line=line.split()
+            while ":" not in list_line[-1]:
+                print(line)
+                line = self.read_specific_line('Posting_files.txt', int(list_line[-1]))
+                print(line)
+                list_line=list_line[:-1]
+                list_line += line.split()
+            for doc_info in list_line:
+                doc_info_list=doc_info.split(":")
+                wij=float(doc_info_list[1])*idf
+                self.Doc_Line_Number[doc_info_list[0]][1]+=wij**2
+
+
+
 
     def calc_wij(self, fi,max_fi, df, n):
         return (fi/max_fi) * (log(n/df, 2))
