@@ -7,7 +7,6 @@ from searcher import Searcher
 import utils
 import pandas as pd
 
-
 def run_engine(corpus_path,output_path,stemming):
     """
     :return:
@@ -17,8 +16,8 @@ def run_engine(corpus_path,output_path,stemming):
     r = ReadFile(corpus_path=config.get__corpusPath())
     p = Parse(stemming)
     indexer = Indexer(config)
-   # indexer.save_with_pickle({})
-#todo get the file name
+
+
     start=time.time()
     documents_list = r.read_file(corpus_path)
     #documents_list = r.read_file(file_name='sample3.parquet')
@@ -31,10 +30,10 @@ def run_engine(corpus_path,output_path,stemming):
             indexer.add_new_doc(parsed_document)
         print("num of tweets:  " + str(num) )
         print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
-    #indexer.merge_all_posting()
+        indexer.insert_posting()
     print("the posting dict was merged and saved:  " + str(file) + ":  " + str(time.time() - start))
         # index the document data
-    #indexer.add_wij_to_doc()
+    indexer.add_wij_to_doc()
     print("time that  calc wij:  " + str(file) + ":  " + str(time.time() - start))
     #print(indexer.Doc_Line_Number)
     # delete the entities that occur less then twice
@@ -43,8 +42,8 @@ def run_engine(corpus_path,output_path,stemming):
     print('Finished parsing and indexing. Starting to export files')
     print("time that toke to pars:  "+str(time.time()-start))
     #todo check what to do with the indexer and posting that they saved
-    utils.save_obj(indexer.inverted_idx, "inverted_idx")
-    utils.save_obj(indexer.Doc_Line_Number, "Doc_Line_Number")
+    #utils.save_obj(indexer.inverted_idx, "inverted_idx")
+    #utils.save_obj(indexer.Doc_Line_Number, "Doc_Line_Number")
 
 def load_index():
     print('Load inverted index')
