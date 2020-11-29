@@ -5,15 +5,22 @@ import pickle
 from math import log
 import os.path
 
+import utils
+
 
 class Indexer:
     num_of_doc=0
-    def __init__(self, config):
+    def __init__(self, config,output_path):
         self.inverted_idx = {}
         self.General_Posting={"a":[1,{}],"b":[1,{}],"c":[1,{}],"d":[1,{}],"e":[1,{}],"f":[1,{}],"g":[1,{}],"h":[1,{}],"i":[1,{}],"j":[1,{}],"k":[1,{}],"l":[1,{}],"m":[1,{}],"n":[1,{}],"o":[1,{}],"p":[1,{}],"q":[1,{}],"r":[1,{}],"s":[1,{}],"t":[1,{}],"u":[1,{}],"v":[1,{}],"w":[1,{}],"x":[1,{}],"y":[1,{}],"z":[1,{}],"@":[1,{}],"#":[1,{}],"other":[1,{}]}
         self.TO_posting_info_a= {}
         self.Doc_information={}
         self.config = config
+        self.output_path=output_path + "/Pickles_directories"
+
+        os.mkdir(self.output_path)
+        for key in self.General_Posting.keys():
+            os.mkdir(self.output_path + "/" + key)
 
     def add_new_doc(self, document):
         Indexer.num_of_doc = Indexer.num_of_doc + 1
@@ -87,72 +94,25 @@ class Indexer:
         self.postingDict=saved_dict
         self.save_with_pickle()
 
-    def save_file_Info(self):
-        #check if the file is already exist
-        if(os.path.isfile("Documnet_info.txt")):
-            param="a"
-        else:
-            param="w"
-        with open('Documnet_info.txt', param) as my_file:
-                for doc in self.Doc_Info_Text:
-                    my_string=str(doc[1])
-                    if my_string.isascii():
-                        my_file.write('%s\n' % (my_string))
-                    self.Doc_Line_Number[doc[0]]=self.Next_line
-                    self.Next_line+=1
-        self.Doc_Info_Text=[]
-
-    def doc_info(self, doc):
-        text_info = [doc.max_term[0],doc.max_term[1], len(doc.term_doc_dictionary),doc.term_doc_dictionary]
-        self.Doc_Info_Text.append((doc.tweet_id, text_info))
-
     def insert_posting(self):
         for key in self.General_Posting.keys():
-            name = 'Pickl_posting' + str(key)+"_ "+str(self.General_Posting[key][0])+ ".pkl"
+            name = self.output_path+"/"+key+"/"+'Pickl_posting' + str(key)+"_ "+str(self.General_Posting[key][0])+ ".pkl"
             self.General_Posting[key][0]+=1
             db = open(name, "wb")
             pickle.dump(self.General_Posting[key][1], db)
             db.close()
             self.General_Posting[key][1] = {}
 
-    def add_wij_to_doc(self):
-        counter=0
-        list_of_docs=[]
-        with open('Documnet_info.txt', 'r') as to_read:
-            for i, line in enumerate(to_read):
-                line = ast.literal_eval(line)
-                list_of_docs.append( line)
-                counter+=1
-                if(counter==10000):
-                    self.writing_wij_to_text(list_of_docs)
-                    counter=0
-                    list_of_docs=[]
 
-    def writing_wij_to_text(self,list_of_docs):
-        square_wij = 0
-        with open('Documnet_info_Wij.txt', 'w') as to_write:
-            for doc_info_list in list_of_docs:
-                doc_term = doc_info_list[3]
-                for term in doc_term:
-                    temp_term = term.lower()
-                    if (temp_term not in self.inverted_idx):
-                        temp_term = term.upper()
-                    wij = self.calc_wij(doc_term[term][0], doc_info_list[1], self.inverted_idx[temp_term], self.num_of_doc)
-                    square_wij += (wij ** 2)
-                doc_info_list[3] = doc_term
-                doc_info_list.insert(3, square_wij)
-                new_info = [doc_info_list[1], doc_info_list[2], doc_info_list[3]]
-                to_write.write('%s\n' % (str(new_info)))
-
-    def calc_wij(self, fi,max_fi, df, n):
-        return (fi/max_fi) * (log(n/df, 2))
-
-    def merge_all_posting(self):
-        for file in (self.my_files):
-            saved_dict=self.load_dictionary(file)
-            for term in saved_dict:
-                if term in self.postingDict:
-                    self.postingDict[term]+=saved_dict[term]
-                else:
-                    self.postingDict[term] = saved_dict[term]
-        self.save_with_pickle()
+    def Merge_into_28_pickles(self,documents_list, char):
+        if(len(documents_list)>0):
+            our_dict=self.load_dictionary(documents_list[0])
+        for i in range (1,len( documents_list)):
+            temp_dict=utils.load_obj(documents_list[i])
+            for term in temp_dict:
+                    if term in our_dict:
+                        our_dict[term] += temp_dict[term]
+                    else:
+                        our_dict[term] = temp_dict[term]
+        utils.save_obj(our_dict,self.output_path+"/"+char+"/"+"final_dict"+char )
+        # os.remove(documents_list[i])

@@ -13,10 +13,10 @@ def run_engine(corpus_path,output_path,stemming):
     """
     num = 0
     config = ConfigClass()
-    r = ReadFile(corpus_path=config.get__corpusPath())
+    r = ReadFile(corpus_path,output_path)
     p = Parse(stemming)
-    indexer = Indexer(config)
-
+    indexer = Indexer(config,output_path)
+    Files_directories = ["a","b", "c", "d","e", "f","g", "h", "i", "j", "k", "l","m", "n", "o", "p", "q", "r","s", "t", "u", "v", "w", "x","y", "z", "@", "#", "other"]
 
     start=time.time()
     documents_list = r.read_file(corpus_path)
@@ -31,10 +31,11 @@ def run_engine(corpus_path,output_path,stemming):
         print("num of tweets:  " + str(num) )
         print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
         indexer.insert_posting()
-    print("the posting dict was merged and saved:  " + str(file) + ":  " + str(time.time() - start))
+    for director in Files_directories:
+        documents_list = r.read_file_pickl(output_path + "/Pickles_directories"+"/"+director)
+        indexer.Merge_into_28_pickles(documents_list,director)
+    #print("the posting dict was merged and saved:  " + str(file) + ":  " + str(time.time() - start))
         # index the document data
-    indexer.add_wij_to_doc()
-    print("time that  calc wij:  " + str(file) + ":  " + str(time.time() - start))
     #print(indexer.Doc_Line_Number)
     # delete the entities that occur less then twice
     #indexer(parser.entities_dict)
@@ -42,7 +43,7 @@ def run_engine(corpus_path,output_path,stemming):
     print('Finished parsing and indexing. Starting to export files')
     print("time that toke to pars:  "+str(time.time()-start))
     #todo check what to do with the indexer and posting that they saved
-    #utils.save_obj(indexer.inverted_idx, "inverted_idx")
+    #utils.load_obj( "inverted_idx")
     #utils.save_obj(indexer.Doc_Line_Number, "Doc_Line_Number")
 
 def load_index():
@@ -66,8 +67,8 @@ def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
     start=time.time()
     run_engine(corpus_path,output_path,stemming)
     #info=load_index()
-    # inverted_index = info[0]
-    # Doc_line=info[1]
+    #inverted_index = info[0]
+    #Doc_line=info[1]
     # for query in queries:
     #     for doc_tuple in search_and_rank_query(query, inverted_index,Doc_line, num_docs_to_retrieve,stemming):
     #         print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
