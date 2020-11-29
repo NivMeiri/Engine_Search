@@ -60,7 +60,7 @@ class Indexer:
                 self.posting_files[toReturn]+=" "+document.tweet_id+":"+str(freq)
             else:
                  self.posting_files[toReturn] = document.tweet_id+":"+str(freq)
-            if (len(self.posting_files) == 1000):
+            if (len(self.posting_files) == 10000):
                  self.insert_to_post()
         self.Doc_Line_Number[document.tweet_id] = [document.len_doc,0.0]
         #self.doc_info(document)
