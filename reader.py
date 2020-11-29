@@ -21,12 +21,7 @@ class ReadFile:
                     filepath = subdir + os.sep + filename
                     if filepath.endswith(".parquet"):
                         doc_names.append(filepath)
-                        '''
-                        df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
-                        for doc in df:
-                            tweets.append(doc)
-                            if(len(tweets)==100000):
-                            '''
+
         else:
             doc_names .append(full_path)
             #tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()

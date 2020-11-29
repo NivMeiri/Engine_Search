@@ -12,11 +12,11 @@ class Indexer:
         # the Main Dictionary {Term:unique doc,line in posting}
         self.inverted_idx = {}
         #the posting files   {term: [(doc1,freq in doc),(doc3,8),(doc5,7)]-sorted list by doc id}
-        alpha_bet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
-                     "u", "v", "w", "x", "y", "z", "@", "#", "other"]
-        for word in alpha_bet:
-            name = "Posting_files" + word + ".txt"
-            open(name, 'a')
+        #alpha_bet = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s", "t",
+        #             "u", "v", "w", "x", "y", "z", "@", "#", "other"]
+        # for word in alpha_bet:
+        #     name = "Posting_files" + word + ".txt"
+         #   open(name, 'a')
         # dictionary to retreive the line number of specific key..{doc id:line number in text file}
         self.Doc_Line_Number = {}
         # [doc id,[doc info]]....doc info=[max_term(str),max freq(int),unique terms(int),wij^2,dictionary{term:(freq,indices(list),wij}
@@ -25,9 +25,10 @@ class Indexer:
         self.Next_line = 1
         self.Posting_counter=1
         self.my_files=[]
-        self.General_Posting={"a":[1,{}],"b":[1,{}],"c":[1,{}],"d":[1,{}],"e":[1,{}],"f":[1,{}],"g":[1,{}],"h":[1,{}],"i":[1,{}],"j":[1,{}],"k":[1,{}],"l":[1,{}],"m":[1,{}],"n":[1,{}],"o":[1,{}],"p":[1,{}],"q":[1,{}],"r":[1,{}],"s":[1,{}],"t":[1,{}],"u":[1,{}],"v":[1,{}],"w":[1,{}],"x":[1,{}],"y":[1,{}],"z":[1,{}],"@":[1,{}],"#":[1,{}],"other":[1,{}]}
+        #self.General_Posting={"a":[1,{}],"b":[1,{}],"c":[1,{}],"d":[1,{}],"e":[1,{}],"f":[1,{}],"g":[1,{}],"h":[1,{}],"i":[1,{}],"j":[1,{}],"k":[1,{}],"l":[1,{}],"m":[1,{}],"n":[1,{}],"o":[1,{}],"p":[1,{}],"q":[1,{}],"r":[1,{}],"s":[1,{}],"t":[1,{}],"u":[1,{}],"v":[1,{}],"w":[1,{}],"x":[1,{}],"y":[1,{}],"z":[1,{}],"@":[1,{}],"#":[1,{}],"other":[1,{}]}
         self.TO_posting_info_a= {}
         self.config = config
+
 
 
     def add_new_doc(self, document):
@@ -71,14 +72,14 @@ class Indexer:
                 else:
                     self.General_Posting["other"][1][toReturn] = [[document.tweet_id, freq]]
                 if (len(self.General_Posting["other"][1]) == 12000):
-                    self.insert_to_post( "other",self.General_Posting["other"][1])
+                    self.insert_to_post( "other")
             else:
                 if toReturn in self.General_Posting[first_term]:
                     self.General_Posting[first_term][1][toReturn].append([document.tweet_id,freq])
                 else:
                     self.General_Posting[first_term][1][toReturn]=[[document.tweet_id,freq]]
                 if(len(self.General_Posting[first_term][1])==12000):
-                    self.insert_to_post(first_term,self.General_Posting[first_term][1])
+                    self.insert_to_post(first_term)
 
 
         # if ( len(self.TO_posting_info)%150000==0):
@@ -225,8 +226,8 @@ class Indexer:
         text_info = [doc.max_term[0],doc.max_term[1], len(doc.term_doc_dictionary),doc.term_doc_dictionary]
         self.Doc_Info_Text.append((doc.tweet_id, text_info))
 
-    def insert_to_post(self,char,dictionary):
-
+    def insert_to_post(self,char):
+            dictionary=self.General_Posting[char][1]
             #check if the file is already exist
             with open("Posting_files"+char+".txt", 'a') as my_file:
                 for key in dictionary.keys():
@@ -236,6 +237,7 @@ class Indexer:
                             my_file.write('%s\n' % (to_insert))
                         else:
                             old=self.read_specific_line("Posting_files"+char+".txt",self.inverted_idx[key] [1])
+                            old=""
                             to_add=old+to_insert
                             my_file.write('%s\n' % (to_add))
 
