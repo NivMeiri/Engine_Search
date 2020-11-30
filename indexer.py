@@ -17,14 +17,16 @@ class Indexer:
         self.Doc_information={}
         self.config = config
         self.output_path=output_path + "/Pickles_directories"
+        self.avg_doc=0
         #
-        # os.mkdir(self.output_path)
-        # for key in self.General_Posting.keys():
-        #     os.mkdir(self.output_path + "/" + key)
+        os.mkdir(self.output_path)
+        for key in self.General_Posting.keys():
+            os.mkdir(self.output_path + "/" + key)
 
     def add_new_doc(self, document):
         Indexer.num_of_doc = Indexer.num_of_doc + 1
         document_dictionary = document.term_doc_dictionary
+        self.avg_doc+=document.len_doc
         # Go over each term in the doc
         #the upper lower sort.. decide if the word will be saved in upper or lower case and update the matches terms
         for term in document_dictionary.keys():
@@ -52,7 +54,7 @@ class Indexer:
                     # switch from upper in inverted to lower. all the words will be saved in lower
                 else:
                     toReturn=upper
-                    self.inverted_idx[upper] +=  1
+                    self.inverted_idx[upper] +=1
             freq=document.term_doc_dictionary[term][0]/(document.max_term[1])
             first_term=toReturn[0].lower()
             #"a": [0, {}]
@@ -64,7 +66,7 @@ class Indexer:
                 # if (len(self.General_Posting["other"][1]) == 25000):
                 #     self.insert_to_post( "other")
             else:
-                if toReturn in self.General_Posting[first_term]:
+                if toReturn in self.General_Posting[first_term][1]:
                     self.General_Posting[first_term][1][toReturn].append([document.tweet_id,freq])
                 else:
                     self.General_Posting[first_term][1][toReturn]=[[document.tweet_id,freq]]

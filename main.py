@@ -16,10 +16,10 @@ if __name__ == '__main__':
                             "s": [1, {}], "t": [1, {}], "u": [1, {}], "v": [1, {}], "w": [1, {}], "x": [1, {}],
                             "y": [1, {}], "z": [1, {}], "@": [1, {}], "#": [1, {}], "other": [1, {}]}
 
-    corpus_path= 'C:/Users/Admin/Desktop/data'
-    output_path="C:/Users/Admin/Documents/GitHub/Engine_Search"
+    corpus_path= 'C:/Users/Hadassa Zenou/Desktop/data'
+    output_path="C:/Users/Hadassa Zenou/Documents/GitHub/Engine_Search"
     stemming=False
-    queries=["going"]
+    queries=["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS."]
     num_docs_to_retrieve=20
     search_engine.main(corpus_path, output_path, stemming, queries, num_docs_to_retrieve)
 

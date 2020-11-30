@@ -39,7 +39,10 @@ class Ranker:
         return  (relevant_doc)
 
     def rank_with_bm25(self,idf,tf,d,avg):
-        return
+        k = 1.3
+        b = 0.75
+        bm25 = (idf * tf * (k + 1)) / (tf + k*(1 - b + b * (d / avg)))
+        return bm25
 
 
     def WordNet(self,word):
