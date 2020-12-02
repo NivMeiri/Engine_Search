@@ -53,12 +53,10 @@ class Parse:
                     elif term[0:5] == "https":
                         UrlList = self.pars_url(term)
                         for word_in_url in UrlList:
-                            clean_word=self.clean(word_in_url)
-                            if len(clean_word)>0:
-                                text_tokensterm.append(clean_word)
+                            self.clean_and_push(word_in_url)
                     elif term.lower() in self.month:
                         self.to_date(term.lower(), list_of_words, i, text_tokensterm)
-                    elif self.to_number(term).replace('.', '', 1).isdigit() and term.isascii():
+                    elif re.sub('[,]', '',term).replace('.', '', 1).isdigit() and term.isascii():
                         num = re.sub('[,]', '',term)
                         if i + 1 < len(list_of_words):
                             if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
@@ -74,9 +72,9 @@ class Parse:
                                 text_tokensterm.append(num + "B")
                                 list_of_words[i + 1] = ""
                             else:
-                                if "/" in list_of_words[i + 1] and list_of_words[i + 1][0].isdigit():
+                                if "/" in list_of_words[i + 1] and list_of_words[i + 1].replace('/', '', 1).isdigit():
                                     num = self.to3digits_units(num)+" "+list_of_words[i+1]
-                                    list_of_words[i+1]=""
+                                    list_of_words[i+1] = ""
                                 else:
                                     num = self.to3digits_units(num)
                                 text_tokensterm.append(num)
@@ -86,7 +84,7 @@ class Parse:
                     else:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
-                            self.clean_and_push(word,text_tokensterm)
+                            self.clean_and_push(word , text_tokensterm)
         self.Entites_and_Names(text_tokensterm)
         return text_tokensterm
 
@@ -251,11 +249,6 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0]) + '.' + str(num_with_point[1])
-    def to_number(self, num):
-        newNum = num.split(",")
-        newNum2 = ''
-        newNum2.join(newNum)
-        return newNum2
 
     def Entites_and_Names(self,list_of_words):
         length=len(list_of_words)
