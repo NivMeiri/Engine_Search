@@ -43,11 +43,3 @@ class Ranker:
         b = 0.75
         bm25 = (idf * tf * (k + 1)) / (tf + k*(1 - b + b * (d / avg)))
         return bm25
-
-
-    def WordNet(self,word):
-        synonyms = []
-        for syn in wordnet.synsets(word):
-            for l in syn.lemmas():
-                synonyms.append(l.name())
-        return(set(synonyms))

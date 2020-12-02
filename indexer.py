@@ -18,10 +18,15 @@ class Indexer:
         self.config = config
         self.output_path=output_path + "/Pickles_directories"
         self.avg_doc=0
-        #
+
         os.mkdir(self.output_path)
         for key in self.General_Posting.keys():
             os.mkdir(self.output_path + "/" + key)
+    def Get_inverted(self):
+        return  self.inverted_idx
+
+    def Get_Doc(self):
+        return self.Doc_information
 
     def add_new_doc(self, document):
         Indexer.num_of_doc = Indexer.num_of_doc + 1
@@ -118,3 +123,17 @@ class Indexer:
                         our_dict[term] = temp_dict[term]
         utils.save_obj(our_dict,self.output_path+"/"+char+"/"+"final_dict"+char )
         # os.remove(documents_list[i])
+    def Check_Merge_entites(self,entities):
+        if(len(entities)>0):
+            our_dict=self.load_dictionary(entities[0])
+            for i in range (1,len( entities)):
+                temp_dict=self.load_dictionary(entities[i])
+                for term in temp_dict:
+                        if term in our_dict:
+                            our_dict[term] += temp_dict[term]
+                        else:
+                            our_dict[term] = temp_dict[term]
+                #os.remove(entities[i])
+            for key in our_dict.keys:
+                if our_dict[key]<2:
+                    self.inverted_idx.pop(key)

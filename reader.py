@@ -3,10 +3,35 @@ import pandas as pd
 
 
 class ReadFile:
-    def __init__(self, corpus_path,output):
+    def __init__(self, corpus_path):
         self.corpus_path = corpus_path
-        self.output_path=output
+        #self.output_path=output
+
     def read_file(self, file_name):
+        """
+        This function is reading a parquet file contains several tweets
+        The file location is given as a string as an input to this function.
+        :param file_name: string - indicates the path to the file we wish to read.
+        :return: a dataframe contains tweets.
+        """
+        full_path = os.path.join(file_name)
+        doc_files = []
+        if not full_path.endswith(".parquet"):
+            for subdir, dirs, files in os.walk(full_path):
+                for filename in files:
+                    filepath = subdir + os.sep + filename
+                    if filepath.endswith(".parquet"):
+                        df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
+                        doc_files.append(df)
+        else:
+            doc_files.append(full_path)
+            # tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
+        return doc_files
+
+
+
+
+    def read_file_our_use(self, file_name):
         """
         This function is reading a parquet file contains several tweets
         The file location is given as a string as an input to this function.
@@ -15,27 +40,25 @@ class ReadFile:
         """
         full_path = os.path.join(self.corpus_path, file_name)
         doc_names=[]
-        tweets = []
         if not full_path.endswith(".parquet"):
             for subdir, dirs, files in os.walk(full_path):
                 for filename in files:
                     filepath = subdir + os.sep + filename
                     if filepath.endswith(".parquet"):
                         doc_names.append(filepath)
-
         else:
             doc_names .append(full_path)
             #tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
         return doc_names
 
-    def read_file_pickl(self, file_name):
+    def read_file_pickl(self, file_name,output_path):
         """
         This function is reading a parquet file contains several tweets
         The file location is given as a string as an input to this function.
         :param file_name: string - indicates the path to the file we wish to read.
         :return: a dataframe contains tweets.
         """
-        full_path = os.path.join(self.output_path, file_name)
+        full_path = os.path.join(output_path, file_name)
         doc_names=[]
         tweets = []
         if not full_path.endswith(".pkl"):
@@ -44,8 +67,14 @@ class ReadFile:
                     filepath = subdir + os.sep + filename
                     if filepath.endswith(".pkl"):
                         doc_names.append(filepath)
-
         else:
             doc_names .append(full_path)
             #tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
         return doc_names
+
+    def read_Parquert(self,filepath):
+        tweets = []
+        df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
+        for doc in df:
+            tweets.append(doc)
+        return tweets

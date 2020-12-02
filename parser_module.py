@@ -1,29 +1,42 @@
+import os.path
+import time
 from math import log
 
 from nltk.corpus import stopwords
 import stemmer
+import utils
 from document import Document
 import re
 
 class Parse:
-    def __init__(self,is_stemming):
+    def __init__(self,is_stemming,output_path):
+        self.output=output_path+"/"+"_Entities_pickles_"
         self.stop_words = stopwords.words('english')
         self.words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(self.words)))) for i, k in enumerate(self.words))
         self.maxword = max(len(x) for x in self.words)
         self.entities={}
+        self.Counter_entites=1
         self.binary_Stem=is_stemming
         self.stemmer=stemmer.Stemmer().Porter_stemmer
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
+        path=self.output
+        if not os.path.isdir(path):
+            os.mkdir(self.output)
     def parse_sentence(self, text):
         """
         This function tokenize, remove stop words and apply lower case for every word within the text
         :param text:
         :return:
         """
+        if(len(self.entities)>450000):
+            utils.save_obj(self.entities, self.output +"/"+ str(self.Counter_entites)+ "_entities_")
+            self.Counter_entites+=1
+            self.entities={}
+
         text_tokensterm = []
         list_of_words =text.split()
         for i in range(0, len(list_of_words)):
@@ -39,7 +52,9 @@ class Parse:
                     elif term[0:5] == "https":
                         UrlList = self.pars_url(term)
                         for word_in_url in UrlList:
-                            self.clean_and_push(word_in_url,text_tokensterm)
+                            clean_word=self.clean(word_in_url)
+                            if len(clean_word)>0:
+                                text_tokensterm.append(clean_word)
                     elif term.lower() in self.month:
                         self.to_date(term.lower(), list_of_words, i, text_tokensterm)
                     elif self.to_number(term).replace('.', '', 1).isdigit() and term.isascii():
@@ -71,7 +86,7 @@ class Parse:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
                             self.clean_and_push(word,text_tokensterm)
-        #self.Entites_and_Names(text_tokensterm)
+        self.Entites_and_Names(text_tokensterm)
         return text_tokensterm
 
     def parse_doc(self, doc_as_list):
@@ -82,9 +97,9 @@ class Parse:
         """
         tweet_id = doc_as_list[0]
         tweet_date = doc_as_list[1]
-        full_text = doc_as_list[2]
+        full_text =  "#biddentopresidency"
         url = doc_as_list[3]
-        retweet_text = doc_as_list[4]
+        retweet_text = "#biddentopresidency"
         retweet_url = doc_as_list[5]
         quote_text = doc_as_list[6]
         quote_url = doc_as_list[7]
@@ -102,9 +117,9 @@ class Parse:
             if term_dict[term][0] > max_term[1]:
                 max_term = (term, term_dict[term][0])
             index+=1
-
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
                             quote_url, term_dict, doc_length, max_term, len(tokenized_text))
+
         return document
 
     def parse_tags(self, term, text_tokensterm):
@@ -153,6 +168,8 @@ class Parse:
                 term=term.upper()
             else:
                 term=term.lower()
+            if(self.binary_Stem):
+                term=self.stemmer.stem(term)
             self.end_with_s(term,text_tokensterm)
 
     def clean(self, term):
@@ -241,14 +258,14 @@ class Parse:
         for i in range(len(list_of_words)) :
             Tag_Names = re.findall("\A@", list_of_words[i])
             if (len(Tag_Names) > 0):
-                self.check_if_in_entites_dictionary(list_of_words[i][1:].lower())
+                self.check_if_in_entites_dictionary(list_of_words[i][1:].upper())
             elif(list_of_words[i][0].isupper):
                 if(length>i+1 and len(list_of_words[i+1])>0):
                     if(list_of_words[i+1][0].isupper()):
-                        my_String=list_of_words[i].lower()+" "+list_of_words[i+1].lower()
+                        my_String=list_of_words[i].lower()+" "+list_of_words[i+1].upper()
                         self.check_if_in_entites_dictionary(my_String)
                 else:
-                    self.check_if_in_entites_dictionary(list_of_words[i].lower())
+                    self.check_if_in_entites_dictionary(list_of_words[i].upper())
 
     def check_if_in_entites_dictionary(self,entite):
         if( entite in self.entities):

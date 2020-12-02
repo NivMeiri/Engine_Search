@@ -12,12 +12,13 @@ import utils
 
 class Searcher:
 
-    def __init__(self, inverted_index,doc_line,avg_doc,stem):
+    def __init__(self, inverted_index,doc_line,avg_doc,stem,output):
         """
         :param inverted_index: dictionary of inverted index
         """
-        self.parser = Parse(stem)
+        self.parser = Parse(stem,output)
         self.ranker = Ranker()
+        self.output=output
         self.inverted_index = inverted_index
         self.doc_line=doc_line
         self.num_of_doc=len(self.doc_line)
@@ -31,22 +32,38 @@ class Searcher:
         """
 
         relevant_docs = {}
+        # expand_query=[]
+        # for term in query:
+        #     expand_query+=self.WordNet(term)
+        temp_char = ""
+        Word_net=[]
         for term in query:
+            if term not in  self.inverted_index:
+                # print('term {} not found in posting'.format(term))
+                # print("Searching the word in the WordNet model")
+                Word_net+=self.WordNet(term)
+            else:
+                Word_net.append(term)
+        expand_query = sorted(Word_net)
+        print(expand_query)
+        for term in expand_query:
              # an example of checks that you have to do
                 if term in self.inverted_index:
-                    idf = log(self.num_of_doc/self.inverted_index[term], 2)
-                    name='C:/Users/Hadassa Zenou/Documents/GitHub/Engine_Search/Pickles_directories'
-                    if term[0]=="@":
-                        name += "/@/final_dict@.pkl"
-                    elif term[0]=="#":
-                        name += "/#/final_dict#.pkl"
-                    elif term[0].islower() or term[0].isupper():
-                        name+="/"+term[0].lower()+"/final_dict"+term[0].lower()+".pkl"
-                    else:
-                        name += "/other/final_dictother.pkl"
-                    db = open(name, 'rb')
-                    posting = pickle.load(db)
-                    db.close()
+                    idf = log(self.num_of_doc / self.inverted_index[term], 2)
+                    if term[0]!=temp_char:
+                        temp_char = term[0]
+                        name=self.output+"/Pickles_directories"
+                        if term[0]=="@":
+                            name += "/@/final_dict@.pkl"
+                        elif term[0]=="#":
+                            name += "/#/final_dict#.pkl"
+                        elif term[0].islower() or term[0].isupper():
+                            name+="/"+term[0].lower()+"/final_dict"+term[0].lower()+".pkl"
+                        else:
+                            name += "/other/final_dictother.pkl"
+                        db = open(name, 'rb')
+                        posting = pickle.load(db)
+                        db.close()
                     docs=posting[term]
                     for doc_tuple in docs:
                         doc = doc_tuple[0]
@@ -56,8 +73,7 @@ class Searcher:
                             relevant_docs[doc]=bm25
                         else:
                             relevant_docs[doc]+=bm25
-                else:
-                    print('term {} not found in posting'.format(term))
+
         return relevant_docs
 
 
@@ -72,10 +88,12 @@ class Searcher:
                     fp.close()
                     return line
 
-
     def WordNet(self,word):
+        word_counter=0
         synonyms = []
         for syn in wordnet.synsets(word):
             for l in syn.lemmas():
-                synonyms.append(l.name())
+                if(word_counter<2 and l.name not in synonyms):
+                    synonyms.append(l.name())
+                    word_counter+=1
         return(set(synonyms))
