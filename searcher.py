@@ -41,7 +41,8 @@ class Searcher:
             if term not in  self.inverted_index:
                 # print('term {} not found in posting'.format(term))
                 # print("Searching the word in the WordNet model")
-                Word_net+=self.WordNet(term)
+                #Word_net+=self.WordNet(term)
+                Word_net.append(term)
             else:
                 Word_net.append(term)
         expand_query = sorted(Word_net)
@@ -68,11 +69,11 @@ class Searcher:
                     for doc_tuple in docs:
                         doc = doc_tuple[0]
                         tf=doc_tuple[1]
-                        bm25=self.ranker.rank_with_bm25(idf,tf,self.doc_line[doc],self.avg_doc)
+                        bm25=self.ranker.rank_with_bm25(idf,tf,self.doc_line[doc][0],self.avg_doc)
                         if doc not in relevant_docs.keys():
-                            relevant_docs[doc]=bm25
+                            relevant_docs[doc] = bm25
                         else:
-                            relevant_docs[doc]+=bm25
+                            relevant_docs[doc] += bm25
 
         return relevant_docs
 

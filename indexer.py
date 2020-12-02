@@ -18,10 +18,10 @@ class Indexer:
         self.config = config
         self.output_path=output_path + "/Pickles_directories"
         self.avg_doc=0
-
         os.mkdir(self.output_path)
         for key in self.General_Posting.keys():
             os.mkdir(self.output_path + "/" + key)
+
     def Get_inverted(self):
         return  self.inverted_idx
 
@@ -77,7 +77,7 @@ class Indexer:
                     self.General_Posting[first_term][1][toReturn]=[[document.tweet_id,freq]]
                 # if(len(self.General_Posting[first_term][1])==25000):
                 #     self.insert_to_post(first_term)
-        self.Doc_information[document.tweet_id]=document.len_doc
+        self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
 
     #self.doc_info(document)
         #if Indexer.num_of_doc%100000==0:

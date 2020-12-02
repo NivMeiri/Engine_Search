@@ -15,10 +15,10 @@ class Parse:
         self.words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(self.words)))) for i, k in enumerate(self.words))
         self.maxword = max(len(x) for x in self.words)
-        self.entities={}
-        self.Counter_entites=1
-        self.binary_Stem=is_stemming
-        self.stemmer=stemmer.Stemmer().Porter_stemmer
+        self.entities = {}
+        self.Counter_entites = 1
+        self.binary_Stem = is_stemming
+        self.stemmer = stemmer.Stemmer().Porter_stemmer
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
@@ -26,6 +26,7 @@ class Parse:
         path=self.output
         if not os.path.isdir(path):
             os.mkdir(self.output)
+
     def parse_sentence(self, text):
         """
         This function tokenize, remove stop words and apply lower case for every word within the text
@@ -97,9 +98,9 @@ class Parse:
         """
         tweet_id = doc_as_list[0]
         tweet_date = doc_as_list[1]
-        full_text =  "#biddentopresidency"
+        full_text =doc_as_list[2]
         url = doc_as_list[3]
-        retweet_text = "#biddentopresidency"
+        retweet_text =doc_as_list[4]
         retweet_url = doc_as_list[5]
         quote_text = doc_as_list[6]
         quote_url = doc_as_list[7]
@@ -123,16 +124,16 @@ class Parse:
         return document
 
     def parse_tags(self, term, text_tokensterm):
-        hash_list=[]
-        if (term.islower()):
+        hash_list = []
+        if term.islower():
             hash_list = self.infer_spaces(term)
-            for hash in hash_list:
-                self.clean_and_push(hash, text_tokensterm)
+        elif "_" in term:
+            hash_list = term.split("_")
         elif term.isupper() == False:
             hash_list = re.findall('[A-Z][^A-Z]*', term)
-            for hash in hash_list:
-                self.clean_and_push(hash,text_tokensterm)
-        if self.clean(term) not in hash_list:
+        for hash in hash_list:
+            self.clean_and_push(hash, text_tokensterm)
+        if term not in hash_list:
             self.clean_and_push(term, text_tokensterm)
 
 
@@ -162,15 +163,17 @@ class Parse:
         return out
 
     def clean_and_push(self, term, text_tokensterm):
-        term= self.clean(term)
+        term=self.clean(term)
         if len(term) > 0:
-            if (term[0].isupper()):
-                term=term.upper()
+            if term[0].isupper():
+                term = term.upper()
             else:
-                term=term.lower()
-            if(self.binary_Stem):
-                term=self.stemmer.stem(term)
-            self.end_with_s(term,text_tokensterm)
+                term = term.lower()
+            if self.binary_Stem:
+                term = self.stemmer.stem(term)
+            else:
+                term = self.end_with_s(term, text_tokensterm)
+            text_tokensterm.append(term)
 
     def clean(self, term):
         while len(term) > 0:
@@ -181,11 +184,12 @@ class Parse:
             else:
                 break
         return term
-    def end_with_s(self,term,text_tokensterm):
+
+    def end_with_s(self,term):
         if term.lower().endswith("'s"):
-            text_tokensterm.append(term[:-2])
+            return term[:-2]
         else:
-            text_tokensterm.append(term)
+            return term
 
     def pars_url(self, url):
         l = re.split('[,|/|//|:%?=+]', url)
