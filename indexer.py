@@ -65,19 +65,19 @@ class Indexer:
             #adding to term to the match dictionary by its first letter
             if(first_term not in self.General_Posting ):
                 if toReturn in self.General_Posting["other"][1]:
-                    self.General_Posting["other"][1][toReturn].append([document.tweet_id, freq])
+                    self.General_Posting["other"][1][toReturn].append((document.tweet_id, freq,document.len_doc))
                 else:
-                    self.General_Posting["other"][1][toReturn] = [[document.tweet_id, freq]]
+                    self.General_Posting["other"][1][toReturn] = [(document.tweet_id, freq,document.len_doc)]
 
             else:
                 if toReturn in self.General_Posting[first_term][1]:
-                    self.General_Posting[first_term][1][toReturn].append([document.tweet_id,freq])
+                    self.General_Posting[first_term][1][toReturn].append((document.tweet_id,freq,document.len_doc))
                 else:
-                    self.General_Posting[first_term][1][toReturn]=[[document.tweet_id,freq]]
+                    self.General_Posting[first_term][1][toReturn]=[(document.tweet_id,freq,document.len_doc)]
 
         #self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
         #adding the doc info the len of the doc
-        self.Doc_information[document.tweet_id]=document.len_doc
+        #self.Doc_information[document.tweet_id]=document.len_doc
 
 
     def load_dictionary(self,name):

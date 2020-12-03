@@ -25,7 +25,7 @@ def run_engine(corpus_path,output_path,stemming):
             parsed_document = p.parse_doc(document)
             num += 1
             indexer.add_new_doc(parsed_document)
-            if (num % 300000 == 0):
+            if (num % 400000 == 0):
                 indexer.insert_posting()
         print("num of tweets:  " + str(num) )
         print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))

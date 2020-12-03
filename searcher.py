@@ -63,7 +63,8 @@ class Searcher:
                     for doc_tuple in docs:
                         doc = doc_tuple[0]
                         tf=doc_tuple[1]
-                        bm25=self.ranker.rank_with_bm25(idf, tf, self.doc_info[doc][0], self.avg_doc)
+                        len=doc_tuple[2]
+                        bm25=self.ranker.rank_with_bm25(idf, tf, len, self.avg_doc)
                         if doc not in relevant_docs.keys():
                             relevant_docs[doc] = bm25
                         else:
