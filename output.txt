@@ -1,0 +1,6 @@
+All Reader tests passed
+Running Passed
+Test Number: 3 The term #asivikelane was not found in your inverted index
+Could Not find file results.csv
+Could Not find file report.docx
+RunTime was: 0:02:00.066121

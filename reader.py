@@ -14,7 +14,7 @@ class ReadFile:
         :param file_name: string - indicates the path to the file we wish to read.
         :return: a dataframe contains tweets.
         """
-        full_path = os.path.join(file_name)
+        full_path = os.path.join(self.corpus_path+"/"+file_name)
         doc_files = []
         if not full_path.endswith(".parquet"):
             for subdir, dirs, files in os.walk(full_path):
@@ -22,9 +22,12 @@ class ReadFile:
                     filepath = subdir + os.sep + filename
                     if filepath.endswith(".parquet"):
                         df = pd.read_parquet(filepath, engine="pyarrow").values.tolist()
-                        doc_files.append(df)
+                        for doc in df:
+                            doc_files.append(doc)
         else:
-            doc_files.append(full_path)
+            df = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
+            for doc in df:
+                doc_files.append(doc)
             # tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
         return doc_files
 
@@ -38,7 +41,7 @@ class ReadFile:
         :param file_name: string - indicates the path to the file we wish to read.
         :return: a dataframe contains tweets.
         """
-        full_path = os.path.join(self.corpus_path, file_name)
+        full_path = os.path.join( file_name)
         doc_names=[]
         if not full_path.endswith(".parquet"):
             for subdir, dirs, files in os.walk(full_path):
@@ -51,14 +54,14 @@ class ReadFile:
             #tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
         return doc_names
 
-    def read_file_pickl(self, file_name,output_path):
+    def read_file_pickl(self, file_name):
         """
         This function is reading a parquet file contains several tweets
         The file location is given as a string as an input to this function.
         :param file_name: string - indicates the path to the file we wish to read.
         :return: a dataframe contains tweets.
         """
-        full_path = os.path.join(output_path, file_name)
+        full_path = os.path.join( file_name)
         doc_names=[]
         tweets = []
         if not full_path.endswith(".pkl"):

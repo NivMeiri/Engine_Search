@@ -1,75 +1,97 @@
 import os.path
-import time
 from math import log
-
 from nltk.corpus import stopwords
+import re
+from document import Document
 import stemmer
 import utils
-from document import Document
-import re
+
 
 class Parse:
     def __init__(self,is_stemming,output_path):
         self.output=output_path+"/"+"_Entities_pickles_"
         self.stop_words = stopwords.words('english')
+        # helper functions for the hashtag calculation
         self.words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(self.words)))) for i, k in enumerate(self.words))
         self.maxword = max(len(x) for x in self.words)
+
+        # dict for the terms that suspected of being entities
         self.entities = {}
         self.Counter_entites = 1
+
+        #Binary parameter from main that decide if the parser use stemming
         self.binary_Stem = is_stemming
-        self.stemmer = stemmer.Stemmer().Porter_stemmer
+        if(is_stemming):
+            self.stemmer = stemmer.Stemmer().Porter_stemmer
+
+        # Months dictionary to support our new rule,saving all dates in the same format
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
+
+        # making dir for the entities pickles
         path=self.output
         if not os.path.isdir(path):
             os.mkdir(self.output)
 
+    #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
-        """
-        This function tokenize, remove stop words and apply lower case for every word within the text
-        :param text:
-        :return:
-        """
-        if(len(self.entities)>450000):
+        #saving the entities
+        if(len(self.entities)>200000):
             utils.save_obj(self.entities, self.output +"/"+ str(self.Counter_entites)+ "_entities_")
             self.Counter_entites+=1
             self.entities={}
 
-        text_tokensterm = []
+        text_tokenstream = []
         list_of_words =text.split()
+        # running over the terms in the full text and clean them from unnecessary chars and emojis
         for i in range(0, len(list_of_words)):
             term = self.clean(list_of_words[i])
-            if len(term)>0 and term not in self.stop_words and term != "RT":
+
+            #remove stop words, "RT", empty strings from the text.
+            if len(term)>0 and term.lower() not in self.stop_words and term.upper() != "RT":
                     if term[0] == "#":
-                        text_tokensterm.append(term)
-                        self.parse_tags(term[1:], text_tokensterm)
+                        text_tokenstream.append(term)
+
+                        #Hash tag rule,explained in the function
+                        self.parse_tags(term[1:], text_tokenstream)
+
+                     # saving tags with the @ sign
                     elif term[0] == "@":
-                        text_tokensterm.append(term)
+                        text_tokenstream.append(term)
+
+                     #if the term end with % add the term
                     elif term[-1] in "%":
-                        text_tokensterm.append(term)
+                        text_tokenstream.append(term)
+
+                    # url rule, pars it and save the url terms
                     elif term[0:5] == "https":
-                        UrlList = self.pars_url(term)
+                        UrlList = self.pars_url(term[5:])
                         for word_in_url in UrlList:
-                            self.clean_and_push(word_in_url)
+                            self.clean(word_in_url)
+                            text_tokenstream.append(word_in_url.lower())
+
+                    #if term is month sent it to date function
                     elif term.lower() in self.month:
-                        self.to_date(term.lower(), list_of_words, i, text_tokensterm)
+                        self.to_date(term.lower(), list_of_words, i, text_tokenstream)
+
+                    #check if the term is number and remove it ", ." and then implementing the Numbers rule
                     elif re.sub('[,]', '',term).replace('.', '', 1).isdigit() and term.isascii():
                         num = re.sub('[,]', '',term)
                         if i + 1 < len(list_of_words):
                             if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
-                                text_tokensterm.append(self.to3digits_units(num) + "%")
+                                text_tokenstream.append(self.to3digits_units(num) + "%")
                                 list_of_words[i + 1] = ""
                             elif list_of_words[i + 1].lower() == "thousand":
-                                text_tokensterm.append(num + "K")
+                                text_tokenstream.append(num + "K")
                                 list_of_words[i + 1] = ""
                             elif list_of_words[i + 1].lower() == "million":
-                                text_tokensterm.append(num + "M")
+                                text_tokenstream.append(num + "M")
                                 list_of_words[i + 1] = ""
                             elif list_of_words[i + 1].lower() == "billion":
-                                text_tokensterm.append(num + "B")
+                                text_tokenstream.append(num + "B")
                                 list_of_words[i + 1] = ""
                             else:
                                 if "/" in list_of_words[i + 1] and list_of_words[i + 1].replace('/', '', 1).isdigit():
@@ -77,16 +99,21 @@ class Parse:
                                     list_of_words[i+1] = ""
                                 else:
                                     num = self.to3digits_units(num)
-                                text_tokensterm.append(num)
+                                text_tokenstream.append(num)
                         else:
                             num = self.to3digits_units(num)
-                            text_tokensterm.append(num)
+                            text_tokenstream.append(num)
                     else:
+                        if term.lower()=="covid-19" or term.lower()=="covid19" or term.lower()=="covid_19" or term.lower()=="cov19" or term.lower()=="cov-19" or term.lower()=="covid":
+                            text_tokenstream.append("COVID19")
+                        # if the terms not fit any rule, removing the unnecessary chars
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
-                            self.clean_and_push(word , text_tokensterm)
-        self.Entites_and_Names(text_tokensterm)
-        return text_tokensterm
+                            self.clean_and_push(word , text_tokenstream)
+
+        # send the parsed text to the entities func
+        self.Entites_and_Names(text_tokenstream)
+        return text_tokenstream
 
     def parse_doc(self, doc_as_list):
         """
@@ -116,14 +143,20 @@ class Parse:
             if term_dict[term][0] > max_term[1]:
                 max_term = (term, term_dict[term][0])
             index+=1
+
+        # we decided to add two more important fields:  max term in tweet  and len of the tweet after parsed(not unique)
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
                             quote_url, term_dict, doc_length, max_term, len(tokenized_text))
-
         return document
 
+
+    '''hash tag function- we support in these rules: 1. seperate by Upper case... e.g #DonaldTrump
+    2. sepearate by _ sign e.g #donald_trump 3. seperate by rate function e.g #donaldtrump
+    '''
     def parse_tags(self, term, text_tokensterm):
         hash_list = []
         if term.islower():
+            # apply the third rule
             hash_list = self.infer_spaces(term)
         elif "_" in term:
             hash_list = term.split("_")
@@ -160,19 +193,7 @@ class Parse:
             i -= k
         return out
 
-    def clean_and_push(self, term, text_tokensterm):
-        term=self.clean(term)
-        if len(term) > 0:
-            if term[0].isupper():
-                term = term.upper()
-            else:
-                term = term.lower()
-            if self.binary_Stem:
-                term = self.stemmer.stem(term)
-            else:
-                term = self.end_with_s(term, text_tokensterm)
-            text_tokensterm.append(term)
-
+    #clean the term from unncessary chars and emojis
     def clean(self, term):
         while len(term) > 0:
             if term[-1] in '/(.&…),''`;:-_|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
@@ -183,6 +204,21 @@ class Parse:
                 break
         return term
 
+    # if the parser include stemming it will happen here, because thats the place the terms that not belonge to any other rule arriving
+    def clean_and_push(self, term, text_tokensterm):
+        term=self.clean(term)
+        if len(term) > 0:
+            if term[0].isupper():
+                term = term.upper()
+            else:
+                term = term.lower()
+            if self.binary_Stem:
+                term = self.stemmer.stem(term)
+            else:
+                term = self.end_with_s(term)
+            text_tokensterm.append(term)
+
+    # another rule that we added ( arent we amazing?)- LOL, remove the "'s" in the word
     def end_with_s(self,term):
         if term.lower().endswith("'s"):
             return term[:-2]
@@ -196,7 +232,7 @@ class Parse:
             if x is not '':
                 a.append(x)
         return a
-
+    #this funtion get a term that suspected to be a part of a date and return it as a date in our single format
     def to_date(self,term,list_of_words,i,text_tokensterm):
         date = ""
         if i>0 and list_of_words[i-1].isdigit() and len(list_of_words[i-1]) < 3:
@@ -226,6 +262,7 @@ class Parse:
             date = term
         text_tokensterm.append(date)
 
+    # this function get number and return it like required in Numbers rule(1000=1k,1000000=1m... )
     def to3digits_units(self, num):
         num_to_units = float(num)
         if (num_to_units >= 1000) and (num_to_units < 1000000):
@@ -239,7 +276,7 @@ class Parse:
             return self.round3(str(num_to_units)) + "B"
         else:
             return self.round3(str(num_to_units))
-
+    #round to 3 digits after the dot
     def round3(self, num):
         newNum = round(float(num), 3)
         num_with_point = str(newNum).split(".")
@@ -249,7 +286,7 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0]) + '.' + str(num_with_point[1])
-
+    #this function maintain a entities dictionary like the rules demand
     def Entites_and_Names(self,list_of_words):
         length=len(list_of_words)
         for i in range(len(list_of_words)) :
@@ -259,7 +296,7 @@ class Parse:
             elif(list_of_words[i][0].isupper):
                 if(length>i+1 and len(list_of_words[i+1])>0):
                     if(list_of_words[i+1][0].isupper()):
-                        my_String=list_of_words[i].lower()+" "+list_of_words[i+1].upper()
+                        my_String=list_of_words[i].upper()+" "+list_of_words[i+1].upper()
                         self.check_if_in_entites_dictionary(my_String)
                 else:
                     self.check_if_in_entites_dictionary(list_of_words[i].upper())

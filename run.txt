@@ -1,0 +1,16 @@
+Project was created successfully..
+num of tweets:  262794
+time that  pars+indexing:  testData\date=07-08-2020\covid19_07-08.snappy.parquet:  102.27613711357117
+time that toke to pars+index+merge:  117.37912201881409
+['@']
+tweet id: 1281000912182362113, score (unique common words with query): 13.432777843854693
+tweet id: 1281008483568099335, score (unique common words with query): 13.432777843854693
+tweet id: 1280966762851454982, score (unique common words with query): 13.432777843854693
+tweet id: 1280949623151001601, score (unique common words with query): 13.432777843854693
+tweet id: 1280947293601042434, score (unique common words with query): 12.86263235978308
+tweet id: 1280962124332716032, score (unique common words with query): 12.86263235978308
+tweet id: 1280965015613341697, score (unique common words with query): 12.338915162919037
+tweet id: 1280919376636653568, score (unique common words with query): 12.338915162919037
+tweet id: 1280983601157296128, score (unique common words with query): 11.856176979957246
+tweet id: 1280927980584394752, score (unique common words with query): 11.856176979957246
+total time:    0.8549749851226807

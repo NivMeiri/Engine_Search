@@ -88,7 +88,7 @@ if __name__ == '__main__':
                     with open(results_file, 'w') as f:
                         f.write('You are required to implement load_inverted_index() in utils')
                         sys.exit(-1)
-            expected_terms = ['#Asivikelane']
+            expected_terms = ['#asivikelane']
             for term in expected_terms:
                 test_number += 1
                 try:

@@ -37,9 +37,9 @@ class Ranker:
             sum=(relevant_doc[doc][1]/(math.sqrt(relevant_doc[doc][0]*wiq)))
             relevant_doc[doc]=sum
         return  (relevant_doc)
-
+    # calculating the rank with the bm25 formula
     def rank_with_bm25(self,idf,tf,d,avg):
-        k = 1.3
+        k = 1.2
         b = 0.75
         bm25 = (idf * tf * (k + 1)) / (tf + k*(1 - b + b * (d / avg)))
         return bm25
