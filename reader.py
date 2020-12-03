@@ -31,9 +31,6 @@ class ReadFile:
             # tweets = pd.read_parquet(full_path, engine="pyarrow").values.tolist()
         return doc_files
 
-
-
-
     def read_file_our_use(self, file_name):
         """
         This function is reading a parquet file contains several tweets

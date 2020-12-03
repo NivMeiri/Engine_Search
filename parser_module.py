@@ -105,12 +105,14 @@ class Parse:
                             text_tokenstream.append(num)
                     else:
                         if term.lower()=="covid-19" or term.lower()=="covid19" or term.lower()=="covid_19" or term.lower()=="cov19" or term.lower()=="cov-19" or term.lower()=="covid":
-                            text_tokenstream.append("COVID19")
-                        # if the terms not fit any rule, removing the unnecessary chars
-                        list_term = re.split('[-,|/|//|:.%?=+]', term)
-                        for word in list_term:
-                            self.clean_and_push(word , text_tokenstream)
-
+                            text_tokenstream.append("covid19")
+                        elif term.lower()=="us" or term.lower()=="u.s" or term.lower()=="usa" or term.lower()=="u.s.a" or term.lower()=="unitedstate" :
+                            text_tokenstream.append("usa")
+                        else:
+                            # if the terms not fit any rule, removing the unnecessary chars
+                            list_term = re.split('[-,|/|//|:.%?=+]', term)
+                            for word in list_term:
+                                self.clean_and_push(word , text_tokenstream)
         # send the parsed text to the entities func
         self.Entites_and_Names(text_tokenstream)
         return text_tokenstream

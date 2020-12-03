@@ -75,10 +75,9 @@ class Indexer:
                 else:
                     self.General_Posting[first_term][1][toReturn]=[[document.tweet_id,freq]]
 
-        self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
-        self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
+        #self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
         #adding the doc info the len of the doc
-        #self.Doc_information[document.tweet_id]=document.len_doc
+        self.Doc_information[document.tweet_id]=document.len_doc
 
 
     def load_dictionary(self,name):
@@ -98,8 +97,8 @@ class Indexer:
     # this func will execute once the indexer finish his job,creating main 29 posting files [a,b,c.....z,other,#,@]
     def Merge_into_28_pickles(self,documents_list, char):
         if(len(documents_list)>0):
-            our_dict=self.load_dictionary(documents_list[0])
-            for i in range (1,len( documents_list)):
+            our_dict=self.General_Posting[char][1]
+            for i in range (0,len( documents_list)):
                 temp_dict=self.load_dictionary(documents_list[i])
                 for term in temp_dict:
                         if term in our_dict:

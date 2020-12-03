@@ -17,7 +17,7 @@ if __name__ == '__main__':
                             "m": [1, {}], "n": [1, {}], "o": [1, {}], "p": [1, {}], "q": [1, {}], "r": [1, {}],
                             "s": [1, {}], "t": [1, {}], "u": [1, {}], "v": [1, {}], "w": [1, {}], "x": [1, {}],
                             "y": [1, {}], "z": [1, {}], "@": [1, {}], "#": [1, {}], "other": [1, {}]}
-    corpus_path= 'C:/Users/Admin/Desktop/data/date=07-24-2020'
+    corpus_path= 'C:/Users/Admin/Desktop/data'
     output_path="C:/Users/Admin/Documents/GitHub/Engine_Search"
     stemming=False
     parser=parser_module.Parse(stemming,output_path)
@@ -61,7 +61,7 @@ if __name__ == '__main__':
     #     return  dbfile
     # print(load_dictionary("inverted_index.pkl.pkl"))
 
-    corpus_path = "sample.parquet"
+    #corpus_path = "testData"
     output_path = 'posting'
     num_docs_to_retrieve = 20
 
