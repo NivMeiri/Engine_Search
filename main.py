@@ -17,14 +17,12 @@ if __name__ == '__main__':
                             "m": [1, {}], "n": [1, {}], "o": [1, {}], "p": [1, {}], "q": [1, {}], "r": [1, {}],
                             "s": [1, {}], "t": [1, {}], "u": [1, {}], "v": [1, {}], "w": [1, {}], "x": [1, {}],
                             "y": [1, {}], "z": [1, {}], "@": [1, {}], "#": [1, {}], "other": [1, {}]}
-    corpus_path= 'C:/Users/Hadassa Zenou/Desktop/data'
-    output_path="C:/Users/Hadassa Zenou/Documents/GitHub/Engine_Search"
+    corpus_path= 'C:/Users/Admin/Desktop/data/date=07-08-2020'
     stemming = False
-    parser = parser_module.Parse(stemming,output_path)
     queries=["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.",
              "The seasonal flu kills more people every year in the U.S. than COVID-19 has to date.","Coronavirus is less dangerous than the flu",
              "The coronavirus pandemic is a cover for a plan to implant trackable microchips and that the Microsoft co-founder Bill Gates is behind it",
-            "Microsoft co-founder Bill Gates said `only the people who have all the vaccines will still be able to move freely`",
+            "Microsoft co-founder Bill Gates sai `only the people who have all the vaccines will still be able to move freely`",
             "Bill Gates owns the patent and vaccine for coronavirus.",
             "Herd immunity has been reached.",
             "Children are “almost immune from this disease.”",
@@ -51,36 +49,6 @@ if __name__ == '__main__':
             "Coins shortage due to coronavirus",
             "People should NOT wear masks while exercising"]
 
-    # for doc in queries:
-    #     print("the originial quert_______________"+doc)
-    #     print(parser.parse_sentence(doc))
-    # def load_dictionary(name):
-    #     db=open(name,'rb')
-    #     dbfile=pickle.load(db)
-    #     db.close()
-    #     return  dbfile
-    # print(load_dictionary("inverted_index.pkl.pkl"))
-
-    #corpus_path = "testData"
     output_path = 'posting'
     num_docs_to_retrieve = 20
-
     search_engine.main(corpus_path, output_path, stemming, queries, num_docs_to_retrieve)
-
-
-
-# w1 = wordnet.synset('ship.n.01')
-    # w2 = wordnet.synset('boat.n.01')
-    # print(w1.wup_similarity(w2))
-    # my_list=[]
-    # word="dog"
-    # synonyms = []
-    # for syn in wordnet.synsets(word):
-    #     print(syn)
-    #     for l in syn.lemmas():
-    #         synonyms.append(l.name())
-    # my_list=(set(synonyms))
-    # print(my_list)
-    # for word_2 in my_list:
-    #     print(word.wup_similarity(word_2)
-    #

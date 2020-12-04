@@ -10,7 +10,7 @@ def run_engine(corpus_path,output_path,stemming):
     """
     :return:
     """
-    num = 0
+    num_of_docs = 0
     config = ConfigClass()
     p = Parse(stemming,output_path)
     indexer = Indexer(config,output_path)
@@ -20,16 +20,17 @@ def run_engine(corpus_path,output_path,stemming):
     documents_list = r.read_file_our_use(corpus_path)
     # Iterate over every document in the file
     for file in documents_list:
-        documents_list=r.read_Parquert(file)
-        for idx, document in enumerate(documents_list):
+        file_open=r.read_Parquert(file)
+        for idx, document in enumerate(file_open):
             parsed_document = p.parse_doc(document)
-            num += 1
+            num_of_docs += 1
             indexer.add_new_doc(parsed_document)
-            if (num % 400000 == 0):
+            if (num_of_docs % 400000 == 0):
                 indexer.insert_posting()
-        print("num of tweets:  " + str(num) )
+        if(len(documents_list)==1 and num_of_docs<400000):
+            indexer.insert_posting()
+        print("num_of_docs of tweets:  " + str(num_of_docs) )
         print("time that  pars+indexing:  "+ str(file)+":  "+ str(time.time() - start))
-
     for director in Files_directories:
         documents_list = r.read_file_pickl(output_path + "/Pickles_directories"+"/"+director)
         Entites_list=r.read_file_pickl(output_path + "/_Entities_pickles_"+"/"+director)
@@ -40,12 +41,12 @@ def run_engine(corpus_path,output_path,stemming):
     utils.save_obj(indexer.inverted_idx,"inverted_index")
     utils.save_obj(indexer.Doc_information,"Doc_info")
     print("time that toke to pars+index+merge:  "+str(time.time()-start))
-    return [avg,indexer.Get_Doc(),indexer.Get_inverted()]
+    return [avg,indexer.Get_Doc(),indexer.Get_inverted(),num_of_docs]
 
-def search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,Doc_line,inverted_index,output):
+def search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,Doc_line,inverted_index,output,num_of_docs):
     p = Parse(stemming,output)
     query_as_list = p.parse_sentence(query)
-    searcher = Searcher(inverted_index,Doc_line,avg_doc,stemming,output)
+    searcher = Searcher(inverted_index,Doc_line,avg_doc,stemming,output,num_of_docs)
     relevant_docs = searcher.relevant_docs_from_posting(query_as_list)
     ranked_docs = searcher.ranker.rank_relevant_doc(relevant_docs)
     return searcher.ranker.retrieve_top_k(ranked_docs, num_docs_to_retrieve)
@@ -55,8 +56,9 @@ def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
     avg_doc=info_from_engine[0]
     Doc_info=info_from_engine[1]
     inverted_index=info_from_engine[2]
+    num_of_docs=info_from_engine[3]
     for query in queries:
         start = time.time()
-        for doc_tuple in search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,Doc_info,inverted_index,output_path):
+        for doc_tuple in search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,Doc_info,inverted_index,output_path,num_docs_to_retrieve):
             print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
         print("total time:    "+str(time.time()-start))

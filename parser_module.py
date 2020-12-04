@@ -32,10 +32,9 @@ class Parse:
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
 
         # making dir for the entities pickles
-        path=self.output
+        path = self.output
         if not os.path.isdir(path):
             os.mkdir(self.output)
-
     #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
         #saving the entities
