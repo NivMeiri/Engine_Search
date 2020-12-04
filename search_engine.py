@@ -59,6 +59,6 @@ def main(corpus_path,output_path,stemming,queries,num_docs_to_retrieve):
     num_of_docs=info_from_engine[3]
     for query in queries:
         start = time.time()
-        for doc_tuple in search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,Doc_info,inverted_index,output_path,num_docs_to_retrieve):
+        for doc_tuple in search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,Doc_info,inverted_index,output_path,num_of_docs):
             print('tweet id: {}, score (unique common words with query): {}'.format(doc_tuple[0], doc_tuple[1]))
         print("total time:    "+str(time.time()-start))
