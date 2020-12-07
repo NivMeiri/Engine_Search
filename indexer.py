@@ -13,7 +13,7 @@ class Indexer:
         self.output_path=output_path + "/Pickles_directories"
         self.avg_doc=0
         os.mkdir(self.output_path)
-        # create a dir to each term
+        #create a dir to each term
         for key in self.General_Posting.keys():
             os.mkdir(self.output_path + "/" + key)
 
@@ -28,6 +28,7 @@ class Indexer:
         Indexer.num_of_doc = Indexer.num_of_doc + 1
         document_dictionary = document.term_doc_dictionary
         self.avg_doc+=document.len_doc
+
         # Go over each term in the doc
         #the upper lower sort.. decide if the word will be saved in upper or lower case and update the matches terms
         for term in document_dictionary.keys():
@@ -44,7 +45,7 @@ class Indexer:
 
             #new word to the corpus
             if(not(term_already_exist)):
-                    self.inverted_idx[toReturn] = 1
+                    self.inverted_idx[toReturn] =1
             elif(lower_in_posting ):
                     self.inverted_idx[lower]+= 1
                     toReturn=lower
@@ -59,6 +60,8 @@ class Indexer:
                 else:
                     toReturn=upper
                     self.inverted_idx[upper] +=1
+
+
             freq=document.term_doc_dictionary[term][0]/(document.max_term[1])
             first_term=toReturn[0].lower()
 
@@ -75,9 +78,8 @@ class Indexer:
                 else:
                     self.General_Posting[first_term][1][toReturn]=[(document.tweet_id,freq,document.len_doc)]
 
-        #self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
-        #adding the doc info the len of the doc
-        #self.Doc_information[document.tweet_id]=document.len_doc
+        self.Doc_information[document.tweet_id]=[document.len_doc, len(document.term_doc_dictionary), document.max_term[1]]
+
 
 
     def load_dictionary(self,name):
@@ -97,8 +99,9 @@ class Indexer:
     # this func will execute once the indexer finish his job,creating main 29 posting files [a,b,c.....z,other,#,@]
     def Merge_into_28_pickles(self,documents_list, char):
         if(len(documents_list)>0):
-            our_dict=self.General_Posting[char][1]
-            for i in range (0,len( documents_list)):
+            our_dict = self.load_dictionary(documents_list[0])
+            os.remove(documents_list[0])
+            for i in range (1,len( documents_list)):
                 temp_dict=self.load_dictionary(documents_list[i])
                 for term in temp_dict:
                         if term in our_dict:
@@ -106,19 +109,20 @@ class Indexer:
                         else:
                             our_dict[term] = temp_dict[term]
                 os.remove(documents_list[i])
+            self.General_Posting[char]={}
             utils.save_obj(our_dict,self.output_path+"/"+char+"/"+"final_dict_"+char )
     #check if the entities found more then once , if not remove it from the inverted files
     def Check_Merge_entites(self,entities):
-        if(len(entities)>0):
-            our_dict=self.load_dictionary(entities[0])
-            for i in range (1,len( entities)):
-                temp_dict=self.load_dictionary(entities[i])
-                for term in temp_dict:
-                        if term in our_dict:
-                            our_dict[term] += temp_dict[term]
-                        else:
-                            our_dict[term] = temp_dict[term]
-                os.remove(entities[i])
-            for key in our_dict.keys:
-                if our_dict[key]<2:
+        our_dict={}
+        for i in range (len( entities)):
+            temp_dict=self.load_dictionary(entities[i])
+            for term in temp_dict:
+                    if term in our_dict:
+                        our_dict[term] += temp_dict[term]
+                    else:
+                        our_dict[term] = temp_dict[term]
+            os.remove(entities[i])
+        for key in our_dict.keys():
+            if our_dict[key]<2:
+                if(key in self.inverted_idx):
                     self.inverted_idx.pop(key)

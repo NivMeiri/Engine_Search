@@ -12,16 +12,16 @@ import utils
 
 class Searcher:
 
-    def __init__(self, inverted_index,doc_info,avg_doc,stem,output,num_of_doc):
+    def __init__(self, inverted_index,avg_doc,output,num_of_doc):
         """
         :param inverted_index: dictionary of inverted index
         """
         self.ranker = Ranker()
         self.output=output
         self.inverted_index = inverted_index
-        self.doc_info=doc_info
         self.num_of_doc=num_of_doc
         self.avg_doc=avg_doc
+
 
     def relevant_docs_from_posting(self, query):
         """
