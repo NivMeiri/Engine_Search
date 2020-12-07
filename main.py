@@ -11,7 +11,7 @@ if __name__ == '__main__':
                             "m": [1, {}], "n": [1, {}], "o": [1, {}], "p": [1, {}], "q": [1, {}], "r": [1, {}],
                             "s": [1, {}], "t": [1, {}], "u": [1, {}], "v": [1, {}], "w": [1, {}], "x": [1, {}],
                             "y": [1, {}], "z": [1, {}], "@": [1, {}], "#": [1, {}], "other": [1, {}]}
-    corpus_path= 'C:/Users/Admin/Desktop/data'
+    corpus_path= 'C:/Users/Admin/Desktop/Data'
     stemming = True
     queries=["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.",
              "The seasonal flu kills more people every year in the U.S. than COVID-19 has to date.","Coronavirus is less dangerous than the flu",
