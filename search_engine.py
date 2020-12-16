@@ -36,19 +36,14 @@ def run_engine(corpus_path,output_path,stemming):
             if (num_of_docs % 280000 == 0):
                 num_of_Saving_doc = 0
                 indexer.insert_posting()
-        print("num_of_docs of tweets:  " + str(num_of_docs))
-        print("time that  pars+indexing:  " + str(file) + ":  " + str(time.time() - start))
+
     if( num_of_Saving_doc>0):
         indexer.insert_posting()
-
-    print("finished to indexing: "+ str(time.time()-start))
     p=""
     ##del p
-    print("started to merge entities")
 
     Entites_list=r.read_file_pickl(output_path + "/_Entities_pickles_")
     indexer.Check_Merge_entites(Entites_list)
-    print("finished to merge entities: "+ str(time.time()-start))
 
     utils.save_obj(indexer.inverted_idx, "inverted_index")
     utils.save_obj(indexer.Doc_information, "Doc_info")
@@ -58,9 +53,6 @@ def run_engine(corpus_path,output_path,stemming):
     for director in Files_directories:
         documents_list = r.read_file_pickl(output_path + "/Pickles_directories"+"/"+director)
         indexer.Merge_into_28_pickles(documents_list,director)
-        print("the pickles files was merged__ :"+director+"time that toke:  "+str(time.time()-start))
-    print("finished to merge files: "+ str(time.time()-start))
-    print("start to search for query!!:  "+str(time.time()-start))
     return [avg,indexer.Get_inverted(),num_of_docs]
 
 def search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,inverted_index,output,num_of_docs):
@@ -107,6 +99,5 @@ def main(corpus_path,output_path,stemming,query_to_check,num_docs_to_retrieve):
         for doc_tuple in search_and_rank_query(query ,num_docs_to_retrieve,stemming,avg_doc,inverted_index,output_path,num_of_docs):
             print('tweet id: {}, score (Rank with BM25 method): {}'.format(doc_tuple[0], doc_tuple[1]))
         query_num +=1
-        print("total time:    "+str(time.time()-start))
 
 

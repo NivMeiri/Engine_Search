@@ -39,7 +39,6 @@ class Searcher:
             else:
                 Word_net.append(term)
         expand_query = sorted(Word_net)
-        print(expand_query)
         #searching the terms in posting files
         for term in expand_query:
              # an example of checks that you have to do

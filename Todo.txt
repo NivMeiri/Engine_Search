@@ -1,0 +1,7 @@
+1.Adding cosSimilarity method
+2.Advanced Parser
+3.Spelling Correction
+4.Improve indexer-the amount of files that saved
+5.Wordnet-check the use of it.
+6.entities
+7.checking all the method to implement
