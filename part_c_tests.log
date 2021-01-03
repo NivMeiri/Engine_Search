@@ -1,0 +1,14 @@
+ERROR 2021-01-03 14:40:57,324: report_part_c.docx does not exist.
+INFO 2021-01-03 14:40:57,324: Successfully loaded benchmark labels data.
+INFO 2021-01-03 14:40:57,324: Successfully loaded queries data.
+ERROR 2021-01-03 14:40:57,340: search_engine_1.py does not exist.
+ERROR 2021-01-03 14:40:57,340: search_engine_2.py does not exist.
+INFO 2021-01-03 14:40:57,996: Successfully imported module search_engine_best.
+DEBUG 2021-01-03 14:40:59,215: Building the index in search_engine_best for benchmark data took 1.0160726999999998 seconds.
+ERROR 2021-01-03 14:40:59,215: The following error occured while testing the module search_engine_best.
+ERROR 2021-01-03 14:40:59,215: not enough values to unpack (expected 2, got 1)
+Traceback (most recent call last):
+  File "C:/Users/Admin/Documents/GitHub/Engine_Search/test_part_c_students.py", line 87, in <module>
+    n_res, res = engine.search('bioweapon')
+ValueError: not enough values to unpack (expected 2, got 1)
+DEBUG 2021-01-03 14:40:59,215: Total runtime was: 0:00:01.890822

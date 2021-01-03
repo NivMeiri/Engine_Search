@@ -8,22 +8,19 @@ import utils
 
 
 class Parse:
-    def __init__(self,is_stemming,output_path):
-        self.output=output_path+"/"+"_Entities_pickles_"
-        self.stop_words = stopwords.words('english')
+    def __init__(self):
+        self.stop_words = frozenset(stopwords.words('english'))
         # helper functions for the hashtag calculation
         self.words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(self.words)))) for i, k in enumerate(self.words))
         self.maxword = max(len(x) for x in self.words)
-
         # dict for the terms that suspected of being entities
-        self.entities = {}
-        self.Counter_entites = 1
-
+        # self.entities = {}
+        # self.Counter_entites = 1
         #Binary parameter from main that decide if the parser use stemming
-        self.binary_Stem = is_stemming
-        if(is_stemming):
-            self.stemmer = stemmer.Stemmer().Porter_stemmer
+        #self.binary_Stem = is_stemming
+        #if(is_stemming):
+            #self.stemmer = stemmer.Stemmer().Porter_stemmer
 
         # Months dictionary to support our new rule,saving all dates in the same format
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
@@ -32,16 +29,19 @@ class Parse:
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
 
         # making dir for the entities pickles
-        path = self.output
-        if not os.path.isdir(path):
-            os.mkdir(self.output)
+        # path = self.output
+        # if not os.path.isdir(path):
+        #     os.mkdir(self.output)
     #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
         #saving the entities
+
+        '''
         if(len(self.entities)>200000):
             utils.save_obj(self.entities, self.output +"/"+ str(self.Counter_entites)+ "_entities_")
             self.Counter_entites+=1
             self.entities={}
+            '''
 
         text_tokenstream = []
         list_of_words =text.split()
@@ -103,7 +103,7 @@ class Parse:
                             num = self.to3digits_units(num)
                             text_tokenstream.append(num)
                     else:
-                        if term.lower()=="covid-19" or term.lower()=="covid19" or term.lower()=="covid_19" or term.lower()=="cov19" or term.lower()=="cov-19" or term.lower()=="covid":
+                        if term.lower()=="covid-19" or term.lower()=="covid19" or term.lower()=="covid_19" or term.lower()=="cov19" or term.lower()=="cov-19" or term.lower()=="covid" or term.lower()=="coronavirus" or term.lower()=="coronaviruses":
                             text_tokenstream.append("covid19")
                         elif term.lower()=="us" or term.lower()=="u.s" or term.lower()=="usa" or term.lower()=="u.s.a" or term.lower()=="unitedstate" :
                             text_tokenstream.append("usa")
@@ -113,7 +113,7 @@ class Parse:
                             for word in list_term:
                                 self.clean_and_push(word , text_tokenstream)
         # send the parsed text to the entities func
-        self.Entites_and_Names(text_tokenstream)
+        #self.Entites_and_Names(text_tokenstream)
         return text_tokenstream
 
     def parse_doc(self, doc_as_list):
@@ -147,7 +147,7 @@ class Parse:
 
         # we decided to add two more important fields:  max term in tweet  and len of the tweet after parsed(not unique)
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
-                            quote_url, term_dict, doc_length, max_term, len(tokenized_text))
+                            quote_url, term_dict, doc_length, max_term)
         return document
 
 
@@ -213,10 +213,10 @@ class Parse:
                 term = term.upper()
             else:
                 term = term.lower()
-            if self.binary_Stem:
-                term = self.stemmer.stem(term)
-            else:
-                term = self.end_with_s(term)
+            # if self.binary_Stem:
+            #     term = self.stemmer.stem(term)
+            # else:
+            #     term = self.end_with_s(term)
             text_tokensterm.append(term)
 
     # another rule that we added ( arent we amazing?)- LOL, remove the "'s" in the word
