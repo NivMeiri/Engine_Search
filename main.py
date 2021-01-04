@@ -66,7 +66,10 @@ if __name__ == '__main__':
     "A common cold can cause a positive COVID-19 test.	cold can cause positive COVID-19 test",
     "wearing masks has been “proven ineffective.”	wearing masks proven ineffective"
     "This virus has a cure.	virus has a cure"]
-
-    output_path = 'posting'
-    num_docs_to_retrieve = 20
-    search_engine.main( output_path, stemming, ['bioweapon'], num_docs_to_retrieve)
+    #
+    # output_path = 'posting'
+    # num_docs_to_retrieve = 20
+    # search_engine.main( output_path, stemming, ['bioweapon'], num_docs_to_retrieve)
+    # from thesaurus.thesaurus  import Word
+    # myWord = Word('box')
+    # print(myWord.synonyms())
