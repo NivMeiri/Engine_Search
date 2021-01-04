@@ -41,8 +41,18 @@ class SearchEngine:
             number_of_documents += 1
             # index the document data
             self._indexer.add_new_doc(parsed_document)
+        to_del = []
+        print("total num of terms: " + str(len(self._indexer.inverted_idx)))
+        # for key in self._indexer.inverted_idx:
+        #     if (self._indexer.inverted_idx[key] == 1):
+        #         to_del.append(key)
+        #         self._indexer.postingDict.pop(key)
+        # for key in to_del:
+        #     self._indexer.inverted_idx.pop(key)
+        print('num od docs in parser. :'+str(len(documents_list)) )
         utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
         utils.save_obj(self._indexer.postingDict, "posting")
+        print("num of terms in inverted "+str(len(self._indexer.inverted_idx)))
         print('Finished parsing and indexing.')
 
     # DO NOT MODIFY THIS SIGNATURE
@@ -53,7 +63,7 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        self._indexer.load_index(fn)
+        return utils.load_obj("Retrieval_info")
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -67,7 +77,6 @@ class SearchEngine:
 
         # DO NOT MODIFY THIS SIGNATURE
         # You can change the internal implementation as you see fit.
-
     def search(self, query, k=2000):
         """
         Executes a query over an existing index and returns the number of
@@ -111,7 +120,9 @@ class SearchEngine:
         query_num = 1
         for query in queries:
             start = time.time()
-            for doc_tuple in self.search(query, num_docs_to_retrieve):
+            mylist=self.search(query, num_docs_to_retrieve)
+            answer_to_run=mylist[1]
+            for doc_tuple in answer_to_run:
                 print(doc_tuple)
                 print('tweet id: {}, score (Rank with BM25 method): {}'.format(doc_tuple[0], doc_tuple[1]))
             query_num += 1

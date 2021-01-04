@@ -1,3 +1,5 @@
+import metrics_Niv_hadassa
+
 if __name__ == '__main__':
     import os
     import sys
@@ -14,7 +16,6 @@ if __name__ == '__main__':
                         filemode='w', format='%(levelname)s %(asctime)s: %(message)s')
     import metrics
 
-
     def test_file_exists(fn):
         if os.path.exists(fn):
             return True
@@ -24,11 +25,10 @@ if __name__ == '__main__':
 
     tid_ptrn = re.compile('\d+')
 
-
     def invalid_tweet_id(tid):
-        if not isinstance(tid, str):
-            tid = str(tid)
-        if tid_ptrn.fullmatch(tid) is None:
+        if not isinstance(tid[0], str):
+            tid = str(tid[0])
+        if tid_ptrn.fullmatch(tid[0]) is None:
             return True
         return False
 

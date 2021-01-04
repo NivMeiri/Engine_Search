@@ -153,39 +153,39 @@ def test_value(func, expected, variables):
             d = traceback.format_exc().splitlines()
             results.extend([f'Test: {test_number} Failed running: {func.__name__} with the following error: {" ".join(d)}'])
 
-test_value(precision, 0.5, [df, True, 1])
-test_value(precision, 0.5, [df, False, None])
-test_value(recall, 0.5, [df, {1: 2}])
-test_value(recall, 0.388, [df, {1: 2, 2: 3, 3: 1}])
-test_value(precision_at_n, 0.5, [df, 1, 2])
-test_value(precision_at_n, 0, [df, 3, 1])
-test_value(map, 2 / 3, [df])
-df = pd.read_csv('311277438.csv')
-
-precision
-test_value(precision, 3 / 8, [df, True, 1])
-test_value(precision, 7 / 8, [df, True, 2])
-test_value(precision, 1, [df, True, 3])
-test_value(precision, 0, [df, True, 88])
-test_value(precision, 0.659375, [df, False, None])
-
-# recall
-test_value(recall, 3 / 20, [df, {1: 20}])
-test_value(recall, 3 / 5, [df, {1: 5}])
-test_value(recall, 0, [df, {100: 5}])
-test_value(recall, (3 / 20 + 7 / 8 + 8 / 10) / 3, [df, {1: 20, 2: 8, 3: 10}])
-test_value(recall, (6 / 17 + 0.5 + 2 / 9) / 3, [df, {27: 17, 30: 8, 39: 9}])
-test_value(recall, None, [df, {1: 0}])  # check the value for 0 relevant docs and correct the function
-
-
-# precision_at_n
-test_value(precision_at_n, 3 / 8, [df, 1, 8])
-test_value(precision_at_n, 3 / 8, [df, 1, 20])
-test_value(precision_at_n, 2 / 3, [df, 1, 3])
-test_value(precision_at_n, 4 / 7, [df, 5, 7])
-test_value(precision_at_n, 0, [df, 6, 0])
-test_value(precision_at_n, 0, [df, 7, 1])
-test_value(precision_at_n, 1, [df, 8, 1])
-test_value(precision_at_n, 0, [df, 88, 1])
+# test_value(precision, 0.5, [df, True, 1])
+# test_value(precision, 0.5, [df, False, None])
+# test_value(recall, 0.5, [df, {1: 2}])
+# test_value(recall, 0.388, [df, {1: 2, 2: 3, 3: 1}])
+# test_value(precision_at_n, 0.5, [df, 1, 2])
+# test_value(precision_at_n, 0, [df, 3, 1])
+# test_value(map, 2 / 3, [df])
+# df = pd.read_csv('311277438.csv')
+#
+# precision
+# test_value(precision, 3 / 8, [df, True, 1])
+# test_value(precision, 7 / 8, [df, True, 2])
+# test_value(precision, 1, [df, True, 3])
+# test_value(precision, 0, [df, True, 88])
+# test_value(precision, 0.659375, [df, False, None])
+#
+# # recall
+# test_value(recall, 3 / 20, [df, {1: 20}])
+# test_value(recall, 3 / 5, [df, {1: 5}])
+# test_value(recall, 0, [df, {100: 5}])
+# test_value(recall, (3 / 20 + 7 / 8 + 8 / 10) / 3, [df, {1: 20, 2: 8, 3: 10}])
+# test_value(recall, (6 / 17 + 0.5 + 2 / 9) / 3, [df, {27: 17, 30: 8, 39: 9}])
+# test_value(recall, None, [df, {1: 0}])  # check the value for 0 relevant docs and correct the function
+#
+#
+# # precision_at_n
+# test_value(precision_at_n, 3 / 8, [df, 1, 8])
+# test_value(precision_at_n, 3 / 8, [df, 1, 20])
+# test_value(precision_at_n, 2 / 3, [df, 1, 3])
+# test_value(precision_at_n, 4 / 7, [df, 5, 7])
+# test_value(precision_at_n, 0, [df, 6, 0])
+# test_value(precision_at_n, 0, [df, 7, 1])
+# test_value(precision_at_n, 1, [df, 8, 1])
+# test_value(precision_at_n, 0, [df, 88, 1])
 for res in results:
     print(res)

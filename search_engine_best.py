@@ -7,7 +7,8 @@ from parser_module import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
-
+import  Index_bench
+import pickle
 
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
@@ -49,11 +50,16 @@ class SearchEngine:
                 self._indexer.postingDict.pop(key)
         for key in to_del:
             self._indexer.inverted_idx.pop(key)
+
+
+
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
         utils.save_obj(self._indexer.postingDict,"posting")
         utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
         print('Finished parsing and indexing.')
         print(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
+        to_save = Index_bench.index_banch(self._indexer.inverted_idx,self._indexer.postingDict,"info")
+        utils.save_obj(to_save, "idx_bench")
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):
@@ -62,7 +68,9 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        self._indexer.load_index(fn)
+        with open(fn ,'rb') as f:
+            return pickle.load(f)
+
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.

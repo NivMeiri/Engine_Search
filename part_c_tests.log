@@ -1,14 +1,142 @@
-ERROR 2021-01-03 14:40:57,324: report_part_c.docx does not exist.
-INFO 2021-01-03 14:40:57,324: Successfully loaded benchmark labels data.
-INFO 2021-01-03 14:40:57,324: Successfully loaded queries data.
-ERROR 2021-01-03 14:40:57,340: search_engine_1.py does not exist.
-ERROR 2021-01-03 14:40:57,340: search_engine_2.py does not exist.
-INFO 2021-01-03 14:40:57,996: Successfully imported module search_engine_best.
-DEBUG 2021-01-03 14:40:59,215: Building the index in search_engine_best for benchmark data took 1.0160726999999998 seconds.
-ERROR 2021-01-03 14:40:59,215: The following error occured while testing the module search_engine_best.
-ERROR 2021-01-03 14:40:59,215: not enough values to unpack (expected 2, got 1)
+ERROR 2021-01-04 16:50:56,971: report_part_c.docx does not exist.
+INFO 2021-01-04 16:50:56,982: Successfully loaded benchmark labels data.
+INFO 2021-01-04 16:50:56,984: Successfully loaded queries data.
+INFO 2021-01-04 16:50:57,572: Successfully imported module search_engine_1.
+DEBUG 2021-01-04 16:50:59,392: Building the index in search_engine_1 for benchmark data took 1.457966 seconds.
+DEBUG 2021-01-04 16:50:59,598: search_engine_1 successfully returned 1 results for the query 'bioweapon'.
+DEBUG 2021-01-04 16:50:59,813: search_engine_1 successfully returned 5 results for query number 1.
+DEBUG 2021-01-04 16:51:00,002: search_engine_1 successfully returned 111 results for query number 2.
+DEBUG 2021-01-04 16:51:00,249: search_engine_1 successfully returned 44 results for query number 3.
+DEBUG 2021-01-04 16:51:00,440: search_engine_1 successfully returned 118 results for query number 4.
+DEBUG 2021-01-04 16:51:00,598: search_engine_1 successfully returned 14 results for query number 5.
+DEBUG 2021-01-04 16:51:02,831: search_engine_1 successfully returned 33 results for query number 6.
+DEBUG 2021-01-04 16:51:03,048: search_engine_1 successfully returned 100 results for query number 7.
+DEBUG 2021-01-04 16:51:03,271: search_engine_1 successfully returned 217 results for query number 8.
+DEBUG 2021-01-04 16:51:03,498: search_engine_1 successfully returned 157 results for query number 9.
+DEBUG 2021-01-04 16:51:03,767: search_engine_1 successfully returned 26 results for query number 10.
+DEBUG 2021-01-04 16:51:03,975: search_engine_1 successfully returned 275 results for query number 11.
+DEBUG 2021-01-04 16:51:04,136: search_engine_1 successfully returned 198 results for query number 12.
+DEBUG 2021-01-04 16:51:04,322: search_engine_1 successfully returned 74 results for query number 13.
+DEBUG 2021-01-04 16:51:04,528: search_engine_1 successfully returned 56 results for query number 14.
+DEBUG 2021-01-04 16:51:04,698: search_engine_1 successfully returned 3 results for query number 15.
+DEBUG 2021-01-04 16:51:04,887: search_engine_1 successfully returned 82 results for query number 16.
+DEBUG 2021-01-04 16:51:05,098: search_engine_1 successfully returned 16 results for query number 17.
+DEBUG 2021-01-04 16:51:05,284: search_engine_1 successfully returned 2 results for query number 18.
+DEBUG 2021-01-04 16:51:05,482: search_engine_1 successfully returned 140 results for query number 19.
+DEBUG 2021-01-04 16:51:05,649: search_engine_1 successfully returned 248 results for query number 20.
+DEBUG 2021-01-04 16:51:05,801: search_engine_1 successfully returned 65 results for query number 21.
+DEBUG 2021-01-04 16:51:05,985: search_engine_1 successfully returned 175 results for query number 22.
+DEBUG 2021-01-04 16:51:06,134: search_engine_1 successfully returned 54 results for query number 23.
+DEBUG 2021-01-04 16:51:06,293: search_engine_1 successfully returned 46 results for query number 24.
+DEBUG 2021-01-04 16:51:06,460: search_engine_1 successfully returned 22 results for query number 25.
+DEBUG 2021-01-04 16:51:06,602: search_engine_1 successfully returned 45 results for query number 26.
+DEBUG 2021-01-04 16:51:06,741: search_engine_1 successfully returned 29 results for query number 27.
+DEBUG 2021-01-04 16:51:06,889: search_engine_1 successfully returned 105 results for query number 28.
+DEBUG 2021-01-04 16:51:07,102: search_engine_1 successfully returned 105 results for query number 29.
+DEBUG 2021-01-04 16:51:07,287: search_engine_1 successfully returned 92 results for query number 30.
+DEBUG 2021-01-04 16:51:07,492: search_engine_1 successfully returned 43 results for query number 31.
+DEBUG 2021-01-04 16:51:07,682: search_engine_1 successfully returned 31 results for query number 32.
+DEBUG 2021-01-04 16:51:07,844: search_engine_1 successfully returned 43 results for query number 33.
+DEBUG 2021-01-04 16:51:08,003: search_engine_1 successfully returned 35 results for query number 34.
+DEBUG 2021-01-04 16:51:08,154: search_engine_1 successfully returned 30 results for query number 35.
+ERROR 2021-01-04 16:51:08,163: The following error occured while testing the module search_engine_1.
+ERROR 2021-01-04 16:51:08,164: division by zero
 Traceback (most recent call last):
-  File "C:/Users/Admin/Documents/GitHub/Engine_Search/test_part_c_students.py", line 87, in <module>
-    n_res, res = engine.search('bioweapon')
-ValueError: not enough values to unpack (expected 2, got 1)
-DEBUG 2021-01-03 14:40:59,215: Total runtime was: 0:00:01.890822
+  File "C:/Users/Admin/Documents/GitHub/Engine_Search/test_part_c_students.py", line 131, in <module>
+    results_map = metrics.map(q_results_labeled)
+  File "C:\Users\Admin\Documents\GitHub\Engine_Search\metrics.py", line 76, in map
+    return acc / len(split_df)
+ZeroDivisionError: division by zero
+INFO 2021-01-04 16:51:08,165: Successfully imported module search_engine_2.
+DEBUG 2021-01-04 16:51:09,579: Building the index in search_engine_2 for benchmark data took 1.1316205000000004 seconds.
+DEBUG 2021-01-04 16:51:09,712: search_engine_2 successfully returned 1 results for the query 'bioweapon'.
+DEBUG 2021-01-04 16:51:11,035: search_engine_2 successfully returned 4 results for query number 1.
+DEBUG 2021-01-04 16:51:11,394: search_engine_2 successfully returned 111 results for query number 2.
+DEBUG 2021-01-04 16:51:11,739: search_engine_2 successfully returned 44 results for query number 3.
+DEBUG 2021-01-04 16:51:11,888: search_engine_2 successfully returned 118 results for query number 4.
+DEBUG 2021-01-04 16:51:12,036: search_engine_2 successfully returned 14 results for query number 5.
+DEBUG 2021-01-04 16:51:12,389: search_engine_2 successfully returned 33 results for query number 6.
+DEBUG 2021-01-04 16:51:12,526: search_engine_2 successfully returned 100 results for query number 7.
+DEBUG 2021-01-04 16:51:12,923: search_engine_2 successfully returned 217 results for query number 8.
+DEBUG 2021-01-04 16:51:13,096: search_engine_2 successfully returned 157 results for query number 9.
+DEBUG 2021-01-04 16:51:13,462: search_engine_2 successfully returned 26 results for query number 10.
+DEBUG 2021-01-04 16:51:13,833: search_engine_2 successfully returned 275 results for query number 11.
+DEBUG 2021-01-04 16:51:14,229: search_engine_2 successfully returned 198 results for query number 12.
+DEBUG 2021-01-04 16:51:14,612: search_engine_2 successfully returned 24 results for query number 13.
+DEBUG 2021-01-04 16:51:14,955: search_engine_2 successfully returned 56 results for query number 14.
+DEBUG 2021-01-04 16:51:15,098: search_engine_2 successfully returned 3 results for query number 15.
+DEBUG 2021-01-04 16:51:15,239: search_engine_2 successfully returned 82 results for query number 16.
+DEBUG 2021-01-04 16:51:15,393: search_engine_2 successfully returned 16 results for query number 17.
+DEBUG 2021-01-04 16:51:15,531: search_engine_2 successfully returned 2 results for query number 18.
+DEBUG 2021-01-04 16:51:15,688: search_engine_2 successfully returned 140 results for query number 19.
+DEBUG 2021-01-04 16:51:15,841: search_engine_2 successfully returned 101 results for query number 20.
+DEBUG 2021-01-04 16:51:16,192: search_engine_2 successfully returned 65 results for query number 21.
+DEBUG 2021-01-04 16:51:16,536: search_engine_2 successfully returned 175 results for query number 22.
+DEBUG 2021-01-04 16:51:16,928: search_engine_2 successfully returned 54 results for query number 23.
+DEBUG 2021-01-04 16:51:17,301: search_engine_2 successfully returned 46 results for query number 24.
+DEBUG 2021-01-04 16:51:17,652: search_engine_2 successfully returned 22 results for query number 25.
+DEBUG 2021-01-04 16:51:17,801: search_engine_2 successfully returned 45 results for query number 26.
+DEBUG 2021-01-04 16:51:17,944: search_engine_2 successfully returned 26 results for query number 27.
+DEBUG 2021-01-04 16:51:18,291: search_engine_2 successfully returned 105 results for query number 28.
+DEBUG 2021-01-04 16:51:18,625: search_engine_2 successfully returned 105 results for query number 29.
+DEBUG 2021-01-04 16:51:18,761: search_engine_2 successfully returned 92 results for query number 30.
+DEBUG 2021-01-04 16:51:20,181: search_engine_2 successfully returned 43 results for query number 31.
+DEBUG 2021-01-04 16:51:20,593: search_engine_2 successfully returned 28 results for query number 32.
+DEBUG 2021-01-04 16:51:21,004: search_engine_2 successfully returned 43 results for query number 33.
+DEBUG 2021-01-04 16:51:21,166: search_engine_2 successfully returned 35 results for query number 34.
+DEBUG 2021-01-04 16:51:21,348: search_engine_2 successfully returned 30 results for query number 35.
+ERROR 2021-01-04 16:51:21,357: The following error occured while testing the module search_engine_2.
+ERROR 2021-01-04 16:51:21,357: division by zero
+Traceback (most recent call last):
+  File "C:/Users/Admin/Documents/GitHub/Engine_Search/test_part_c_students.py", line 131, in <module>
+    results_map = metrics.map(q_results_labeled)
+  File "C:\Users\Admin\Documents\GitHub\Engine_Search\metrics.py", line 76, in map
+    return acc / len(split_df)
+ZeroDivisionError: division by zero
+INFO 2021-01-04 16:51:21,360: Successfully imported module search_engine_best.
+DEBUG 2021-01-04 16:51:23,455: Building the index in search_engine_best for benchmark data took 1.699429900000002 seconds.
+ERROR 2021-01-04 16:51:23,646: basic query for the word bioweapon returned no results
+DEBUG 2021-01-04 16:51:23,838: search_engine_best successfully returned 2 results for query number 1.
+DEBUG 2021-01-04 16:51:23,989: search_engine_best successfully returned 111 results for query number 2.
+DEBUG 2021-01-04 16:51:24,198: search_engine_best successfully returned 44 results for query number 3.
+DEBUG 2021-01-04 16:51:24,411: search_engine_best successfully returned 117 results for query number 4.
+DEBUG 2021-01-04 16:51:24,581: search_engine_best successfully returned 13 results for query number 5.
+DEBUG 2021-01-04 16:51:24,725: search_engine_best successfully returned 33 results for query number 6.
+DEBUG 2021-01-04 16:51:24,879: search_engine_best successfully returned 100 results for query number 7.
+DEBUG 2021-01-04 16:51:25,068: search_engine_best successfully returned 217 results for query number 8.
+DEBUG 2021-01-04 16:51:25,277: search_engine_best successfully returned 157 results for query number 9.
+DEBUG 2021-01-04 16:51:25,464: search_engine_best successfully returned 26 results for query number 10.
+DEBUG 2021-01-04 16:51:25,627: search_engine_best successfully returned 274 results for query number 11.
+DEBUG 2021-01-04 16:51:25,793: search_engine_best successfully returned 198 results for query number 12.
+DEBUG 2021-01-04 16:51:25,980: search_engine_best successfully returned 74 results for query number 13.
+DEBUG 2021-01-04 16:51:26,119: search_engine_best successfully returned 56 results for query number 14.
+DEBUG 2021-01-04 16:51:26,269: search_engine_best successfully returned 2 results for query number 15.
+DEBUG 2021-01-04 16:51:26,412: search_engine_best successfully returned 81 results for query number 16.
+DEBUG 2021-01-04 16:51:26,615: search_engine_best successfully returned 16 results for query number 17.
+ERROR 2021-01-04 16:51:26,788: Query 18 with keywords 'bioweapon lab wuhan' returned no results.
+DEBUG 2021-01-04 16:51:26,934: search_engine_best successfully returned 140 results for query number 19.
+DEBUG 2021-01-04 16:51:27,075: search_engine_best successfully returned 101 results for query number 20.
+DEBUG 2021-01-04 16:51:27,225: search_engine_best successfully returned 65 results for query number 21.
+DEBUG 2021-01-04 16:51:27,371: search_engine_best successfully returned 175 results for query number 22.
+DEBUG 2021-01-04 16:51:27,508: search_engine_best successfully returned 54 results for query number 23.
+DEBUG 2021-01-04 16:51:27,648: search_engine_best successfully returned 46 results for query number 24.
+DEBUG 2021-01-04 16:51:27,794: search_engine_best successfully returned 22 results for query number 25.
+DEBUG 2021-01-04 16:51:27,924: search_engine_best successfully returned 45 results for query number 26.
+DEBUG 2021-01-04 16:51:28,059: search_engine_best successfully returned 25 results for query number 27.
+DEBUG 2021-01-04 16:51:28,196: search_engine_best successfully returned 105 results for query number 28.
+DEBUG 2021-01-04 16:51:28,341: search_engine_best successfully returned 105 results for query number 29.
+DEBUG 2021-01-04 16:51:28,477: search_engine_best successfully returned 92 results for query number 30.
+DEBUG 2021-01-04 16:51:28,626: search_engine_best successfully returned 42 results for query number 31.
+DEBUG 2021-01-04 16:51:28,764: search_engine_best successfully returned 28 results for query number 32.
+DEBUG 2021-01-04 16:51:28,898: search_engine_best successfully returned 43 results for query number 33.
+DEBUG 2021-01-04 16:51:29,056: search_engine_best successfully returned 35 results for query number 34.
+DEBUG 2021-01-04 16:51:29,227: search_engine_best successfully returned 30 results for query number 35.
+ERROR 2021-01-04 16:51:29,235: The following error occured while testing the module search_engine_best.
+ERROR 2021-01-04 16:51:29,235: division by zero
+Traceback (most recent call last):
+  File "C:/Users/Admin/Documents/GitHub/Engine_Search/test_part_c_students.py", line 131, in <module>
+    results_map = metrics.map(q_results_labeled)
+  File "C:\Users\Admin\Documents\GitHub\Engine_Search\metrics.py", line 76, in map
+    return acc / len(split_df)
+ZeroDivisionError: division by zero
+DEBUG 2021-01-04 16:51:29,235: Total runtime was: 0:00:32.264477
