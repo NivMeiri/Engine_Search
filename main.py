@@ -1,13 +1,13 @@
 import search_engine_best
 import  configuration
 import  search_engine_1
-import  search_engine_2
+import  search_engine4
 import  spellchecker
 import  time
 if __name__ == '__main__':
     config=configuration.ConfigClass()
     #search_engine=search_engine_best.SearchEngine(config)
-    search_engine=search_engine_1.SearchEngine(config)
+    search_engine=search_engine4.SearchEngine(config)
 
     from textblob import TextBlob
     a = "cmputr"  # incorrect spelling
@@ -67,9 +67,9 @@ if __name__ == '__main__':
     "wearing masks has been “proven ineffective.”	wearing masks proven ineffective"
     "This virus has a cure.	virus has a cure"]
     #
-    # output_path = 'posting'
-    # num_docs_to_retrieve = 20
-    # search_engine.main( output_path, stemming, ['bioweapon'], num_docs_to_retrieve)
-    from thesaurus  import Word
-    myWord = Word('box')
-    print(myWord.synonyms())
+    output_path = 'posting'
+    num_docs_to_retrieve = 20
+    search_engine.main( output_path, stemming, queries, num_docs_to_retrieve)
+    # from thesaurus import Word
+    # myWord = Word("all")
+    # print(myWord.synonyms())

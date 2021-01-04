@@ -60,21 +60,28 @@ class Searcher:
             expand_query=self.SpellChecker(query_as_list)
         else:
             expand_query=query_as_list
-
+        sum_bm25 = 0
         for term in expand_query:
             term_lower=term.lower()
             if term in self._indexer.inverted_idx:
-                idf = log(self._indexer.num_of_docs / self._indexer.inverted_idx[term_lower], 2)
+                idf = self._indexer.inverted_idx[term_lower]
                 docs = self._indexer.postingDict[term_lower]
                 for doc_tuple in docs:
                     doc = doc_tuple[0]
                     tf=doc_tuple[1]
-                    len=doc_tuple[2]
+                    len=self._indexer.doc_info[doc][0]
+                    info=self._indexer.doc_info
+                    squar_Wij=self._indexer.doc_info[doc][1]
                     bm25=self._ranker.rank_with_bm25(idf, tf, len, avg_doc)
+                    sum_bm25+=bm25
+                    cosin=self._ranker.Rank_with_cosimilarity(tf*idf,squar_Wij,expand_query)
                     if doc not in relevant_docs.keys():
-                        relevant_docs[doc] = bm25
+                        relevant_docs[doc] = [bm25,cosin]
                     else:
-                        relevant_docs[doc] += bm25
+                        relevant_docs[doc][0]=relevant_docs[doc][0]+bm25
+                        relevant_docs[doc][1]=relevant_docs[doc][1]+cosin
+
+
         return relevant_docs
 
 

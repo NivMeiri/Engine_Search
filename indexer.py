@@ -1,5 +1,6 @@
 # DO NOT MODIFY CLASS NAME
 import pickle
+from math import log
 
 import utils
 
@@ -13,6 +14,7 @@ class Indexer:
         self.config = config
         self.avg_Size_doc=0
         self.num_of_docs=0
+        self.doc_info={}
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -81,3 +83,15 @@ class Indexer:
         Return the posting list from the index for a term.
         """
         return self.postingDict[term] if self._is_term_exist(term) else []
+
+    def add_square_Wij(self):
+        for term in self.inverted_idx:
+            idf=self.inverted_idx[term]
+            list_of_doc=self.postingDict[term]
+            for doc in list_of_doc:
+                if doc[0] in self.doc_info:
+                    self.doc_info[doc[0]][0]+=1
+                    self.doc_info[doc[0]][1] += (idf*doc[1])
+                else:
+                    tf_idf=idf*doc[1]
+                    self.doc_info[doc[0]]=[1,tf_idf]

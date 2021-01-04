@@ -13,6 +13,9 @@ class Ranker:
         :param relevant_doc: dictionary of documents that contains at least one term from the query.
         :return: sorted list of documents by score
         """
+        for doc in relevant_doc:
+            relevant_doc[doc]=Ranker.rank_bm25_and_cosin(Ranker,relevant_doc[doc])
+
         return sorted(relevant_doc.items(), key=lambda item: item[1], reverse=True)
 
     @staticmethod
@@ -31,15 +34,19 @@ class Ranker:
     #W_iq is the number of times that the term exist in the query
 
 
-    def Rank_with_cosimilarity(self, relevant_doc,query):
+    def Rank_with_cosimilarity(self, tf_idf,wij,query):
         wiq=len(query)
-        for doc in relevant_doc.keys():
-            sum=(relevant_doc[doc][1]/(math.sqrt(relevant_doc[doc][0]*wiq)))
-            relevant_doc[doc]=sum
-        return  (relevant_doc)
+        return tf_idf/math.sqrt(wij*wiq)
+        # for doc in relevant_doc.keys():
+        #     sum=(relevant_doc[doc][1]/(math.sqrt(relevant_doc[doc][0]*wiq)))
+        #     relevant_doc[doc]=sum
+        # return  (relevant_doc)
     # calculating the rank with the bm25 formula
     def rank_with_bm25(self,idf,tf,d,avg):
         k = 1.2
         b = 0.75
         bm25 = (idf * tf * (k + 1)) / (tf + k*(1 - b + b * (d / avg)))
         return bm25
+
+    def rank_bm25_and_cosin(self,list_rank):
+        return 0*list_rank[0]+1*list_rank[1]
