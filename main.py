@@ -70,6 +70,6 @@ if __name__ == '__main__':
     # output_path = 'posting'
     # num_docs_to_retrieve = 20
     # search_engine.main( output_path, stemming, ['bioweapon'], num_docs_to_retrieve)
-    # from thesaurus.thesaurus  import Word
-    # myWord = Word('box')
-    # print(myWord.synonyms())
+    from thesaurus  import Word
+    myWord = Word('box')
+    print(myWord.synonyms())
