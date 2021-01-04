@@ -7,7 +7,6 @@ from parser_module import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
-import  Index_bench
 import pickle
 
 # DO NOT CHANGE THE CLASS NAME
@@ -44,22 +43,22 @@ class SearchEngine:
 
         to_del=[]
         print("total num of terms: "+str(len(self._indexer.inverted_idx)))
-        for key in self._indexer.inverted_idx:
-            if(self._indexer.inverted_idx[key]==1):
-                to_del.append(key)
-                self._indexer.postingDict.pop(key)
-        for key in to_del:
-            self._indexer.inverted_idx.pop(key)
+        def remove_word_1():
+            for key in self._indexer.inverted_idx:
+                if (self._indexer.inverted_idx[key] == 1):
+                    to_del.append(key)
+                    self._indexer.postingDict.pop(key)
+            for key in to_del:
+                self._indexer.inverted_idx.pop(key)
 
-
+        remove_word_1()
+        self._indexer.add_square_Wij()
 
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
         utils.save_obj(self._indexer.postingDict,"posting")
         utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
         print('Finished parsing and indexing.')
-        print(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
-        to_save = Index_bench.index_banch(self._indexer.inverted_idx,self._indexer.postingDict,"info")
-        utils.save_obj(to_save, "idx_bench")
+        #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):
@@ -130,9 +129,13 @@ class SearchEngine:
         query_num =1
         for query in queries:
             start = time.time()
-            for doc_tuple in self.search(query ,num_docs_to_retrieve):
+            mylist=self.search(query, num_docs_to_retrieve)
+            answer_to_run=mylist[1]
+            for doc_tuple in answer_to_run:
+                print(doc_tuple)
                 print('tweet id: {}, score (Rank with BM25 method): {}'.format(doc_tuple[0], doc_tuple[1]))
-            query_num +=1
-            print("time that toke to retrieve :"+str(time.time()-start))
+            query_num += 1
+            print("time that toke to retrieve :" + str(time.time() - start))
+
 
 

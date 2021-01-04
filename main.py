@@ -1,23 +1,13 @@
 import search_engine_best
 import  configuration
 import  search_engine_1
-import  search_engine4
+import  search_engine_4
 import  spellchecker
 import  time
 if __name__ == '__main__':
     config=configuration.ConfigClass()
     #search_engine=search_engine_best.SearchEngine(config)
-    search_engine=search_engine4.SearchEngine(config)
-
-    from textblob import TextBlob
-    a = "cmputr"  # incorrect spelling
-    #b = TextBlob(a)
-    b=spellchecker.SpellChecker()
-    start=time.time()
-    # prints the corrected spelling
-    print("corrected text: " + str(b.correction(a)))
-    print(time.time()-start)
-
+    search_engine=search_engine_best.SearchEngine(config)
 
 
     def SpellChecker(word_list):
@@ -28,7 +18,6 @@ if __name__ == '__main__':
             after.append(spell.correction(value))
         print("this is after spell checking :" + str(after))
         return after
-    print(SpellChecker(["Fauci"]))
 
     stemming = False
     queries = ["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.	fauci paper hydroxychloroquine sars",

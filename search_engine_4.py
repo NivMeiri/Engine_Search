@@ -8,7 +8,6 @@ from parser_module import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
-import  Index_bench
 import pickle
 
 # DO NOT CHANGE THE CLASS NAME
@@ -61,8 +60,6 @@ class SearchEngine:
         utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
         print('Finished parsing and indexing.')
         print(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
-        to_save = Index_bench.index_banch(self._indexer.inverted_idx,self._indexer.postingDict,"info")
-        utils.save_obj(to_save, "idx_bench")
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):

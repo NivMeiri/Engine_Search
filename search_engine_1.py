@@ -43,18 +43,22 @@ class SearchEngine:
             self._indexer.add_new_doc(parsed_document)
         to_del = []
         print("total num of terms: " + str(len(self._indexer.inverted_idx)))
-        # for key in self._indexer.inverted_idx:
-        #     if (self._indexer.inverted_idx[key] == 1):
-        #         to_del.append(key)
-        #         self._indexer.postingDict.pop(key)
-        # for key in to_del:
-        #     self._indexer.inverted_idx.pop(key)
+
+        def remove_word_1():
+            for key in self._indexer.inverted_idx:
+                if (self._indexer.inverted_idx[key] == 1):
+                    to_del.append(key)
+                    self._indexer.postingDict.pop(key)
+            for key in to_del:
+                self._indexer.inverted_idx.pop(key)
+
+
+
         print('num od docs in parser. :'+str(len(documents_list)) )
-        utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
-        utils.save_obj(self._indexer.postingDict, "posting")
+        to_Save=(self._indexer.inverted_idx,self._indexer.postingDict,self._indexer.doc_info)
         print("num of terms in inverted "+str(len(self._indexer.inverted_idx)))
         print('Finished parsing and indexing.')
-
+        utils.save_obj(to_Save,"idx_bench")
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):
@@ -63,7 +67,7 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        return utils.load_obj("Retrieval_info")
+        return utils.load_obj(fn)
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.

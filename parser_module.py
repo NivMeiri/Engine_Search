@@ -16,11 +16,11 @@ class Parse:
         self.maxword = max(len(x) for x in self.words)
         # dict for the terms that suspected of being entities
         # self.entities = {}
-        # self.Counter_entites = 1
+
         #Binary parameter from main that decide if the parser use stemming
-        #self.binary_Stem = is_stemming
-        #if(is_stemming):
-            #self.stemmer = stemmer.Stemmer().Porter_stemmer
+        self.binary_Stem = False
+        if(self.binary_Stem):
+            self.stemmer = stemmer.Stemmer().Porter_stemmer
 
         # Months dictionary to support our new rule,saving all dates in the same format
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
