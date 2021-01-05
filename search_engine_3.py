@@ -1,12 +1,12 @@
 import time
 import pandas as pd
-from parser_module import Parse
+from parser_module_SpellCorrection import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
 import pickle
 
-#------------this moudle is implementing ----------------
+#------------this moudle is implementing spell correction ----------------
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
 
