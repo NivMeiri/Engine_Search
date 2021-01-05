@@ -66,18 +66,13 @@ class Parse:
                     elif term[-1] in "%":
                         text_tokenstream.append(term)
 
-                    #if term with $
-                    elif term[0]=="$" and re.sub('[,]', '',term[1:]).replace('.', '', 1).isdigit() and term[1:].isascii():
-                        text_tokenstream.append("$"+self.to3digits_units(term[1:]))
-                    elif term[-1]=="$" and re.sub('[,]', '',term[:-1]).replace('.', '', 1).isdigit() and term[:-1].isascii():
-                        text_tokenstream.append("$" + self.to3digits_units(term[:-1]))
+
                     # url rule, pars it and save the url terms
                     elif term[0:5] == "https":
                         UrlList = self.pars_url(term[5:])
                         for word_in_url in UrlList:
                             self.clean(word_in_url)
-                            if word_in_url.lower() != "t.co":
-                                text_tokenstream.append(word_in_url.lower())
+                            text_tokenstream.append(word_in_url.lower())
 
                     #if term is month sent it to date function
                     elif term.lower() in self.month:
@@ -89,9 +84,6 @@ class Parse:
                         if i + 1 < len(list_of_words):
                             if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
                                 text_tokenstream.append(self.to3digits_units(num) + "%")
-                                list_of_words[i + 1] = ""
-                            elif list_of_words[i + 1].lower() == "dollars" or list_of_words[i + 1].lower() == "dollar":
-                                text_tokenstream.append("$"+self.to3digits_units(num))
                                 list_of_words[i + 1] = ""
                             elif list_of_words[i + 1].lower() == "thousand":
                                 text_tokenstream.append(num + "K")
@@ -113,17 +105,11 @@ class Parse:
                             num = self.to3digits_units(num)
                             text_tokenstream.append(num)
                     else:
-                        if term.lower()=="covid-19" or term.lower()=="covid19" or term.lower()=="covid_19" or term.lower()=="cov19" or term.lower()=="cov-19" or term.lower()=="covid" or term.lower()=="coronavirus" or term.lower()=="coronaviruses":
-                            text_tokenstream.append("covid19")
-                        elif term.lower()=="us" or term.lower()=="u.s" or term.lower()=="usa" or term.lower()=="u.s.a" or term.lower()=="unitedstate" :
-                            text_tokenstream.append("usa")
-                        elif term.lower()=="donald":
-                            text_tokenstream.append("trump")
-                        else:
-                            # if the terms not fit any rule, removing the unnecessary chars
-                            list_term = re.split('[-,|/|//|:.%?=+]', term)
-                            for word in list_term:
-                                self.clean_and_push(word , text_tokenstream)
+
+                        # if the terms not fit any rule, removing the unnecessary chars
+                        list_term = re.split('[-,|/|//|:.%?=+]', term)
+                        for word in list_term:
+                            self.clean_and_push(word , text_tokenstream)
         # send the parsed text to the entities func
         #self.Entites_and_Names(text_tokenstream)
         return text_tokenstream
@@ -209,9 +195,9 @@ class Parse:
     #clean the term from unncessary chars and emojis
     def clean(self, term):
         while len(term) > 0:
-            if term[-1] in '/(.&…),''`;:-_|!?"' or term[-1] in "'" or ord(term[-1]) > 126:
+            if term[-1] in '/(.&…),''`;:-_|!?"' or term[-1] in "'":
                 term = term[:-1]
-            elif term[0] in '/()&.…,''`;:-_|!?"' or term[0] in "'" or ord(term[0]) > 126:
+            elif term[0] in '/()&.…,''`;:-_|!?"' or term[0] in "'":
                 term = term[:0]
             else:
                 break
@@ -228,7 +214,7 @@ class Parse:
             # if self.binary_Stem:
             #     term = self.stemmer.stem(term)
             # else:
-            term = self.end_with_s(term)
+            #term = self.end_with_s(term)
             text_tokensterm.append(term)
 
     # another rule that we added ( arent we amazing?)- LOL, remove the "'s" in the word
@@ -245,6 +231,7 @@ class Parse:
             if x is not '':
                 a.append(x)
         return a
+
     #this funtion get a term that suspected to be a part of a date and return it as a date in our single format
     def to_date(self,term,list_of_words,i,text_tokensterm):
         date = ""

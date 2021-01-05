@@ -1,7 +1,7 @@
 import time
 
 import pandas as pd
-from parser_module import Parse
+from parser_module_Advance import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils

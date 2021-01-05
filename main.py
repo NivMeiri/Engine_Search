@@ -7,7 +7,7 @@ import  time
 if __name__ == '__main__':
     config=configuration.ConfigClass()
     #search_engine=search_engine_best.SearchEngine(config)
-    search_engine=search_engine_4.SearchEngine(config)
+    search_engine=search_engine_best.SearchEngine(config)
 
 
     def SpellChecker(word_list):

@@ -5,7 +5,7 @@ from math import log
 import pandas as pd
 from reader import ReadFile
 from configuration import ConfigClass
-from parser_module import Parse
+from parser_module_Advance import Parse
 from indexer import Indexer
 from searcher_Cosimilarity import Searcher
 import utils

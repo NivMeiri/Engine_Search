@@ -4,9 +4,9 @@ import time
 import pandas as pd
 from reader import ReadFile
 from configuration import ConfigClass
-from parser_module import Parse
+from parser_module_Advance import Parse
 from indexer import Indexer
-from searcher import Searcher
+from searcher_less_twitt import Searcher
 import utils
 import pickle
 import  time
@@ -47,13 +47,13 @@ class SearchEngine:
         print("total num of terms: "+str(len(self._indexer.inverted_idx)))
         def remove_word_1():
             for key in self._indexer.inverted_idx:
-                if (self._indexer.inverted_idx[key] == 1 and key.isalpha()==False):
+                if (self._indexer.inverted_idx[key] == 1):
                     to_del.append(key)
                     self._indexer.postingDict.pop(key)
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
 
-        #remove_word_1()
+        remove_word_1()
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
         print('Finished parsing and indexing.')
         print("time toke to build index "+str(time.time()-time1))
