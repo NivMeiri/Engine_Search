@@ -45,7 +45,7 @@ class SearchEngine:
         print("total num of terms: "+str(len(self._indexer.inverted_idx)))
         def remove_word_1():
             for key in self._indexer.inverted_idx:
-                if (self._indexer.inverted_idx[key] == 1):
+                if (self._indexer.inverted_idx[key] == 1 and key.isalpha()==False):
                     to_del.append(key)
                     self._indexer.postingDict.pop(key)
             for key in to_del:
@@ -53,7 +53,7 @@ class SearchEngine:
 
         remove_word_1()
         self._indexer.add_square_Wij()
-
+        print (self._indexer.inverted_idx)
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
         utils.save_obj(self._indexer.postingDict,"posting")
         utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
@@ -132,7 +132,6 @@ class SearchEngine:
             mylist=self.search(query, num_docs_to_retrieve)
             answer_to_run=mylist[1]
             for doc_tuple in answer_to_run:
-                print(doc_tuple)
                 print('tweet id: {}, score (Rank with BM25 method): {}'.format(doc_tuple[0], doc_tuple[1]))
             query_num += 1
             print("time that toke to retrieve :" + str(time.time() - start))

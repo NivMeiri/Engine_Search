@@ -34,6 +34,7 @@ class Parse:
         #     os.mkdir(self.output)
     #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
+        #print (text)
         #saving the entities
 
         '''
@@ -65,12 +66,18 @@ class Parse:
                     elif term[-1] in "%":
                         text_tokenstream.append(term)
 
+                    #if term with $
+                    elif term[0]=="$" and re.sub('[,]', '',term[1:]).replace('.', '', 1).isdigit() and term[1:].isascii():
+                        text_tokenstream.append("$"+self.to3digits_units(term[1:]))
+                    elif term[-1]=="$" and re.sub('[,]', '',term[:-1]).replace('.', '', 1).isdigit() and term[:-1].isascii():
+                        text_tokenstream.append("$" + self.to3digits_units(term[:-1]))
                     # url rule, pars it and save the url terms
                     elif term[0:5] == "https":
                         UrlList = self.pars_url(term[5:])
                         for word_in_url in UrlList:
                             self.clean(word_in_url)
-                            text_tokenstream.append(word_in_url.lower())
+                            if word_in_url.lower() != "t.co":
+                                text_tokenstream.append(word_in_url.lower())
 
                     #if term is month sent it to date function
                     elif term.lower() in self.month:
@@ -82,6 +89,9 @@ class Parse:
                         if i + 1 < len(list_of_words):
                             if list_of_words[i + 1].lower() == "percent" or list_of_words[i + 1].lower() == "percentage":
                                 text_tokenstream.append(self.to3digits_units(num) + "%")
+                                list_of_words[i + 1] = ""
+                            elif list_of_words[i + 1].lower() == "dollars" or list_of_words[i + 1].lower() == "dollar":
+                                text_tokenstream.append("$"+self.to3digits_units(num))
                                 list_of_words[i + 1] = ""
                             elif list_of_words[i + 1].lower() == "thousand":
                                 text_tokenstream.append(num + "K")
@@ -107,6 +117,8 @@ class Parse:
                             text_tokenstream.append("covid19")
                         elif term.lower()=="us" or term.lower()=="u.s" or term.lower()=="usa" or term.lower()=="u.s.a" or term.lower()=="unitedstate" :
                             text_tokenstream.append("usa")
+                        elif term.lower()=="donald":
+                            text_tokenstream.append("trump")
                         else:
                             # if the terms not fit any rule, removing the unnecessary chars
                             list_term = re.split('[-,|/|//|:.%?=+]', term)
@@ -216,7 +228,7 @@ class Parse:
             # if self.binary_Stem:
             #     term = self.stemmer.stem(term)
             # else:
-            #     term = self.end_with_s(term)
+            term = self.end_with_s(term)
             text_tokensterm.append(term)
 
     # another rule that we added ( arent we amazing?)- LOL, remove the "'s" in the word

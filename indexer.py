@@ -34,13 +34,14 @@ class Indexer:
             term_lower=term.lower()
             try:
                 # Update inverted index and posting
-                if term not in self.inverted_idx.keys():
+                if term_lower not in self.inverted_idx.keys():
                     self.inverted_idx[term_lower] = 1
                     self.postingDict[term_lower] = []
                 else:
                     self.inverted_idx[term_lower] += 1
                 freq=document.term_doc_dictionary[term][0]/(document.max_term[1])
                 self.postingDict[term_lower].append((document.tweet_id,freq,document.doc_length))
+
 
             except Exception:
                 print(Exception)
@@ -91,7 +92,7 @@ class Indexer:
             for doc in list_of_doc:
                 if doc[0] in self.doc_info:
                     self.doc_info[doc[0]][0]+=1
-                    self.doc_info[doc[0]][1] += (idf*doc[1])
+                    self.doc_info[doc[0]][1] += (idf*doc[1])**2
                 else:
-                    tf_idf=idf*doc[1]
+                    tf_idf=(idf*doc[1])**2
                     self.doc_info[doc[0]]=[1,tf_idf]
