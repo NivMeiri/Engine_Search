@@ -7,7 +7,7 @@ import  time
 if __name__ == '__main__':
     config=configuration.ConfigClass()
     #search_engine=search_engine_best.SearchEngine(config)
-    search_engine=search_engine_best.SearchEngine(config)
+    search_engine=search_engine_4.SearchEngine(config)
 
 
     def SpellChecker(word_list):
@@ -18,6 +18,7 @@ if __name__ == '__main__':
             after.append(spell.correction(value))
         print("this is after spell checking :" + str(after))
         return after
+
 
     stemming = False
     queries = ["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.	fauci paper hydroxychloroquine sars",
@@ -58,7 +59,7 @@ if __name__ == '__main__':
     #
     output_path = 'posting'
     num_docs_to_retrieve = 20
-    search_engine.main( output_path, stemming, queries, num_docs_to_retrieve)
+    search_engine.main( output_path, stemming, queries, 20)
     # from thesaurus import Word
     # myWord = Word("all")
     # print(myWord.synonyms())

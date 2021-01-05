@@ -13,10 +13,14 @@ class Ranker:
         :param relevant_doc: dictionary of documents that contains at least one term from the query.
         :return: sorted list of documents by score
         """
-        for doc in relevant_doc:
-            relevant_doc[doc]=Ranker.rank_bm25_and_cosin(Ranker,relevant_doc[doc])
+        # for doc in relevant_doc:
+        #     relevant_doc[doc]=Ranker.rank_bm25_and_cosin(Ranker,relevant_doc[doc])
 
-        return sorted(relevant_doc.items(), key=lambda item: item[1], reverse=True)
+        our__list= sorted(relevant_doc.items(), key=lambda item: item[1], reverse=True)
+        to_ret=[]
+        for val in our__list:
+            to_ret.append(val[0])
+        return to_ret
 
     @staticmethod
     def retrieve_top_k(sorted_relevant_doc, k=2000):
@@ -49,4 +53,4 @@ class Ranker:
         return bm25
 
     def rank_bm25_and_cosin(self,list_rank):
-        return 0*list_rank[0]+1*list_rank[1]
+        return 1*list_rank[0]+0*list_rank[1]

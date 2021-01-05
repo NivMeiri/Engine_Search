@@ -1,3 +1,4 @@
+import os
 import time
 from math import log
 
@@ -6,9 +7,13 @@ from reader import ReadFile
 from configuration import ConfigClass
 from parser_module import Parse
 from indexer import Indexer
-from searcher import Searcher
+from searcher_Cosimilarity import Searcher
 import utils
 import pickle
+#--------------------cosimilarity---------------------
+
+
+
 
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
@@ -43,23 +48,20 @@ class SearchEngine:
             self._indexer.add_new_doc(parsed_document)
         to_del=[]
         print("total num of terms: "+str(len(self._indexer.inverted_idx)))
-        for key in self._indexer.inverted_idx:
-            if(self._indexer.inverted_idx[key]==1):
-                to_del.append(key)
-                self._indexer.postingDict.pop(key)
-            else:
-               self._indexer.inverted_idx[key]=log(self._indexer.num_of_docs/self._indexer.inverted_idx[key],2)
-        for key in to_del:
-            self._indexer.inverted_idx.pop(key)
+        # for key in self._indexer.inverted_idx:
+        #     if(self._indexer.inverted_idx[key]==1):
+        #         to_del.append(key)
+        #         self._indexer.postingDict.pop(key)
+        #     else:
+        #        self._indexer.inverted_idx[key]=log(self._indexer.num_of_docs/self._indexer.inverted_idx[key],2)
+        # for key in to_del:
+        #     self._indexer.inverted_idx.pop(key)
         self._indexer.add_square_Wij()
-        print(self._indexer.inverted_idx)
 
 
-        print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
-        utils.save_obj(self._indexer.postingDict,"posting")
-        utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
+
         print('Finished parsing and indexing.')
-        print(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
+        #print(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):
@@ -74,7 +76,7 @@ class SearchEngine:
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
-    def load_precomputed_model(self):
+    def load_precomputed_model(self,model_dir=None):
         """
         Loads a pre-computed model (or models) so we can answer queries.
         This is where you would load models like word2vec, LSI, LDA, etc. and
@@ -127,13 +129,16 @@ class SearchEngine:
         else:
             output_path = output_path + "/WithoutStem"
 
-        query_num =1
-        for query in queries:
+        query_num = 1
+        queries = pd.read_csv(os.path.join('data', 'queries_train.tsv'), sep='\t')
+        for i, row in queries.iterrows():
+            q_id = row['query_id']
+            q_keywords = row['keywords']
             start = time.time()
-            mylist = self.search(query, num_docs_to_retrieve)
+            mylist = self.search(q_keywords, num_docs_to_retrieve)
             answer_to_run = mylist[1]
             for doc_tuple in answer_to_run:
-                print('tweet id: {}, score (Rank with BM25 method): {}'.format(doc_tuple[0], doc_tuple[1]))
+                print('tweet id: {}'.format(doc_tuple))
             query_num += 1
             print("time that toke to retrieve :" + str(time.time() - start))
 

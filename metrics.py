@@ -68,10 +68,9 @@ def map(df):
         :return: Double: the average precision of the df
     """
     acc = 0
-    split_df = [pd.DataFrame(y).reset_index() for x, y in df.groupby('query', as_index=True)]
+    split_df = [pd.DataFrame(y).reset_index() for x, y in df.groupby('query', as_index=True) if len(y) > 0]
     indices = [sdf.index[sdf['y_true'] == 1].tolist() for sdf in split_df]
     for i, indexes in enumerate(indices):
-        pres = [precision_at_n(split_df[i], i + 1, index + 1) for index in indexes]
+        pres = [precision_at_n(split_df[i], split_df[i]['query'][0], index + 1) for index in indexes]
         acc += reduce(lambda a, b: a + b, pres) / len(indexes) if len(pres) > 0 else 0
     return acc / len(split_df)
-    

@@ -1,3 +1,4 @@
+import os
 import time
 
 import pandas as pd
@@ -8,7 +9,7 @@ from indexer import Indexer
 from searcher import Searcher
 import utils
 import pickle
-
+import  time
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
 
@@ -23,6 +24,7 @@ class SearchEngine:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def build_index_from_parquet(self, fn):
+        time1=time.time()
         """
         Reads parquet file and passes it to the parser, then indexer.
         Input:
@@ -51,13 +53,10 @@ class SearchEngine:
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
 
-        remove_word_1()
-        self._indexer.add_square_Wij()
-        print (self._indexer.inverted_idx)
+        #remove_word_1()
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
-        utils.save_obj(self._indexer.postingDict,"posting")
-        utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
         print('Finished parsing and indexing.')
+        print("time toke to build index "+str(time.time()-time1))
         #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -73,13 +72,14 @@ class SearchEngine:
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
-    def load_precomputed_model(self):
+    def load_precomputed_model(self,model_dir=None):
         """
         Loads a pre-computed model (or models) so we can answer queries.
         This is where you would load models like word2vec, LSI, LDA, etc. and 
         assign to self._model, which is passed on to the searcher at query time.
         """
         pass
+
 
         # DO NOT MODIFY THIS SIGNATURE
         # You can change the internal implementation as you see fit.
@@ -127,12 +127,15 @@ class SearchEngine:
             output_path = output_path + "/WithoutStem"
 
         query_num =1
-        for query in queries:
+        queries = pd.read_csv(os.path.join('data', 'queries_train.tsv'), sep='\t')
+        for i, row in queries.iterrows():
+            q_id = row['query_id']
+            q_keywords = row['keywords']
             start = time.time()
-            mylist=self.search(query, num_docs_to_retrieve)
+            mylist=self.search(q_keywords, num_docs_to_retrieve)
             answer_to_run=mylist[1]
             for doc_tuple in answer_to_run:
-                print('tweet id: {}, score (Rank with BM25 method): {}'.format(doc_tuple[0], doc_tuple[1]))
+                print('tweet id: {}'.format(doc_tuple))
             query_num += 1
             print("time that toke to retrieve :" + str(time.time() - start))
 

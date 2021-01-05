@@ -32,13 +32,56 @@ class Searcher:
             and the last is the least relevant result.
         """
         query_as_list = self._parser.parse_sentence(query)
-
         relevant_docs = self._relevant_docs_from_posting(query_as_list)
         n_relevant = len(relevant_docs)
         ranked_doc_ids = Ranker.rank_relevant_docs(relevant_docs)
         return n_relevant,ranked_doc_ids[:k]
 
 
+
+    # def _relevant_docs_from_posting(self, query_as_list):
+    #     """
+    #     This function loads the posting list and count the amount of relevant documents per term.
+    #     :param query_as_list: parsed query tokens
+    #     :return: dictionary of relevant documents mapping doc_id to document frequency.
+    #     """
+    #     #     This function loads the posting list and count the amount of relevant documents per term.
+    #     #     :param query: query
+    #     #     :return: dictionary of relevant documents.
+    #     #     """
+    #     #
+    #     avg_doc=self._indexer.avg_Size_doc / self._indexer.num_of_docs
+    #     relevant_docs = {}
+    #     temp_char = ""
+    #     if self._model=="WordNet":
+    #         expand_query = self.WordNetExpand(query_as_list)
+    #     elif self._model=="SpellCorrection":
+    #         expand_query=self.SpellChecker(query_as_list)
+    #     else:
+    #         expand_query=query_as_list
+    #     sum_bm25 = 0
+    #     for term in expand_query:
+    #         term_lower=term.lower()
+    #         if term in self._indexer.inverted_idx:
+    #             idf = self._indexer.inverted_idx[term_lower]
+    #             docs = self._indexer.postingDict[term_lower]
+    #             for doc_tuple in docs:
+    #                 doc = doc_tuple[0]
+    #                 tf=doc_tuple[1]
+    #                 len=self._indexer.doc_info[doc][0]
+    #                 info=self._indexer.doc_info
+    #                 squar_Wij=self._indexer.doc_info[doc][1]
+    #                 bm25=self._ranker.rank_with_bm25(idf, tf, len, avg_doc)
+    #                 sum_bm25+=bm25
+    #                 cosin=self._ranker.Rank_with_cosimilarity(tf*idf,squar_Wij,expand_query)
+    #                 if doc not in relevant_docs.keys():
+    #                     relevant_docs[doc] = [bm25,cosin]
+    #                 else:
+    #                     relevant_docs[doc][0]=relevant_docs[doc][0]+bm25
+    #                     relevant_docs[doc][1]=relevant_docs[doc][1]+cosin
+    #
+    #
+    #     return relevant_docs
 
     def _relevant_docs_from_posting(self, query_as_list):
         """
@@ -51,40 +94,31 @@ class Searcher:
         #     :return: dictionary of relevant documents.
         #     """
         #
-        avg_doc=self._indexer.avg_Size_doc / self._indexer.num_of_docs
+        avg_doc = self._indexer.avg_Size_doc / self._indexer.num_of_docs
         relevant_docs = {}
         temp_char = ""
-        if self._model=="WordNet":
-            expand_query = self.WordNetExpand(query_as_list)
-        elif self._model=="SpellCorrection":
-            expand_query=self.SpellChecker(query_as_list)
+        if (self._model == "WordNet"):
+            expand_query = sorted(self.WordNetExpand(query_as_list))
+        elif (self._model == "SpellCorection"):
+            print("shmul")
         else:
-            expand_query=query_as_list
-        sum_bm25 = 0
+            expand_query = sorted(query_as_list)
+
         for term in expand_query:
-            term_lower=term.lower()
+            term_lower = term.lower()
             if term in self._indexer.inverted_idx:
-                idf = self._indexer.inverted_idx[term_lower]
+                idf = log(self._indexer.num_of_docs / self._indexer.inverted_idx[term_lower], 2)
                 docs = self._indexer.postingDict[term_lower]
                 for doc_tuple in docs:
                     doc = doc_tuple[0]
-                    tf=doc_tuple[1]
-                    len=self._indexer.doc_info[doc][0]
-                    info=self._indexer.doc_info
-                    squar_Wij=self._indexer.doc_info[doc][1]
-                    bm25=self._ranker.rank_with_bm25(idf, tf, len, avg_doc)
-                    sum_bm25+=bm25
-                    cosin=self._ranker.Rank_with_cosimilarity(tf*idf,squar_Wij,expand_query)
+                    tf = doc_tuple[1]
+                    len = doc_tuple[2]
+                    bm25 = self._ranker.rank_with_bm25(idf, tf, len, avg_doc)
                     if doc not in relevant_docs.keys():
-                        relevant_docs[doc] = [bm25,cosin]
+                        relevant_docs[doc] = bm25
                     else:
-                        relevant_docs[doc][0]=relevant_docs[doc][0]+bm25
-                        relevant_docs[doc][1]=relevant_docs[doc][1]+cosin
-
-
+                        relevant_docs[doc] += bm25
         return relevant_docs
-
-
 
     # if the word does not exist in the inverted we taking the two first synonyms
     def WordNet(self,word):
