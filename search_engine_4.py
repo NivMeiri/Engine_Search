@@ -1,16 +1,11 @@
 import os
 import time
-from math import log
-
 import pandas as pd
-from reader import ReadFile
-from configuration import ConfigClass
 from parser_module_Advance import Parse
 from indexer import Indexer
 from searcher_Cosimilarity import Searcher
-import utils
 import pickle
-#--------------------cosimilarity---------------------
+#----------------------------------------------cosimilarity---------------------
 
 
 
@@ -46,18 +41,8 @@ class SearchEngine:
             number_of_documents += 1
             # index the document data
             self._indexer.add_new_doc(parsed_document)
-        to_del=[]
-        print("total num of terms: "+str(len(self._indexer.inverted_idx)))
-        # for key in self._indexer.inverted_idx:
-        #     if(self._indexer.inverted_idx[key]==1):
-        #         to_del.append(key)
-        #         self._indexer.postingDict.pop(key)
-        #     else:
-        #        self._indexer.inverted_idx[key]=log(self._indexer.num_of_docs/self._indexer.inverted_idx[key],2)
-        # for key in to_del:
-        #     self._indexer.inverted_idx.pop(key)
-        self._indexer.add_square_Wij()
 
+        self._indexer.add_square_Wij()
 
 
         print('Finished parsing and indexing.')

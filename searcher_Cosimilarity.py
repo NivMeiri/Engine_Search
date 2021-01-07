@@ -49,13 +49,7 @@ class Searcher:
         #     """
 
         relevant_docs = {}
-        if (self._model == "WordNet"):
-            expand_query = sorted(self.WordNetExpand(query_as_list))
-        elif (self._model == "SpellCorection"):
-            print("spell")
-        else:
-            expand_query = sorted(query_as_list)
-
+        expand_query = query_as_list
         for term in expand_query:
             term_lower = term.lower()
             if term in self._indexer.inverted_idx:

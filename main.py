@@ -1,25 +1,14 @@
-import search_engine_best
 import  configuration
 import  search_engine_1
+import  search_engine_2
+import  search_engine_3
 import  search_engine_4
-import  spellchecker
-import  time
+import  search_engine_5
+import search_engine_best
+
 if __name__ == '__main__':
     config=configuration.ConfigClass()
-    #search_engine=search_engine_best.SearchEngine(config)
-    search_engine=search_engine_best.SearchEngine(config)
-
-
-    def SpellChecker(word_list):
-        after = []
-        print("this is before spell checking :" + str(word_list))
-        spell = spellchecker.SpellChecker()
-        for value in word_list:
-            after.append(spell.correction(value))
-        print("this is after spell checking :" + str(after))
-        return after
-
-
+    search_engine=search_engine_5.SearchEngine(config)
     stemming = False
     queries = ["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.	fauci paper hydroxychloroquine sars",
     "The seasonal flu kills more people every year in the U.S. than COVID-19 has to date. 	flu kills more than covid",
@@ -56,10 +45,7 @@ if __name__ == '__main__':
     "A common cold can cause a positive COVID-19 test.	cold can cause positive COVID-19 test",
     "wearing masks has been “proven ineffective.”	wearing masks proven ineffective"
     "This virus has a cure.	virus has a cure"]
-    #
+
     output_path = 'posting'
     num_docs_to_retrieve = 20
     search_engine.main( output_path, stemming, queries, 20)
-    # from thesaurus import Word
-    # myWord = Word("all")
-    # print(myWord.synonyms())

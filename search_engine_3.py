@@ -5,8 +5,7 @@ from indexer import Indexer
 from searcher import Searcher
 import utils
 import pickle
-
-#------------this moudle is implementing spell correction ----------------
+#-------------------------this moudle is implementing spell correction ----------------
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
 
@@ -49,12 +48,6 @@ class SearchEngine:
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
 
-        remove_word_1()
-        self._indexer.add_square_Wij()
-        print (self._indexer.inverted_idx)
-        print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
-        utils.save_obj(self._indexer.postingDict,"posting")
-        utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
         print('Finished parsing and indexing.')
         #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE

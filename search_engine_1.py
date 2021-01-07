@@ -1,23 +1,19 @@
 import time
-
 import pandas as pd
 from parser_module_Advance import Parse
 from indexer import Indexer
-from searcher import Searcher
-import utils
+from searcher_WordNet import Searcher
 import pickle
 #----------------------this moudle implementing WordNet-------------------------------
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
-
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation, but you must have a parser and an indexer.
     def __init__(self, config=None):
         self._config = config
         self._parser = Parse()
         self._indexer = Indexer(config)
-        self._model = "WordNet"
-
+        self._model = None
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def build_index_from_parquet(self, fn):
@@ -49,12 +45,9 @@ class SearchEngine:
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
 
-        #remove_word_1()
         self._indexer.add_square_Wij()
-        print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
-        utils.save_obj(self._indexer.postingDict,"posting")
-        utils.save_obj(self._indexer.inverted_idx, "inverted_idx")
-        print('Finished parsing and indexing.')
+
+
         #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
