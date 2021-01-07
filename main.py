@@ -9,11 +9,11 @@ import search_engine_best
 if __name__ == '__main__':
     config=configuration.ConfigClass()
     config.corpusPath="data/benchmark_data_train.snappy.parquet"
-    search_engine=search_engine_best.SearchEngine(config)
-    search_engine1=search_engine_1.SearchEngine(config)
-    search_engine2=search_engine_2.SearchEngine(config)
-    search_engine3=search_engine_3.SearchEngine(config)
-    search_engine4=search_engine_4.SearchEngine(config)
+    # search_engine=search_engine_best.SearchEngine(config)
+    # search_engine1=search_engine_1.SearchEngine(config)
+    # search_engine2=search_engine_2.SearchEngine(config)
+    # search_engine3=search_engine_3.SearchEngine(config)
+    # search_engine4=search_engine_4.SearchEngine(config)
     search_engine5=search_engine_5.SearchEngine(config)
 
     stemming = False
@@ -55,11 +55,11 @@ if __name__ == '__main__':
 
     output_path = 'posting'
     num_docs_to_retrieve = 20
-    search_engine.main( output_path, stemming, queries, 20)
-    search_engine1.main( output_path, stemming, queries, 20)
-    search_engine2.main( output_path, stemming, queries, 20)
-    #search_engine3.main( output_path, stemming, queries, 20)
-    search_engine4.main( output_path, stemming, queries, 20)
+    # search_engine.main( output_path, stemming, queries, 20)
+    # search_engine1.main( output_path, stemming, queries, 20)
+    # search_engine2.main( output_path, stemming, queries, 20)
+    # #search_engine3.main( output_path, stemming, queries, 20)
+    # search_engine4.main( output_path, stemming, queries, 20)
     search_engine5.main( output_path, stemming, queries, 20)
 
     #search_engine.load_index("index_best")

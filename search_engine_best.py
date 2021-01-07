@@ -68,7 +68,10 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        obj=utils.load_obj(fn)
+        #todo fix the load
+        with open(fn , 'rb') as f:
+            obj= pickle.load(f)
+
         self._indexer.inverted_idx=obj[0]
         self._indexer.postingDict=obj[1]
         self._indexer.num_of_docs=obj[2]

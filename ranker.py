@@ -47,7 +47,7 @@ class Ranker:
         # return  (relevant_doc)
     # calculating the rank with the bm25 formula
     def rank_with_bm25(self,idf,tf,d,avg):
-        k =0.0000001
+        k =1.2
         b = 0.75
         bm25 = (idf * tf * (k + 1)) / (tf + k*(1 - b + b * (d / avg)))
         return bm25

@@ -276,6 +276,8 @@ class Parse:
 
     # this function get number and return it like required in Numbers rule(1000=1k,1000000=1m... )
     def to3digits_units(self, num):
+        num = re.sub('[,]', '', num)
+
         num_to_units = float(num)
         if (num_to_units >= 1000) and (num_to_units < 1000000):
             num_to_units = num_to_units / 1000

@@ -1,7 +1,7 @@
 import time
 
 import pandas as pd
-from parser_module_Advance import Parse
+from parser_module_Spacy import Parse
 from indexer_Spacy import Indexer
 from searcher_Spacy import Searcher
 import utils
@@ -42,19 +42,19 @@ class SearchEngine:
             number_of_documents += 1
             # index the document data
             self._indexer.add_new_doc(parsed_document)
-        # file1 = open("entities.txt", "a")
-        # print(self._parser.entities)
-        # start=time.time()
-        # our_dict = sorted(self._parser.entities.items(), key=lambda item: item[1], reverse=True)
-        # print(our_dict)
-        # for word in our_dict:
-        #     if is_ascii(word[0]):
-        #         parsed=self._parser.parse_sentence(word[0])
-        #         for term in parsed:
-        #             if(not   term[0].isdigit() and   term[0]!="#" and term[0]!="@"):
-        #                 file1.writelines(str(term)+"\n")
-        # file1.close()
-        #print(" time took: "+str(time.time()-start))
+        file1 = open("entitiesBig.txt", "a")
+        print(self._parser.entities)
+        start=time.time()
+        our_dict = sorted(self._parser.entities.items(), key=lambda item: item[1], reverse=True)
+        print(our_dict)
+        for word in our_dict:
+            if is_ascii(word[0]):
+                parsed=self._parser.parse_sentence(word[0])
+                for term in parsed:
+                    if(not   term[0].isdigit() and   term[0]!="#" and term[0]!="@"):
+                        file1.writelines(str(term)+"\n")
+        file1.close()
+        print(" time took: "+str(time.time()-start))
 
 
         to_del=[]
@@ -117,7 +117,7 @@ class SearchEngine:
 
 
     def main(self,output_path,stemming,query_to_check,num_docs_to_retrieve):
-        self.build_index_from_parquet("data/benchmark_data_train.snappy.parquet")
+        self.build_index_from_parquet("C:/Users/Admin/Desktop/מנוע חיפוש/Data/date=07-19-2020/covid19_07-19.snappy.parquet")
         if isinstance(query_to_check, list):
             queries = query_to_check
         elif isinstance(query_to_check, str):

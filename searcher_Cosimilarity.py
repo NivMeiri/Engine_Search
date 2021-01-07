@@ -60,6 +60,7 @@ class Searcher:
                     tf = doc_tuple[1]
                     len = doc_tuple[2]
                     cosim=self._ranker.Rank_with_cosimilarity(tf*idf,self._indexer.doc_info[doc][1],expand_query)
+                    cosim=tf*idf
                     if doc not in relevant_docs.keys():
                         relevant_docs[doc] = cosim
                     else:
