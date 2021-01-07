@@ -47,7 +47,8 @@ class SearchEngine:
                     self._indexer.postingDict.pop(key)
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
-
+        to_Save=(self._indexer.inverted_idx, self._indexer.postingDict, self._indexer.num_of_docs, self._indexer.avg_Size_doc)
+        utils.save_obj(to_Save, "index_3")
         print('Finished parsing and indexing.')
         #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
@@ -58,8 +59,11 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        with open(fn ,'rb') as f:
-            return pickle.load(f)
+        obj = utils.load_obj(fn)
+        self._indexer.inverted_idx = obj[0]
+        self._indexer.postingDict = obj[1]
+        self._indexer.num_of_docs = obj[2]
+        self._indexer.avg_Size_doc = obj[3]
 
 
     # DO NOT MODIFY THIS SIGNATURE

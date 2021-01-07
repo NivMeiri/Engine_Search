@@ -58,7 +58,13 @@ class SearchEngine:
 
 
         to_del=[]
-        print("total num of terms: "+str(len(self._indexer.inverted_idx)))
+
+        # saving the necessary data to pickle
+        to_Save = (
+        self._indexer.inverted_idx, self._indexer.postingDict, self._indexer.num_of_docs, self._indexer.avg_Size_doc)
+        utils.save_obj(to_Save, "index_5")
+
+
         def remove_word_1():
             for key in self._indexer.inverted_idx:
                 if (self._indexer.inverted_idx[key] == 1 and key.isalpha()==False):
@@ -76,8 +82,11 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        with open(fn ,'rb') as f:
-            return pickle.load(f)
+        obj=utils.load_obj(fn)
+        self._indexer.inverted_idx=obj[0]
+        self._indexer.postingDict=obj[1]
+        self._indexer.num_of_docs=obj[2]
+        self._indexer.avg_Size_doc=obj[3]
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_precomputed_model(self,model_dir=None):

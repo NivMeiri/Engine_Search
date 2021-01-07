@@ -9,7 +9,6 @@ class ConfigClass:
         # in subsequent submissions to avoid the slow downloading of the large
         # model file with every submission.
         self._download_model = False
-
         self.corpusPath = ''
         self.savedFileMainFolder = ''
         self.saveFilesWithStem = self.savedFileMainFolder + "/WithStem"

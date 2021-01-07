@@ -51,11 +51,15 @@ class SearchEngine:
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
 
-        remove_word_1()
+        # saving the necessary data to pickle
+        to_Save=(self._indexer.inverted_idx,self._indexer.postingDict,self._indexer.num_of_docs,self._indexer.avg_Size_doc)
+        utils.save_obj(to_Save,"index_best")
+
+
+
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
         print('Finished parsing and indexing.')
         print("time toke to build index "+str(time.time()-time1))
-        #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):
@@ -64,9 +68,11 @@ class SearchEngine:
         Input:
             fn - file name of pickled index.
         """
-        with open(fn ,'rb') as f:
-            return pickle.load(f)
-
+        obj=utils.load_obj(fn)
+        self._indexer.inverted_idx=obj[0]
+        self._indexer.postingDict=obj[1]
+        self._indexer.num_of_docs=obj[2]
+        self._indexer.avg_Size_doc=obj[3]
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -99,7 +105,7 @@ class SearchEngine:
 
 
     def main(self,output_path,stemming,query_to_check,num_docs_to_retrieve):
-        self.build_index_from_parquet("data/benchmark_data_train.snappy.parquet")
+        self.build_index_from_parquet(self._config.get__corpusPath())
         if isinstance(query_to_check, list):
             queries = query_to_check
         elif isinstance(query_to_check, str):
