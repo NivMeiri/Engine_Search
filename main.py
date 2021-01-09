@@ -14,7 +14,7 @@ if __name__ == '__main__':
     # search_engine2=search_engine_2.SearchEngine(config)
     # search_engine3=search_engine_3.SearchEngine(config)
     # search_engine4=search_engine_4.SearchEngine(config)
-    search_engine5=search_engine_5.SearchEngine(config)
+    search_engine=search_engine_best.SearchEngine(config)
 
     stemming = False
     queries = ["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.	fauci paper hydroxychloroquine sars",
@@ -60,7 +60,9 @@ if __name__ == '__main__':
     # search_engine2.main( output_path, stemming, queries, 20)
     # #search_engine3.main( output_path, stemming, queries, 20)
     # search_engine4.main( output_path, stemming, queries, 20)
-    search_engine5.main( output_path, stemming, queries, 20)
+    queries=[queries[0],queries[1],queries[3],queries[6]]
+    print(queries)
+    search_engine.main( output_path, stemming, queries, 5)
 
     #search_engine.load_index("index_best")
     #print(search_engine.search(queries[0]))

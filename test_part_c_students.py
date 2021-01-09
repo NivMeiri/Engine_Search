@@ -9,7 +9,7 @@ if __name__ == '__main__':
     import timeit
     import importlib
     import logging
-    logging.basicConfig(filename='part_c_tests.log', level=logging.DEBUG,
+    logging.basicConfig(filename='part_c_tests8.log', level=logging.DEBUG,
                         filemode='w', format='%(levelname)s %(asctime)s: %(message)s')
     import metrics
 
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
 
     bench_data_path = os.path.join('data', 'benchmark_data_train.snappy.parquet')
-    bench_lbls_path = os.path.join('data', 'benchmark_lbls_train.csv')
+    bench_lbls_path = os.path.join('data', 'benchmark_lbls_train8.csv')
     queries_path = os.path.join('data', 'queries_train.tsv')
     model_dir = os.path.join('.', 'model')
 
@@ -82,7 +82,7 @@ if __name__ == '__main__':
                 logging.error('model.zip file does not exists.')
 
         # test for each search engine module
-        engine_modules = ['search_engine_' + name for name in ['1', '4', 'best']]
+        engine_modules = ['search_engine_' + name for name in ['best',"1","2","4","5"]]
         for engine_module in engine_modules:
             try:
                 # does the module file exist?
@@ -121,7 +121,9 @@ if __name__ == '__main__':
                 if queries is not None:
                     for i, row in queries.iterrows():
                         q_id = row['query_id']
-                        q_keywords = row['information_need']
+                        if(q_id!=8):
+                            continue
+                        q_keywords = row['keywords']
                         start_time = time.time()
                         q_n_res, q_res = engine.search(q_keywords)
                         end_time = time.time()

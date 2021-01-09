@@ -2,7 +2,7 @@ import time
 import pandas as pd
 
 import utils
-from parser_module_Advance import Parse
+from parser_module import Parse
 from indexer import Indexer
 from searcher_WordNet import Searcher
 import pickle

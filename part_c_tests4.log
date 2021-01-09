@@ -1,0 +1,57 @@
+ERROR 2021-01-09 17:39:53,028: report_part_c.docx does not exist.
+INFO 2021-01-09 17:39:53,035: Successfully loaded benchmark labels data.
+INFO 2021-01-09 17:39:53,037: Successfully loaded queries data.
+INFO 2021-01-09 17:39:54,248: Successfully imported module search_engine_best.
+DEBUG 2021-01-09 17:39:56,110: Building the index in search_engine_best for benchmark data took 1.5006478999999997 seconds.
+DEBUG 2021-01-09 17:39:56,115: search_engine_best successfully returned 36 results for the query 'bioweapon'.
+DEBUG 2021-01-09 17:39:56,143: search_engine_best successfully returned 825 results for query number 4.
+DEBUG 2021-01-09 17:39:56,379: search_engine_best results have MAP value of 0.8886776414914865.
+DEBUG 2021-01-09 17:39:56,386: search_engine_best results produced average precision of 0.6264150943396226.
+DEBUG 2021-01-09 17:39:56,386: search_engine_best results produced average precision@5 of 1.0.
+DEBUG 2021-01-09 17:39:56,386: search_engine_best results produced average precision@10 of 1.0.
+DEBUG 2021-01-09 17:39:56,386: search_engine_best results produced average precision@50 of 0.94.
+DEBUG 2021-01-09 17:39:56,386: search_engine_best results produced average recall of 1.0.
+INFO 2021-01-09 17:39:56,386: idx_bench.pkl found!
+INFO 2021-01-09 17:39:56,482: Successfully loaded idx_bench.pkl using search_engine_best.
+INFO 2021-01-09 17:39:56,485: Successfully imported module search_engine_1.
+DEBUG 2021-01-09 17:39:57,889: Building the index in search_engine_1 for benchmark data took 1.0839011999999997 seconds.
+DEBUG 2021-01-09 17:39:57,890: search_engine_1 successfully returned 35 results for the query 'bioweapon'.
+DEBUG 2021-01-09 17:39:57,904: search_engine_1 successfully returned 822 results for query number 4.
+DEBUG 2021-01-09 17:39:58,136: search_engine_1 results have MAP value of 0.8988609620011451.
+DEBUG 2021-01-09 17:39:58,145: search_engine_1 results produced average precision of 0.6287878787878788.
+DEBUG 2021-01-09 17:39:58,145: search_engine_1 results produced average precision@5 of 1.0.
+DEBUG 2021-01-09 17:39:58,145: search_engine_1 results produced average precision@10 of 1.0.
+DEBUG 2021-01-09 17:39:58,145: search_engine_1 results produced average precision@50 of 0.94.
+DEBUG 2021-01-09 17:39:58,145: search_engine_1 results produced average recall of 1.0.
+INFO 2021-01-09 17:39:58,150: Successfully imported module search_engine_2.
+DEBUG 2021-01-09 17:40:00,000: Building the index in search_engine_2 for benchmark data took 1.4902658999999998 seconds.
+DEBUG 2021-01-09 17:40:00,164: search_engine_2 successfully returned 36 results for the query 'bioweapon'.
+DEBUG 2021-01-09 17:40:00,379: search_engine_2 successfully returned 825 results for query number 4.
+DEBUG 2021-01-09 17:40:00,682: search_engine_2 results have MAP value of 0.8934523321067838.
+DEBUG 2021-01-09 17:40:00,688: search_engine_2 results produced average precision of 0.6264150943396226.
+DEBUG 2021-01-09 17:40:00,689: search_engine_2 results produced average precision@5 of 1.0.
+DEBUG 2021-01-09 17:40:00,689: search_engine_2 results produced average precision@10 of 1.0.
+DEBUG 2021-01-09 17:40:00,689: search_engine_2 results produced average precision@50 of 0.94.
+DEBUG 2021-01-09 17:40:00,689: search_engine_2 results produced average recall of 1.0.
+INFO 2021-01-09 17:40:00,691: Successfully imported module search_engine_4.
+DEBUG 2021-01-09 17:40:02,595: Building the index in search_engine_4 for benchmark data took 1.5433789000000004 seconds.
+DEBUG 2021-01-09 17:40:02,748: search_engine_4 successfully returned 36 results for the query 'bioweapon'.
+DEBUG 2021-01-09 17:40:02,906: search_engine_4 successfully returned 825 results for query number 4.
+DEBUG 2021-01-09 17:40:03,129: search_engine_4 results have MAP value of 0.880171787948274.
+DEBUG 2021-01-09 17:40:03,135: search_engine_4 results produced average precision of 0.6264150943396226.
+DEBUG 2021-01-09 17:40:03,135: search_engine_4 results produced average precision@5 of 1.0.
+DEBUG 2021-01-09 17:40:03,135: search_engine_4 results produced average precision@10 of 1.0.
+DEBUG 2021-01-09 17:40:03,135: search_engine_4 results produced average precision@50 of 0.94.
+DEBUG 2021-01-09 17:40:03,135: search_engine_4 results produced average recall of 1.0.
+INFO 2021-01-09 17:40:03,434: Successfully imported module search_engine_5.
+DEBUG 2021-01-09 17:42:13,895: Building the index in search_engine_5 for benchmark data took 129.1207902 seconds.
+ERROR 2021-01-09 17:42:13,895: Parsing and index our *small* benchmark dataset took over a minute!
+DEBUG 2021-01-09 17:42:13,909: search_engine_5 successfully returned 36 results for the query 'bioweapon'.
+DEBUG 2021-01-09 17:42:13,945: search_engine_5 successfully returned 825 results for query number 4.
+DEBUG 2021-01-09 17:42:14,215: search_engine_5 results have MAP value of 0.8896506471879938.
+DEBUG 2021-01-09 17:42:14,222: search_engine_5 results produced average precision of 0.6264150943396226.
+DEBUG 2021-01-09 17:42:14,223: search_engine_5 results produced average precision@5 of 1.0.
+DEBUG 2021-01-09 17:42:14,223: search_engine_5 results produced average precision@10 of 1.0.
+DEBUG 2021-01-09 17:42:14,223: search_engine_5 results produced average precision@50 of 0.94.
+DEBUG 2021-01-09 17:42:14,223: search_engine_5 results produced average recall of 1.0.
+DEBUG 2021-01-09 17:42:14,223: Total runtime was: 0:02:21.194673

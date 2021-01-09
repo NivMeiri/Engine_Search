@@ -52,12 +52,13 @@ class SearchEngine:
                 self._indexer.inverted_idx.pop(key)
 
         # saving the necessary data to pickle
+
         to_Save=(self._indexer.inverted_idx,self._indexer.postingDict,self._indexer.num_of_docs,self._indexer.avg_Size_doc)
         utils.save_obj(to_Save,"index_best")
-
-
-
+        print("num of terms : " + str(len(self._indexer.inverted_idx)))
+        remove_word_1()
         print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
+
         print('Finished parsing and indexing.')
         print("time toke to build index "+str(time.time()-time1))
     # DO NOT MODIFY THIS SIGNATURE
@@ -136,15 +137,16 @@ class SearchEngine:
         query_num =1
         queries = pd.read_csv(os.path.join('data', 'queries_train.tsv'), sep='\t')
         for i, row in queries.iterrows():
-            q_id = row['query_id']
-            q_keywords = row['keywords']
-            start = time.time()
-            mylist=self.search(q_keywords, num_docs_to_retrieve)
-            answer_to_run=mylist[1]
-            for doc_tuple in answer_to_run:
-                print('tweet id: {}'.format(doc_tuple))
-            query_num += 1
-            print("time that toke to retrieve :" + str(time.time() - start))
+            if(i==0 or i==1 or i==3 or i==6 or i==7):
+                q_id = row['query_id']
+                q_keywords = row['keywords']
+                start = time.time()
+                mylist=self.search(q_keywords, num_docs_to_retrieve)
+                answer_to_run=mylist[1]
+                for doc_tuple in answer_to_run:
+                    print('tweet id: {}'.format(doc_tuple))
+                query_num += 1
+                print("time that toke to retrieve :" + str(time.time() - start))
 
 
 

@@ -45,15 +45,15 @@ class SearchEngine:
         file1 = open("entitiesBig.txt", "a")
         print(self._parser.entities)
         start=time.time()
-        our_dict = sorted(self._parser.entities.items(), key=lambda item: item[1], reverse=True)
-        print(our_dict)
-        for word in our_dict:
-            if is_ascii(word[0]):
-                parsed=self._parser.parse_sentence(word[0])
-                for term in parsed:
-                    if(not   term[0].isdigit() and   term[0]!="#" and term[0]!="@"):
-                        file1.writelines(str(term)+"\n")
-        file1.close()
+        # our_dict = sorted(self._parser.entities.items(), key=lambda item: item[1], reverse=True)
+        # print(our_dict)
+        # for word in our_dict:
+        #     if is_ascii(word[0]):
+        #         parsed=self._parser.parse_sentence(word[0])
+        #         for term in parsed:
+        #             if(not   term[0].isdigit() and   term[0]!="#" and term[0]!="@"):
+        #                 file1.writelines(str(term)+"\n")
+        # file1.close()
         print(" time took: "+str(time.time()-start))
 
 
