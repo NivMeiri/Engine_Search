@@ -3,6 +3,9 @@ from math import log
 from nltk.corpus import wordnet
 from ranker import Ranker
 
+
+
+#--------------this is the best search model------------------
 class Searcher:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit. The model
@@ -65,8 +68,8 @@ class Searcher:
                     tf = doc_tuple[1]
                     len = doc_tuple[2]
                     bm25 = self._ranker.rank_with_bm25(idf, tf, len, avg_doc)
-                    if(term in self.entities):
-                        bm25=1.5*bm25
+                    if(term.lower()  in self.entities or term.upper() in self.entities):
+                        bm25=1.35*bm25
                     if doc not in relevant_docs.keys():
                         relevant_docs[doc] = bm25
                     else:

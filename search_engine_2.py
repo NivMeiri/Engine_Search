@@ -1,12 +1,12 @@
 import time
-#--------------------------------this moudle advanced parser--------------
 import pandas as pd
 from parser_module_Advance import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
-import pickle
 # DO NOT CHANGE THE CLASS NAME
+#----------------------this moudle implementing  Advanced Parser Search Engine-------------------------------
+
 class SearchEngine:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation, but you must have a parser and an indexer.
@@ -38,7 +38,6 @@ class SearchEngine:
             self._indexer.add_new_doc(parsed_document)
 
         to_del=[]
-        print("total num of terms: "+str(len(self._indexer.inverted_idx)))
         def remove_word_1():
             for key in self._indexer.inverted_idx:
                 if (self._indexer.inverted_idx[key] == 1 and key.isalpha()==False):
@@ -50,7 +49,6 @@ class SearchEngine:
         to_Save = (self._indexer.inverted_idx, self._indexer.postingDict, self._indexer.num_of_docs, self._indexer.avg_Size_doc)
         utils.save_obj(to_Save, "index_2")
 
-        print('Finished parsing and indexing.')
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):

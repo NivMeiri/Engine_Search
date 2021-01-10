@@ -1,9 +1,6 @@
 # DO NOT MODIFY CLASS NAME
 import pickle
-from math import log
-
 import utils
-
 
 class Indexer:
     # DO NOT MODIFY THIS SIGNATURE

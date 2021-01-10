@@ -1,12 +1,10 @@
 import time
 import pandas as pd
-
 import utils
 from parser_module import Parse
 from indexer import Indexer
 from searcher_WordNet import Searcher
-import pickle
-#----------------------this moudle implementing WordNet-------------------------------
+#----------------------this moudle implementing  WordNet Search Engine-------------------------------
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
     # DO NOT MODIFY THIS SIGNATURE
@@ -38,7 +36,6 @@ class SearchEngine:
             self._indexer.add_new_doc(parsed_document)
 
         to_del=[]
-        print("total num of terms: "+str(len(self._indexer.inverted_idx)))
         def remove_word_1():
             for key in self._indexer.inverted_idx:
                 if (self._indexer.inverted_idx[key] == 1 and key.isalpha()==False):

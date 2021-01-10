@@ -1,7 +1,5 @@
 import math
-from math import  log,sqrt
-from nltk.corpus import wordnet
-
+#-------------------class Ranker------------------------------
 class Ranker:
     def __init__(self):
         pass
@@ -37,20 +35,17 @@ class Ranker:
 
     #W_iq is the number of times that the term exist in the query
 
-
+    #this function is calculating cosimilarity
     def Rank_with_cosimilarity(self, tf_idf,wij,query):
         wiq=len(query)
         return tf_idf/math.sqrt(wij*wiq)
-        # for doc in relevant_doc.keys():
-        #     sum=(relevant_doc[doc][1]/(math.sqrt(relevant_doc[doc][0]*wiq)))
-        #     relevant_doc[doc]=sum
-        # return  (relevant_doc)
+
     # calculating the rank with the bm25 formula
     def rank_with_bm25(self,idf,tf,d,avg):
         k =1.2
         b = 0.75
         bm25 = (idf * tf * (k + 1)) / (tf + k*(1 - b + b * (d / avg)))
         return bm25
-
+    #this function merge between the rank methods
     def rank_bm25_and_cosin(self,list_rank):
         return 1*list_rank[0]+0*list_rank[1]

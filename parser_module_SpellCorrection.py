@@ -4,6 +4,9 @@ import re
 from document import Document
 import  spellchecker
 
+
+#-------------------------this is the Spell Correction  Parser----------------------------
+
 class Parse:
     def __init__(self):
         self.stop_words = frozenset(stopwords.words('english'))
@@ -20,15 +23,8 @@ class Parse:
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
 
-        # making dir for the entities pickles
-        # path = self.output
-        # if not os.path.isdir(path):
-        #     os.mkdir(self.output)
     #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
-        #saving the entities
-
-
 
         text_tokenstream = []
         list_of_words =text.split()
@@ -100,8 +96,7 @@ class Parse:
                             for word in list_term:
                                 word=self.spell.correction(word)
                                 text_tokenstream.append(word)
-        # send the parsed text to the entities func
-        #self.Entites_and_Names(text_tokenstream)
+
         return text_tokenstream
 
     def parse_doc(self, doc_as_list):
@@ -201,10 +196,6 @@ class Parse:
                 term = term.upper()
             else:
                 term = term.lower()
-            # if self.binary_Stem:
-            #     term = self.stemmer.stem(term)
-            # else:
-            #     term = self.end_with_s(term)
             text_tokensterm.append(term)
 
     # another rule that we added ( arent we amazing?)- LOL, remove the "'s" in the word
@@ -275,26 +266,6 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0]) + '.' + str(num_with_point[1])
-    #this function maintain a entities dictionary like the rules demand
-    def Entites_and_Names(self,list_of_words):
-        length=len(list_of_words)
-        for i in range(len(list_of_words)) :
-            Tag_Names = re.findall("\A@", list_of_words[i])
-            if (len(Tag_Names) > 0):
-                self.check_if_in_entites_dictionary(list_of_words[i][1:].upper())
-            elif(list_of_words[i][0].isupper):
-                if(length>i+1 and len(list_of_words[i+1])>0):
-                    if(list_of_words[i+1][0].isupper()):
-                        my_String=list_of_words[i].upper()+" "+list_of_words[i+1].upper()
-                        self.check_if_in_entites_dictionary(my_String)
-                else:
-                    self.check_if_in_entites_dictionary(list_of_words[i].upper())
-
-    def check_if_in_entites_dictionary(self,entite):
-        if( entite in self.entities):
-            self.entities[entite]+=1
-        else:
-            self.entities[entite]=1
 
 
 

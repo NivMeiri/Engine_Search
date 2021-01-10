@@ -2,7 +2,7 @@
 from math import log
 from nltk.corpus import wordnet
 from ranker import Ranker
-
+#------------------this is searcher WordNet-------------------
 class Searcher:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit. The model

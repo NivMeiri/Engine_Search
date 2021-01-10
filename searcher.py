@@ -3,7 +3,7 @@ from math import log
 from spellchecker import SpellChecker
 from nltk.corpus import wordnet
 from ranker import Ranker
-
+#----------------------this is the basic Searcher------------------------------------------
 class Searcher:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit. The model

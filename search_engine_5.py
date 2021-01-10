@@ -1,13 +1,13 @@
 import time
 
 import pandas as pd
-from parser_module_Spacy import Parse
+from parser_module import Parse
 from indexer_Spacy import Indexer
 from searcher_Spacy import Searcher
 import utils
 import pickle
 # DO NOT CHANGE THE CLASS NAME
-#------------------------------------this moudle is implementing spacy entites -------------------------------
+#------------------------------------this moudle is implementing Spacy Entities Search Engine-------------------------------
 class SearchEngine:
 
     # DO NOT MODIFY THIS SIGNATURE
@@ -16,7 +16,7 @@ class SearchEngine:
         self._config = config
         self._parser = Parse()
         self._indexer = Indexer(config)
-        self._model = "Spacy"
+        self._model =  None
 
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
@@ -42,9 +42,13 @@ class SearchEngine:
             number_of_documents += 1
             # index the document data
             self._indexer.add_new_doc(parsed_document)
-        file1 = open("entitiesBig.txt", "a")
-        print(self._parser.entities)
-        start=time.time()
+
+        #this funtion is respobsible to write the entities dict to text file
+
+
+        #def write_entites():
+        # file1 = open("entities.txt", "a")
+        # start=time.time()
         # our_dict = sorted(self._parser.entities.items(), key=lambda item: item[1], reverse=True)
         # print(our_dict)
         # for word in our_dict:
@@ -54,14 +58,12 @@ class SearchEngine:
         #             if(not   term[0].isdigit() and   term[0]!="#" and term[0]!="@"):
         #                 file1.writelines(str(term)+"\n")
         # file1.close()
-        print(" time took: "+str(time.time()-start))
 
 
         to_del=[]
 
         # saving the necessary data to pickle
-        to_Save = (
-        self._indexer.inverted_idx, self._indexer.postingDict, self._indexer.num_of_docs, self._indexer.avg_Size_doc)
+        to_Save = (self._indexer.inverted_idx, self._indexer.postingDict, self._indexer.num_of_docs, self._indexer.avg_Size_doc)
         utils.save_obj(to_Save, "index_5")
 
 
@@ -73,7 +75,6 @@ class SearchEngine:
             for key in to_del:
                 self._indexer.inverted_idx.pop(key)
 
-        print('Finished parsing and indexing.')
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
     def load_index(self, fn):
@@ -117,7 +118,7 @@ class SearchEngine:
 
 
     def main(self,output_path,stemming,query_to_check,num_docs_to_retrieve):
-        self.build_index_from_parquet("C:/Users/Admin/Desktop/מנוע חיפוש/Data/date=07-19-2020/covid19_07-19.snappy.parquet")
+        self.build_index_from_parquet("data/benchmark_data_train.snappy.parquet")
         if isinstance(query_to_check, list):
             queries = query_to_check
         elif isinstance(query_to_check, str):

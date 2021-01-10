@@ -5,6 +5,7 @@ from document import Document
 import stemmer
 import spacy
 
+#-------------------------this is the Spacy Parser----------------------------
 
 class Parse:
     def __init__(self):
@@ -17,17 +18,13 @@ class Parse:
         self.entities = {}
         self.spec=spacy.load("en_core_web_sm")
         # Load English tokenizer, tagger, parser, NER and word vectors
-        #Binary parameter from main that decide if the parser use stemming
-        self.binary_Stem = False
-        if(self.binary_Stem):
-            self.stemmer = stemmer.Stemmer().Porter_stemmer
 
         # Months dictionary to support our new rule,saving all dates in the same format
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
-
+    # this function adding to entities  dict the terms that spacy model classified as entities
     def entities_1(self,text):
         nlp = self.spec
         doc=nlp(text)
@@ -39,15 +36,8 @@ class Parse:
     #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
         self.entities_1(text)
-        #print (text)
-        #saving the entities
 
-        '''
-        if(len(self.entities)>200000):
-            utils.save_obj(self.entities, self.output +"/"+ str(self.Counter_entites)+ "_entities_")
-            self.Counter_entites+=1
-            self.entities={}
-            '''
+
 
         text_tokenstream = []
         list_of_words =text.split()
@@ -304,26 +294,6 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0]) + '.' + str(num_with_point[1])
-    #this function maintain a entities dictionary like the rules demand
-    def Entites_and_Names(self,list_of_words):
-        length=len(list_of_words)
-        for i in range(len(list_of_words)) :
-            Tag_Names = re.findall("\A@", list_of_words[i])
-            if (len(Tag_Names) > 0):
-                self.check_if_in_entites_dictionary(list_of_words[i][1:].upper())
-            elif(list_of_words[i][0].isupper):
-                if(length>i+1 and len(list_of_words[i+1])>0):
-                    if(list_of_words[i+1][0].isupper()):
-                        my_String=list_of_words[i].upper()+" "+list_of_words[i+1].upper()
-                        self.check_if_in_entites_dictionary(my_String)
-                else:
-                    self.check_if_in_entites_dictionary(list_of_words[i].upper())
-
-    def check_if_in_entites_dictionary(self,entite):
-        if( entite in self.entities):
-            self.entities[entite]+=1
-        else:
-            self.entities[entite]=1
 
 
 

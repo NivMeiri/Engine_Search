@@ -4,8 +4,10 @@ from nltk.corpus import stopwords
 import re
 from document import Document
 import stemmer
-import utils
 
+
+
+# -----------------------this is simple parser class----------------------------------
 
 class Parse:
     def __init__(self):
@@ -14,36 +16,14 @@ class Parse:
         self.words = open("word_freq.txt").read().split()
         self.wordcost = dict((k, log((i + 1) * log(len(self.words)))) for i, k in enumerate(self.words))
         self.maxword = max(len(x) for x in self.words)
-        # dict for the terms that suspected of being entities
-        # self.entities = {}
-
-        #Binary parameter from main that decide if the parser use stemming
-        self.binary_Stem = False
-        if(self.binary_Stem):
-            self.stemmer = stemmer.Stemmer().Porter_stemmer
-
         # Months dictionary to support our new rule,saving all dates in the same format
         self.month = {"jan": "01", "january": "01", "feb": "02", "february": "02", "mar": "03", "march": "03",
                       "apr": "04", "april": "04", "may": "05", "jun": "06", "june": "06", "jul": "07", "july": "07",
                       "aug": "08", "august": "08", "sep": "09", "september": "09", "october": "10", "oct": "10",
                       "nov": "11", "november": "11", "dec": "12", "december": "12"}
 
-        # making dir for the entities pickles
-        # path = self.output
-        # if not os.path.isdir(path):
-        #     os.mkdir(self.output)
     #the main function of this class,parsing the full text from the read files
     def parse_sentence(self, text):
-        #print (text)
-        #saving the entities
-
-        '''
-        if(len(self.entities)>200000):
-            utils.save_obj(self.entities, self.output +"/"+ str(self.Counter_entites)+ "_entities_")
-            self.Counter_entites+=1
-            self.entities={}
-            '''
-
         text_tokenstream = []
         list_of_words =text.split()
         # running over the terms in the full text and clean them from unnecessary chars and emojis
@@ -65,7 +45,6 @@ class Parse:
                      #if the term end with % add the term
                     elif term[-1] in "%":
                         text_tokenstream.append(term)
-
 
                     # url rule, pars it and save the url terms
                     elif term[0:5] == "https":
@@ -110,8 +89,6 @@ class Parse:
                         list_term = re.split('[-,|/|//|:.%?=+]', term)
                         for word in list_term:
                             self.clean_and_push(word , text_tokenstream)
-        # send the parsed text to the entities func
-        #self.Entites_and_Names(text_tokenstream)
         return text_tokenstream
 
     def parse_doc(self, doc_as_list):
@@ -147,7 +124,6 @@ class Parse:
         document = Document(tweet_id, tweet_date, full_text, url, retweet_text, retweet_url, quote_text,
                             quote_url, term_dict, doc_length, max_term)
         return document
-
 
     '''hash tag function- we support in these rules: 1. seperate by Upper case... e.g #DonaldTrump
     2. sepearate by _ sign e.g #donald_trump 3. seperate by rate function e.g #donaldtrump
@@ -211,10 +187,6 @@ class Parse:
                 term = term.upper()
             else:
                 term = term.lower()
-            # if self.binary_Stem:
-            #     term = self.stemmer.stem(term)
-            # else:
-            #term = self.end_with_s(term)
             text_tokensterm.append(term)
 
     # another rule that we added ( arent we amazing?)- LOL, remove the "'s" in the word
@@ -286,26 +258,3 @@ class Parse:
             return str(num_with_point[0])
         else:
             return str(num_with_point[0]) + '.' + str(num_with_point[1])
-    #this function maintain a entities dictionary like the rules demand
-    def Entites_and_Names(self,list_of_words):
-        length=len(list_of_words)
-        for i in range(len(list_of_words)) :
-            Tag_Names = re.findall("\A@", list_of_words[i])
-            if (len(Tag_Names) > 0):
-                self.check_if_in_entites_dictionary(list_of_words[i][1:].upper())
-            elif(list_of_words[i][0].isupper):
-                if(length>i+1 and len(list_of_words[i+1])>0):
-                    if(list_of_words[i+1][0].isupper()):
-                        my_String=list_of_words[i].upper()+" "+list_of_words[i+1].upper()
-                        self.check_if_in_entites_dictionary(my_String)
-                else:
-                    self.check_if_in_entites_dictionary(list_of_words[i].upper())
-
-    def check_if_in_entites_dictionary(self,entite):
-        if( entite in self.entities):
-            self.entities[entite]+=1
-        else:
-            self.entities[entite]=1
-
-
-

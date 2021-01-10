@@ -1,16 +1,12 @@
 import os
 import time
 import pandas as pd
-
 import utils
 from parser_module_Advance import Parse
 from indexer import Indexer
 from searcher_Cosimilarity import Searcher
 import pickle
-#----------------------------------------------cosimilarity---------------------
-
-
-
+#----------------------------------------------This model is implementing cosimilarity Search Engine---------------------
 
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:

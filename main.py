@@ -14,11 +14,11 @@ if __name__ == '__main__':
     # search_engine2=search_engine_2.SearchEngine(config)
     # search_engine3=search_engine_3.SearchEngine(config)
     # search_engine4=search_engine_4.SearchEngine(config)
-    search_engine=search_engine_best.SearchEngine(config)
-
-    stemming = False
-    queries = ["Dr. Anthony Fauci wrote in a 2005 paper published in Virology Journal that hydroxychloroquine was effective in treating SARS.	fauci paper hydroxychloroquine sars",
-    "The seasonal flu kills more people every year in the U.S. than COVID-19 has to date. 	flu kills more than covid",
+    # search_engine5=search_engine_5.SearchEngine(config)
+    #
+    # stemming = False
+    queries = ["fauci paper hydroxychloroquine sars",
+    "flu kills more than covid",
     "Coronavirus is less dangerous than the flu	coronavirus less dangerous flu",
     "The coronavirus pandemic is a cover for a plan to implant trackable microchips and that the Microsoft co-founder Bill Gates is behind it	gates implant microchips",
     'Microsoft co-founder Bill Gates said "only the people who have all the vaccines will still be able to move freely".	vaccines move freely',
@@ -53,16 +53,26 @@ if __name__ == '__main__':
     "wearing masks has been “proven ineffective.”	wearing masks proven ineffective"
     "This virus has a cure.	virus has a cure"]
 
-    output_path = 'posting'
-    num_docs_to_retrieve = 20
+    # output_path = 'posting'
+    # num_docs_to_retrieve = 20
     # search_engine.main( output_path, stemming, queries, 20)
+    # print(" search best")
     # search_engine1.main( output_path, stemming, queries, 20)
+    # print(" search1")
     # search_engine2.main( output_path, stemming, queries, 20)
+    # print(" search2")
+    #
     # #search_engine3.main( output_path, stemming, queries, 20)
     # search_engine4.main( output_path, stemming, queries, 20)
-    queries=[queries[0],queries[1],queries[3],queries[6]]
-    print(queries)
-    search_engine.main( output_path, stemming, queries, 5)
+    # print(" search4")
+    #
+    # search_engine5.main( output_path, stemming, queries, 20)
+    # print(" search5")
 
-    #search_engine.load_index("index_best")
-    #print(search_engine.search(queries[0]))
+
+    queries=[queries[0],queries[1],queries[3],queries[6],queries[7]]
+    print(queries)
+     #search_engine.main( output_path, stemming, queries, 5)
+
+    search_engine=search_engine_best.SearchEngine(config)
+    search_engine.load_index("idx_bench.pkl")

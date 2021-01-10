@@ -4,8 +4,7 @@ from parser_module_SpellCorrection import Parse
 from indexer import Indexer
 from searcher import Searcher
 import utils
-import pickle
-#-------------------------this moudle is implementing spell correction ----------------
+#-------------------------this moudle is implementing Spell correction ----------------
 # DO NOT CHANGE THE CLASS NAME
 class SearchEngine:
 
@@ -39,7 +38,6 @@ class SearchEngine:
             self._indexer.add_new_doc(parsed_document)
 
         to_del=[]
-        print("total num of terms: "+str(len(self._indexer.inverted_idx)))
         def remove_word_1():
             for key in self._indexer.inverted_idx:
                 if (self._indexer.inverted_idx[key] == 1 and key.isalpha()==False):
@@ -49,7 +47,6 @@ class SearchEngine:
                 self._indexer.inverted_idx.pop(key)
         to_Save=(self._indexer.inverted_idx, self._indexer.postingDict, self._indexer.num_of_docs, self._indexer.avg_Size_doc)
         utils.save_obj(to_Save, "index_3")
-        print('Finished parsing and indexing.')
         #(sorted( self._indexer.inverted_idx,key=lambda x: self._indexer.inverted_idx[x]))
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.

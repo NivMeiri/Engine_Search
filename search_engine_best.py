@@ -1,6 +1,4 @@
 import os
-import time
-
 import pandas as pd
 from parser_module_Advance import Parse
 from indexer import Indexer
@@ -9,8 +7,9 @@ import utils
 import pickle
 import  time
 # DO NOT CHANGE THE CLASS NAME
-class SearchEngine:
+#------------------------------------this moudle is implementing Best Search Engine-------------------------------
 
+class SearchEngine:
     # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation, but you must have a parser and an indexer.
     def __init__(self, config=None):
@@ -42,37 +41,27 @@ class SearchEngine:
             self._indexer.add_new_doc(parsed_document)
 
         to_del=[]
-        print("total num of terms: "+str(len(self._indexer.inverted_idx)))
+
+        #saving the object that needed while searching
+        to_Save=(self._indexer.inverted_idx,self._indexer.postingDict,self._indexer.num_of_docs,self._indexer.avg_Size_doc)
+        utils.save_obj(to_Save,"index_best")
         def remove_word_1():
             for key in self._indexer.inverted_idx:
                 if (self._indexer.inverted_idx[key] == 1):
                     to_del.append(key)
                     self._indexer.postingDict.pop(key)
             for key in to_del:
-                self._indexer.inverted_idx.pop(key)
-
-        # saving the necessary data to pickle
-
-        to_Save=(self._indexer.inverted_idx,self._indexer.postingDict,self._indexer.num_of_docs,self._indexer.avg_Size_doc)
-        utils.save_obj(to_Save,"index_best")
-        print("num of terms : " + str(len(self._indexer.inverted_idx)))
-        remove_word_1()
-        print("num of terms without the term with freq 1: " + str(len(self._indexer.inverted_idx)))
-
-        print('Finished parsing and indexing.')
-        print("time toke to build index "+str(time.time()-time1))
-    # DO NOT MODIFY THIS SIGNATURE
+                self._indexer.inverted_idx.pop(key)    # DO NOT MODIFY THIS SIGNATURE
     # You can change the internal implementation as you see fit.
+
     def load_index(self, fn):
         """
         Loads a pre-computed index (or indices) so we can answer queries.
         Input:
             fn - file name of pickled index.
         """
-        #todo fix the load
-        with open(fn , 'rb') as f:
-            obj= pickle.load(f)
 
+        obj=utils.load_obj(fn)
         self._indexer.inverted_idx=obj[0]
         self._indexer.postingDict=obj[1]
         self._indexer.num_of_docs=obj[2]
